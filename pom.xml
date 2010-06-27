@@ -1,16 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <name>xebia-management-extras</name>
    <groupId>fr.xebia.management.extras</groupId>
    <artifactId>xebia-management-extras</artifactId>
    <packaging>jar</packaging>
    <description>Extras for Tomcat 6</description>
-   <version>0.0.1-SNAPSHOT</version>
+   <version>0.0.1</version>
    <scm>
-      <connection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</connection>
-      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</developerConnection>
-      <url>https://xebia-france.googlecode.com/svn/management/xebia-management-extras/</url>
+      <connection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-0.0.1</connection>
+      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-0.0.1</developerConnection>
+      <url>https://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-0.0.1</url>
    </scm>
    <build>
       <plugins>
