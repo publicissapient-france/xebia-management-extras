@@ -18,23 +18,16 @@ package fr.xebia.management.jms;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
-import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.jmx.export.naming.SelfNaming;
 
 /**
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class ManagedConnectionFactory implements ConnectionFactory, ManagedConnectionFactoryMBean, SelfNaming, BeanNameAware {
+public class ManagedConnectionFactory implements ConnectionFactory, ManagedConnectionFactoryMBean {
 
     private ConnectionFactory delegate;
 
     private final JmsStatistics statistics = new JmsStatistics();
-
-    private String beanName;
 
     @Override
     public Connection createConnection() throws JMSException {
@@ -122,16 +115,6 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     public void setDelegate(ConnectionFactory delegate) {
         this.delegate = delegate;
-    }
-
-    @Override
-    public ObjectName getObjectName() throws MalformedObjectNameException {
-        return ObjectName.getInstance("javax.jms:type=ConnectionFactory,name=" + beanName);
-    }
-
-    @Override
-    public void setBeanName(String name) {
-        this.beanName = name;
     }
 
 }
