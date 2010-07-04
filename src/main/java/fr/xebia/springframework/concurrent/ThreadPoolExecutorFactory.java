@@ -23,6 +23,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.springframework.beans.factory.BeanNameAware;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.naming.SelfNaming;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -48,7 +50,7 @@ import org.springframework.util.StringUtils;
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
 public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExecutor> implements FactoryBean<ThreadPoolExecutor>,
-BeanNameAware {
+        BeanNameAware {
 
     private static class CountingRejectedExecutionHandler implements RejectedExecutionHandler {
 
@@ -74,12 +76,15 @@ BeanNameAware {
     }
 
     @ManagedResource
-    public static class SpringJmxEnabledThreadPoolExecutor extends ThreadPoolExecutor {
+    public static class SpringJmxEnabledThreadPoolExecutor extends ThreadPoolExecutor implements SelfNaming {
+
+        private ObjectName objectName;
 
         public SpringJmxEnabledThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
+                BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, ObjectName objectName) {
             super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, new CountingRejectedExecutionHandler(
                     new AbortPolicy()));
+            this.objectName = objectName;
         }
 
         @Override
@@ -88,10 +93,15 @@ BeanNameAware {
             return super.getActiveCount();
         }
 
+        @Override
+        public ObjectName getObjectName() throws MalformedObjectNameException {
+            return objectName;
+        }
+
         @ManagedAttribute(description = "Returns the number of additional elements that this queue can "
-            + "ideally (in the absence of memory or resource constraints) accept without  "
-            + "blocking, or Integer.MAX_VALUE if there is no intrinsic limit.")
-            public int getQueueRemainingCapacity() {
+                + "ideally (in the absence of memory or resource constraints) accept without  "
+                + "blocking, or Integer.MAX_VALUE if there is no intrinsic limit.")
+        public int getQueueRemainingCapacity() {
             return getQueue().remainingCapacity();
         }
 
@@ -102,16 +112,14 @@ BeanNameAware {
 
         @Override
         @ManagedAttribute(description = "Returns the approximate total number of tasks that have ever been scheduled for execution "
-            + "(does not include the rejected tasks)")
-            public long getTaskCount() {
+                + "(does not include the rejected tasks)")
+        public long getTaskCount() {
             return super.getTaskCount();
         }
 
     }
 
     private String beanName;
-
-    private MBeanExporter mbeanExporter;
 
     private int nbThreads;
 
@@ -131,16 +139,12 @@ BeanNameAware {
         }
         CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(threadNamePrefix);
         threadFactory.setDaemon(true);
-
-        ThreadPoolExecutor instance = new SpringJmxEnabledThreadPoolExecutor(nbThreads, nbThreads, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(queueCapacity), threadFactory);
-
         if (!StringUtils.hasLength(objectName)) {
             objectName = "java.util.concurrent:type=ThreadPoolExecutor,name=" + ObjectName.quote(beanName);
         }
 
-        Assert.notNull(mbeanExporter, "mbeanExporter can not be null");
-        mbeanExporter.registerManagedResource(instance, new ObjectName(objectName));
+        ThreadPoolExecutor instance = new SpringJmxEnabledThreadPoolExecutor(nbThreads, nbThreads, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(queueCapacity), threadFactory, new ObjectName(objectName));
 
         return instance;
     }
@@ -158,10 +162,6 @@ BeanNameAware {
     @Override
     public void setBeanName(String name) {
         this.beanName = name;
-    }
-
-    public void setMbeanExporter(MBeanExporter mbeanExporter) {
-        this.mbeanExporter = mbeanExporter;
     }
 
     public void setNbThreads(int nbThreads) {
