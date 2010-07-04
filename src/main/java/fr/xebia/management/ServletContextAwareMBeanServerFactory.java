@@ -55,9 +55,8 @@ import org.springframework.web.context.ServletContextAware;
  * .
  * </p>
  * <p>
- * The added property was named <code>path</code>
- * </p>
- * to follow Tomcat JMX beans naming convention.
+ * The added property was named '<code>path</code>' to follow Tomcat JMX beans
+ * naming convention.
  * <p>
  * This {@link FactoryBean} doesn't extend {@link AbstractFactoryBean} due to <a
  * href="http://jira.springframework.org/browse/SPR-4968">SPR-4968 : Error
@@ -65,7 +64,7 @@ import org.springframework.web.context.ServletContextAware;
  * of circular references</a>
  * </p>
  * 
- * @author <a href="mailto:cyrille.leclerc@pobox.com">Cyrille Le Clerc</a>
+ * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
 public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanServer>, ServletContextAware, InitializingBean {
 
