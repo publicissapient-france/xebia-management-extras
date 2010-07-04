@@ -5,11 +5,11 @@
    <artifactId>xebia-management-extras</artifactId>
    <packaging>jar</packaging>
    <description>Extras for Tomcat 6</description>
-   <version>0.0.3-SNAPSHOT</version>
+   <version>0.0.3</version>
    <scm>
-      <connection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</connection>
-      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</developerConnection>
-      <url>https://xebia-france.googlecode.com/svn/management/xebia-management-extras/</url>
+      <connection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-0.0.3</connection>
+      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-0.0.3</developerConnection>
+      <url>https://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-0.0.3</url>
    </scm>
    <build>
       <plugins>
