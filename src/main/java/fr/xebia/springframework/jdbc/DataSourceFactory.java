@@ -66,6 +66,8 @@ public class DataSourceFactory extends AbstractFactoryBean<DataSource> implement
 
     private String beanName;
 
+    private boolean defaultAutoCommit;
+
     private String driverClassName;
 
     private int maxActive;
@@ -81,7 +83,7 @@ public class DataSourceFactory extends AbstractFactoryBean<DataSource> implement
     private String url;
 
     private String username;
-
+    
     @Override
     protected DataSource createInstance() throws Exception {
 
@@ -92,6 +94,7 @@ public class DataSourceFactory extends AbstractFactoryBean<DataSource> implement
         basicDataSource.setPassword(password);
         basicDataSource.setMaxActive(maxActive);
         basicDataSource.setMaxWait(maxWait);
+        basicDataSource.setDefaultAutoCommit(defaultAutoCommit);
 
         if (!StringUtils.hasLength(this.objectName)) {
             objectName = "javax.sql:type=DataSource,name=" + ObjectName.quote(beanName);
@@ -116,6 +119,10 @@ public class DataSourceFactory extends AbstractFactoryBean<DataSource> implement
     @Override
     public void setBeanName(String name) {
         this.beanName = name;
+    }
+
+    public void setDefaultAutoCommit(boolean defaultAutoCommit) {
+        this.defaultAutoCommit = defaultAutoCommit;
     }
 
     public void setDriverClassName(String driverClassName) {

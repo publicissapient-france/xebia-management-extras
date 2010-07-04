@@ -15,77 +15,58 @@
  */
 package fr.xebia.springframework.jms;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.jms.Topic;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.jms.JmsException;
+import org.springframework.jms.UncategorizedJmsException;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
 
 /**
+ * JMX enabled {@link DefaultMessageListenerContainer}.
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-@ManagedResource
-public class ManagedDefaultMessageListenerContainer extends DefaultMessageListenerContainer implements BeanNameAware, SelfNaming {
+public class ManagedDefaultMessageListenerContainer extends DefaultMessageListenerContainer implements
+        ManagedDefaultMessageListenerContainerMBean, BeanNameAware, SelfNaming {
 
     private String beanName;
+
+    private ObjectName objectName;
+
+    @Override
+    public ObjectName getObjectName() throws MalformedObjectNameException {
+        if (objectName == null) {
+            String destinationName = getDestinationName();
+            Destination destination = getDestination();
+            if (destinationName == null && destination != null) {
+                try {
+                    if (destination instanceof Queue) {
+                        Queue queue = (Queue) destination;
+                        destinationName = queue.getQueueName();
+
+                    } else if (destination instanceof Topic) {
+                        Topic topic = (Topic) destination;
+                        destinationName = topic.getTopicName();
+                    }
+                } catch (JMSException e) {
+                    throw new UncategorizedJmsException(e);
+                }
+            }
+            objectName = ObjectName.getInstance("javax.jms:type=MessageListenerContainer,name=" + ObjectName.quote(beanName)
+                    + ",destination=" + destinationName);
+        }
+        return objectName;
+    }
 
     @Override
     public void setBeanName(String name) {
         this.beanName = name;
-    }
-
-    @Override
-    public ObjectName getObjectName() throws MalformedObjectNameException {
-        return ObjectName.getInstance("javax.jms:type=MessageListenerContainer,name=" + ObjectName.quote(beanName));
-    }
-
-    @ManagedOperation
-    @Override
-    public void stop() throws JmsException {
-        super.stop();
-    }
-
-    @ManagedAttribute(description = "Return the number of currently active consumers. "
-        + "This number will always be inbetween 'concurrentConsumers' and 'maxConcurrentConsumers', but might be lower than 'scheduledConsumerCount'. "
-        + "(in case of some consumers being scheduled but not executed at the moment).")
-        public int getContainerActiveConsumerCount() {
-        return getActiveConsumerCount();
-    }
-
-    @ManagedAttribute(description = "Return the 'concurrentConsumer' setting."
-        + "This returns the currently configured 'concurrentConsumers' value;"
-        + "the number of currently scheduled/active consumers might differ.")
-        public int getContainerConcurrentConsumers() {
-        return getConcurrentConsumers();
-    }
-
-    @ManagedAttribute(description = "Name of a durable subscription to create, if any.")
-    @Override
-    public String getDurableSubscriptionName() {
-        return super.getDurableSubscriptionName();
-    }
-
-    @ManagedAttribute(description = "Determine the number of currently paused tasks, if any.")
-    @Override
-    public int getPausedTaskCount() {
-        return super.getPausedTaskCount();
-    }
-
-    @ManagedAttribute(description = "Determine whether this container is currently running, that is, whether it has been started and not stopped yet.")
-    public boolean isContainerRunning() {
-        return isRunning();
-    }
-
-    @ManagedOperation
-    @Override
-    public void start() throws JmsException {
-        super.start();
     }
 
 }
