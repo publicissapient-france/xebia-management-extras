@@ -70,8 +70,18 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
     }
 
     @Override
+    public int getCreatedMessageProducerCount() {
+        return statistics.getCreatedMessageProducerCount();
+    }
+
+    @Override
     public int getCreatedSessionCount() {
         return statistics.getCreatedSessionCount();
+    }
+
+    @Override
+    public int getCreateMessageProducerExceptionCount() {
+        return statistics.getCreateMessageProducerExceptionCount();
     }
 
     @Override
@@ -116,5 +126,4 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
     public void setDelegate(ConnectionFactory delegate) {
         this.delegate = delegate;
     }
-
 }

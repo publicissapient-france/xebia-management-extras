@@ -27,16 +27,23 @@ public class JmsStatistics implements ManagedConnectionFactoryMBean {
     private final AtomicInteger createConnectionExceptionCount = new AtomicInteger();
     private final AtomicInteger createdConnectionCount = new AtomicInteger();
 
+    private final AtomicInteger createdMessageProducerCount = new AtomicInteger();
+
     private final AtomicInteger createdSessionCount = new AtomicInteger();
+
+    private final AtomicInteger createMessageProducerExceptionCount = new AtomicInteger();
+
     private final AtomicInteger createSessionExceptionCount = new AtomicInteger();
 
     private final AtomicInteger receivedMessageCount = new AtomicInteger();
-    private final AtomicInteger receivedMessageExceptionCount = new AtomicInteger();
-    private final AtomicLong receiveMessageDurationInMillis = new AtomicLong();
 
+    private final AtomicInteger receivedMessageExceptionCount = new AtomicInteger();
+
+    private final AtomicLong receiveMessageDurationInMillis = new AtomicLong();
     private final AtomicLong sendMessageDurationInMillis = new AtomicLong();
 
     private final AtomicInteger sentMessageCount = new AtomicInteger();
+
     private final AtomicInteger sentMessageExceptionCount = new AtomicInteger();
 
     @Override
@@ -50,8 +57,18 @@ public class JmsStatistics implements ManagedConnectionFactoryMBean {
     }
 
     @Override
+    public int getCreatedMessageProducerCount() {
+        return createdMessageProducerCount.get();
+    }
+
+    @Override
     public int getCreatedSessionCount() {
         return createdSessionCount.get();
+    }
+
+    @Override
+    public int getCreateMessageProducerExceptionCount() {
+        return createMessageProducerExceptionCount.get();
     }
 
     @Override
@@ -97,8 +114,16 @@ public class JmsStatistics implements ManagedConnectionFactoryMBean {
         createdConnectionCount.incrementAndGet();
     }
 
+    public void incrementCreatedMessageProducerCount() {
+        createdMessageProducerCount.incrementAndGet();
+    }
+
     public void incrementCreatedSessionCount() {
         createdSessionCount.incrementAndGet();
+    }
+
+    public void incrementCreateMessageProducerExceptionCount() {
+        createMessageProducerExceptionCount.incrementAndGet();
     }
 
     public void incrementCreateSessionExceptionCount() {

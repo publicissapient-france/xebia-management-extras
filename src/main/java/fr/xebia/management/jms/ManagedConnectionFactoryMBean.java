@@ -25,7 +25,11 @@ public interface ManagedConnectionFactoryMBean {
 
     int getCreatedConnectionCount();
 
+    int getCreatedMessageProducerCount();
+
     int getCreatedSessionCount();
+
+    int getCreateMessageProducerExceptionCount();
 
     int getCreateSessionExceptionCount();
 

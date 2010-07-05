@@ -65,7 +65,18 @@ public class ManagedSession extends SessionWrapper {
 
     @Override
     public MessageProducer createProducer(Destination destination) throws JMSException {
-        return decorate(super.createProducer(destination));
+        try {
+            return decorate(super.createProducer(destination));
+        } catch (JMSException e) {
+            statistics.incrementCreateMessageProducerExceptionCount();
+            throw e;
+        } catch (RuntimeException e) {
+            statistics.incrementCreateMessageProducerExceptionCount();
+            throw e;
+        } finally {
+            statistics.incrementCreatedMessageProducerCount();
+
+        }
     }
 
     protected MessageConsumer decorate(MessageConsumer messageConsumer) {
