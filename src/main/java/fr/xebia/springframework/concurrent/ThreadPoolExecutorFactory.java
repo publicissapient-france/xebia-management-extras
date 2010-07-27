@@ -67,7 +67,6 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
             return rejectedExecutionCount.get();
         }
 
-        @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             rejectedExecutionCount.incrementAndGet();
             rejectedExecutionHandler.rejectedExecution(r, executor);
@@ -93,7 +92,6 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
             return super.getActiveCount();
         }
 
-        @Override
         public ObjectName getObjectName() throws MalformedObjectNameException {
             return objectName;
         }
@@ -159,7 +157,6 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
         return SpringJmxEnabledThreadPoolExecutor.class;
     }
 
-    @Override
     public void setBeanName(String name) {
         this.beanName = name;
     }

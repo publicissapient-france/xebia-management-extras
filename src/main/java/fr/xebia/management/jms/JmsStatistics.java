@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class JmsStatistics implements ManagedConnectionFactoryMBean {
 
     private final AtomicInteger createConnectionExceptionCount = new AtomicInteger();
+    
     private final AtomicInteger createdConnectionCount = new AtomicInteger();
 
     private final AtomicInteger createdMessageProducerCount = new AtomicInteger();
@@ -46,62 +47,50 @@ public class JmsStatistics implements ManagedConnectionFactoryMBean {
 
     private final AtomicInteger sentMessageExceptionCount = new AtomicInteger();
 
-    @Override
     public int getCreateConnectionExceptionCount() {
         return createConnectionExceptionCount.get();
     }
 
-    @Override
     public int getCreatedConnectionCount() {
         return createdConnectionCount.get();
     }
 
-    @Override
     public int getCreatedMessageProducerCount() {
         return createdMessageProducerCount.get();
     }
 
-    @Override
     public int getCreatedSessionCount() {
         return createdSessionCount.get();
     }
 
-    @Override
     public int getCreateMessageProducerExceptionCount() {
         return createMessageProducerExceptionCount.get();
     }
 
-    @Override
     public int getCreateSessionExceptionCount() {
         return createSessionExceptionCount.get();
     }
 
-    @Override
     public int getReceivedMessageCount() {
         return receivedMessageCount.get();
     }
 
-    @Override
     public int getReceivedMessageExceptionCount() {
         return receivedMessageExceptionCount.get();
     }
 
-    @Override
     public long getReceiveMessageDurationInMillis() {
         return receiveMessageDurationInMillis.get();
     }
 
-    @Override
     public long getSendMessageDurationInMillis() {
         return sendMessageDurationInMillis.get();
     }
 
-    @Override
     public int getSentMessageCount() {
         return sentMessageCount.get();
     }
 
-    @Override
     public int getSentMessageExceptionCount() {
         return sentMessageExceptionCount.get();
     }

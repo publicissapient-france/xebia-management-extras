@@ -41,7 +41,6 @@ public class ManagedCachingConnectionFactory extends CachingConnectionFactory im
 
     private ObjectName objectName;
 
-    @Override
     public ObjectName getObjectName() throws MalformedObjectNameException {
         if (objectName == null) {
             objectName = ObjectName.getInstance("javax.jms:type=CachingConnectionFactory,name=" + ObjectName.quote(this.beanName));
@@ -57,7 +56,6 @@ public class ManagedCachingConnectionFactory extends CachingConnectionFactory im
         return super.isReconnectOnException();
     }
 
-    @Override
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }

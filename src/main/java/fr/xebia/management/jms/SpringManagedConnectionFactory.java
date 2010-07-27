@@ -31,12 +31,10 @@ public class SpringManagedConnectionFactory extends ManagedConnectionFactory imp
 
     private String beanName;
 
-    @Override
     public ObjectName getObjectName() throws MalformedObjectNameException {
         return ObjectName.getInstance("javax.jms:type=ConnectionFactory,name=" + beanName);
     }
 
-    @Override
     public void setBeanName(String name) {
         this.beanName = name;
     }

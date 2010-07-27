@@ -116,7 +116,6 @@ public class DataSourceFactory extends AbstractFactoryBean<DataSource> implement
         return BasicDataSource.class;
     }
 
-    @Override
     public void setBeanName(String name) {
         this.beanName = name;
     }

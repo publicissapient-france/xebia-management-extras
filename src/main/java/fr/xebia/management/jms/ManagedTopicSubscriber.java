@@ -32,12 +32,10 @@ public class ManagedTopicSubscriber extends ManagedMessageConsumer implements To
         this.delegate = delegate;
     }
 
-    @Override
     public boolean getNoLocal() throws JMSException {
         return delegate.getNoLocal();
     }
 
-    @Override
     public Topic getTopic() throws JMSException {
         return delegate.getTopic();
     }

@@ -39,7 +39,6 @@ public class ManagedDefaultMessageListenerContainer extends DefaultMessageListen
 
     private ObjectName objectName;
 
-    @Override
     public ObjectName getObjectName() throws MalformedObjectNameException {
         if (objectName == null) {
             String destinationName = getDestinationName();

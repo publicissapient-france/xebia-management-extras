@@ -17,8 +17,8 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
-               <source>1.6</source>
-               <target>1.6</target>
+               <source>1.5</source>
+               <target>1.5</target>
             </configuration>
          </plugin>
          <plugin>
@@ -142,7 +142,7 @@
    </dependencies>
    <properties>
       <spring.version>3.0.3.RELEASE</spring.version>
-      <spring-security.version>3.0.2.RELEASE</spring-security.version>
+      <spring-security.version>3.0.3.RELEASE</spring-security.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
 </project>

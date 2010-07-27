@@ -33,7 +33,6 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
 
     private ObjectName objectName;
 
-    @Override
     public ObjectName getObjectName() throws MalformedObjectNameException {
         if (objectName == null) {
             objectName = new ObjectName("javax.sql:type=DataSource,name=" + beanName);
@@ -41,7 +40,6 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
         return objectName;
     }
 
-    @Override
     public void setBeanName(String name) {
         this.beanName = name;
     }

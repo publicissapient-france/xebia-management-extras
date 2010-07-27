@@ -29,7 +29,6 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     private final JmsStatistics statistics = new JmsStatistics();
 
-    @Override
     public Connection createConnection() throws JMSException {
         try {
             return new ManagedConnection(delegate.createConnection(), statistics);
@@ -44,7 +43,6 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         }
     }
 
-    @Override
     public Connection createConnection(String userName, String password) throws JMSException {
         try {
             return new ManagedConnection(delegate.createConnection(userName, password), statistics);
@@ -59,32 +57,26 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         }
     }
 
-    @Override
     public int getCreateConnectionExceptionCount() {
         return statistics.getCreateConnectionExceptionCount();
     }
 
-    @Override
     public int getCreatedConnectionCount() {
         return statistics.getCreatedConnectionCount();
     }
 
-    @Override
     public int getCreatedMessageProducerCount() {
         return statistics.getCreatedMessageProducerCount();
     }
 
-    @Override
     public int getCreatedSessionCount() {
         return statistics.getCreatedSessionCount();
     }
 
-    @Override
     public int getCreateMessageProducerExceptionCount() {
         return statistics.getCreateMessageProducerExceptionCount();
     }
 
-    @Override
     public int getCreateSessionExceptionCount() {
         return statistics.getCreateSessionExceptionCount();
     }
@@ -93,32 +85,26 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         return delegate;
     }
 
-    @Override
     public int getReceivedMessageCount() {
         return statistics.getReceivedMessageCount();
     }
 
-    @Override
     public int getReceivedMessageExceptionCount() {
         return statistics.getReceivedMessageExceptionCount();
     }
 
-    @Override
     public long getReceiveMessageDurationInMillis() {
         return statistics.getReceiveMessageDurationInMillis();
     }
 
-    @Override
     public long getSendMessageDurationInMillis() {
         return statistics.getSendMessageDurationInMillis();
     }
 
-    @Override
     public int getSentMessageCount() {
         return statistics.getSentMessageCount();
     }
 
-    @Override
     public int getSentMessageExceptionCount() {
         return statistics.getSentMessageExceptionCount();
     }

@@ -76,17 +76,14 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
 
     protected ServletContext servletContext;
 
-    @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.mbeanServer, "mbeanServer can NOT be null");
         Assert.notNull(this.servletContext, "servletContext can NOT be null");
     }
 
-    @Override
     public MBeanServer getObject() throws Exception {
         if (instance == null) {
             InvocationHandler invocationHandler = new InvocationHandler() {
-                @Override
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                     Object[] modifiedArgs = args.clone();
                     for (int i = 0; i < modifiedArgs.length; i++) {
@@ -130,12 +127,10 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
         return instance;
     }
 
-    @Override
     public Class<? extends MBeanServer> getObjectType() {
         return MBeanServer.class;
     }
 
-    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -144,7 +139,6 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
         this.mbeanServer = mbeanServer;
     }
 
-    @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
