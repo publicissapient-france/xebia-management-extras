@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,43 +24,96 @@ import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
 
 import fr.xebia.jms.wrapper.SessionWrapper;
+import fr.xebia.management.jms.ManagedConnectionFactory.Statistics;
 
 /**
- * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
 public class ManagedSession extends SessionWrapper {
 
-    private final JmsStatistics statistics;
+    private final Statistics statistics;
 
-    public ManagedSession(Session delegate, JmsStatistics statistics) {
+    public ManagedSession(Session delegate, Statistics statistics) {
         super(delegate);
         this.statistics = statistics;
     }
 
     @Override
     public TopicSubscriber createDurableSubscriber(Topic topic, String name) throws JMSException {
-        return decorate(super.createDurableSubscriber(topic, name));
+        try {
+            return decorate(super.createDurableSubscriber(topic, name));
+        } catch (RuntimeException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } catch (JMSException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } finally {
+            statistics.incrementCreateMessageConsumerCount();
+        }
+
     }
 
     @Override
     public TopicSubscriber createDurableSubscriber(Topic topic, String name, String messageSelector, boolean noLocal) throws JMSException {
-        return decorate(super.createDurableSubscriber(topic, name, messageSelector, noLocal));
+        try {
+            return decorate(super.createDurableSubscriber(topic, name, messageSelector, noLocal));
+        } catch (RuntimeException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } catch (JMSException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } finally {
+            statistics.incrementCreateMessageConsumerCount();
+        }
+
     }
 
     @Override
     public MessageConsumer createConsumer(Destination destination) throws JMSException {
-        return decorate(super.createConsumer(destination));
+        try {
+            return decorate(super.createConsumer(destination));
+        } catch (RuntimeException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } catch (JMSException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } finally {
+            statistics.incrementCreateMessageConsumerCount();
+        }
     }
 
     @Override
     public MessageConsumer createConsumer(Destination destination, String messageSelector) throws JMSException {
-        return decorate(super.createConsumer(destination, messageSelector));
+        try {
+            return decorate(super.createConsumer(destination, messageSelector));
+        } catch (RuntimeException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } catch (JMSException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } finally {
+            statistics.incrementCreateMessageConsumerCount();
+        }
+
     }
 
     @Override
     public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean NoLocal) throws JMSException {
-        return decorate(super.createConsumer(destination, messageSelector, NoLocal));
+        try {
+            return decorate(super.createConsumer(destination, messageSelector, NoLocal));
+        } catch (RuntimeException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } catch (JMSException e) {
+            statistics.incrementCreateMessageConsumerExceptionCount();
+            throw e;
+        } finally {
+            statistics.incrementCreateMessageConsumerCount();
+        }
     }
 
     @Override
@@ -74,8 +127,7 @@ public class ManagedSession extends SessionWrapper {
             statistics.incrementCreateMessageProducerExceptionCount();
             throw e;
         } finally {
-            statistics.incrementCreatedMessageProducerCount();
-
+            statistics.incrementCreateMessageProducerCount();
         }
     }
 

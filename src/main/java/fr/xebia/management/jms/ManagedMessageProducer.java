@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 
 import fr.xebia.jms.wrapper.MessageProducerWrapper;
+import fr.xebia.management.jms.ManagedConnectionFactory.Statistics;
 
 /**
  * 
@@ -28,9 +29,9 @@ import fr.xebia.jms.wrapper.MessageProducerWrapper;
  */
 public class ManagedMessageProducer extends MessageProducerWrapper {
 
-    private final JmsStatistics statistics;
+    private final Statistics statistics;
 
-    public ManagedMessageProducer(MessageProducer delegate, JmsStatistics statistics) {
+    public ManagedMessageProducer(MessageProducer delegate, Statistics statistics) {
         super(delegate);
         this.statistics = statistics;
     }
@@ -41,13 +42,13 @@ public class ManagedMessageProducer extends MessageProducerWrapper {
         try {
             super.send(destination, message);
         } catch (JMSException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } catch (RuntimeException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } finally {
-            statistics.incrementSentMessageCount();
+            statistics.incrementSendMessageCount();
             statistics.incrementSendMessageDurationInMillis(System.currentTimeMillis() - timeBefore);
         }
     }
@@ -58,13 +59,13 @@ public class ManagedMessageProducer extends MessageProducerWrapper {
         try {
             super.send(destination, message, deliveryMode, priority, timeToLive);
         } catch (JMSException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } catch (RuntimeException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } finally {
-            statistics.incrementSentMessageCount();
+            statistics.incrementSendMessageCount();
             statistics.incrementSendMessageDurationInMillis(System.currentTimeMillis() - timeBefore);
         }
     }
@@ -75,13 +76,13 @@ public class ManagedMessageProducer extends MessageProducerWrapper {
         try {
             super.send(message);
         } catch (JMSException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } catch (RuntimeException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } finally {
-            statistics.incrementSentMessageCount();
+            statistics.incrementSendMessageCount();
             statistics.incrementSendMessageDurationInMillis(System.currentTimeMillis() - timeBefore);
         }
     }
@@ -92,13 +93,13 @@ public class ManagedMessageProducer extends MessageProducerWrapper {
         try {
             super.send(message, deliveryMode, priority, timeToLive);
         } catch (JMSException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } catch (RuntimeException e) {
-            statistics.incrementSentMessageExceptionCount();
+            statistics.incrementSendMessageExceptionCount();
             throw e;
         } finally {
-            statistics.incrementSentMessageCount();
+            statistics.incrementSendMessageCount();
             statistics.incrementSendMessageDurationInMillis(System.currentTimeMillis() - timeBefore);
         }
     }

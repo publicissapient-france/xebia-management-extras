@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,28 +21,32 @@ package fr.xebia.management.jms;
  */
 public interface ManagedConnectionFactoryMBean {
 
+    int getCreateConnectionCount();
+
     int getCreateConnectionExceptionCount();
 
-    int getCreatedConnectionCount();
+    int getCreateMessageConsumerCount();
 
-    int getCreatedMessageProducerCount();
+    int getCreateMessageConsumerExceptionCount();
 
-    int getCreatedSessionCount();
+    int getCreateMessageProducerCount();
 
     int getCreateMessageProducerExceptionCount();
 
+    int getCreateSessionCount();
+
     int getCreateSessionExceptionCount();
 
-    int getReceivedMessageCount();
-
-    int getReceivedMessageExceptionCount();
+    int getReceiveMessageCount();
 
     long getReceiveMessageDurationInMillis();
 
+    int getReceiveMessageExceptionCount();
+
+    int getSendMessageCount();
+    
     long getSendMessageDurationInMillis();
 
-    int getSentMessageCount();
-
-    int getSentMessageExceptionCount();
+    int getSendMessageExceptionCount();
 
 }

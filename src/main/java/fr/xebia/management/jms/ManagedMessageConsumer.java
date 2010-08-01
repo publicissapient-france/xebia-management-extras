@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 
 import fr.xebia.jms.wrapper.MessageConsumerWrapper;
+import fr.xebia.management.jms.ManagedConnectionFactory.Statistics;
 
 /**
  * 
@@ -27,9 +28,9 @@ import fr.xebia.jms.wrapper.MessageConsumerWrapper;
  */
 public class ManagedMessageConsumer extends MessageConsumerWrapper {
 
-    private final JmsStatistics statistics;
+    private final Statistics statistics;
 
-    public ManagedMessageConsumer(MessageConsumer delegate, JmsStatistics statistics) {
+    public ManagedMessageConsumer(MessageConsumer delegate, Statistics statistics) {
         super(delegate);
         this.statistics = statistics;
     }

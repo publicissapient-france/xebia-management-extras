@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
  */
 package fr.xebia.jms.wrapper;
 
-
 import javax.jms.JMSException;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
-
 
 /**
  * 

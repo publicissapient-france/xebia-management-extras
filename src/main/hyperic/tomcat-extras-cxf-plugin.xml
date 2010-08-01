@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+ <!--                                                                           -->
+ <!--  Copyright 2008-2010 Xebia and the original author or authors.            -->
+ <!--                                                                           -->
+ <!--  Licensed under the Apache License, Version 2.0 (the "License");          -->
+ <!--  you may not use this file except in compliance with the License.         -->
+ <!--  You may obtain a copy of the License at                                  -->
+ <!--                                                                           -->
+ <!--       http://www.apache.org/licenses/LICENSE-2.0                          -->
+ <!--                                                                           -->
+ <!--  Unless required by applicable law or agreed to in writing, software      -->
+ <!--  distributed under the License is distributed on an "AS IS" BASIS,        -->
+ <!--  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+ <!--  See the License for the specific language governing permissions and      -->
+ <!--  limitations under the License.                                           -->
+ <!--  Hyperic jvm-plugin extensions for CXF metrics                            -->
+ <!--                                                                           -->
+<plugin name="tomcat-extras-cxf">
+   <service name="CXF Endpoint" server="Apache Tomcat" version="6.0">
+
+      <property name="OBJECT_NAME" value="org.apache.cxf:type=Performance.Counter.Server,host=*,path=*,bus.id=*,service=*,port=*,operation=*" />
+
+      <!-- Don't add service in autoinventory name to limit the name length -->
+      <property name="AUTOINVENTORY_NAME" value="%serverName% %path% %port% %operation% CXF Endpoint" />
+
+      <plugin type="autoinventory" />
+
+      <config>
+         <option name="host" description="Hostname" default="" />
+         <option name="path" description="Path of the web application" default="/" />
+         <option name="bus.id" description="ID of the CXF Bus" />
+         <option name="service" description="Name of the Service" />
+         <option name="port" description="Name of the Port" />
+         <option name="operation" description="Name of the Operation" />
+      </config>
+
+      <filter name="template" value="${OBJECT_NAME}:${alias}" />
+
+      <metric name="Availability" indicator="true" />
+
+      <metric name="Number of Invocations" alias="NumInvocations" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Total Handling Time" alias="TotalHandlingTime" indicator="true" template="${OBJECT_NAME}:${alias}" units="mu"
+         collectionType="trendsup" category="PERFORMANCE" />
+
+      <metric name="Num Checked Application Faults" alias="NumCheckedApplicationFaults" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Num Logical Runtime Faults" alias="NumLogicalRuntimeFaults" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Num Runtime Faults" alias="NumRuntimeFaults" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Num UnChecked Application Faults" alias="NumUnCheckedApplicationFaults" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+   </service>
+
+   <service name="CXF Client" server="Apache Tomcat" version="6.0">
+      <property name="OBJECT_NAME" value="org.apache.cxf:type=Performance.Counter.Client,host=*,path=*,bus.id=*,service=*,port=*,operation=*" />
+
+      <!-- Don't add service in autoinventory name to limit the name length -->
+      <property name="AUTOINVENTORY_NAME" value="%serverName% %path% %port% %operation% CXF Client" />
+
+      <plugin type="autoinventory" />
+
+      <config>
+         <option name="host" description="Hostname" default="" />
+         <option name="path" description="Path of the web application" default="/" />
+         <option name="bus.id" description="ID of the CXF Bus" />
+         <option name="service" description="Name of the Service" />
+         <option name="port" description="Name of the Port" />
+         <option name="operation" description="Name of the Operation" />
+      </config>
+
+      <filter name="template" value="${OBJECT_NAME}:${alias}" />
+
+      <metric name="Availability" indicator="true" />
+      <metric name="Number of Invocations" alias="NumInvocations" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Total Handling Time" alias="TotalHandlingTime" indicator="true" template="${OBJECT_NAME}:${alias}" units="mu"
+         collectionType="trendsup" category="PERFORMANCE" />
+
+      <metric name="Num Checked Application Faults" alias="NumCheckedApplicationFaults" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Num Logical Runtime Faults" alias="NumLogicalRuntimeFaults" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Num Runtime Faults" alias="NumRuntimeFaults" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Num UnChecked Application Faults" alias="NumUnCheckedApplicationFaults" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+   </service>
+
+</plugin>

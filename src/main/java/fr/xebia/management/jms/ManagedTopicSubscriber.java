@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import javax.jms.JMSException;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
 
+import fr.xebia.management.jms.ManagedConnectionFactory.Statistics;
+
 /**
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
@@ -27,7 +29,7 @@ public class ManagedTopicSubscriber extends ManagedMessageConsumer implements To
 
     private final TopicSubscriber delegate;
 
-    public ManagedTopicSubscriber(TopicSubscriber delegate, JmsStatistics statistics) {
+    public ManagedTopicSubscriber(TopicSubscriber delegate, Statistics statistics) {
         super(delegate, statistics);
         this.delegate = delegate;
     }

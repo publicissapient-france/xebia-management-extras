@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import javax.jms.Session;
 import org.springframework.jmx.JmxException;
 
 import fr.xebia.jms.wrapper.ConnectionWrapper;
+import fr.xebia.management.jms.ManagedConnectionFactory.Statistics;
 
 /**
  * 
@@ -29,9 +30,9 @@ import fr.xebia.jms.wrapper.ConnectionWrapper;
  */
 public class ManagedConnection extends ConnectionWrapper {
 
-    private final JmsStatistics statistics;
+    private final Statistics statistics;
 
-    public ManagedConnection(Connection delegate, JmsStatistics statistics) {
+    public ManagedConnection(Connection delegate, Statistics statistics) {
         super(delegate);
         this.statistics = statistics;
     }
@@ -47,7 +48,7 @@ public class ManagedConnection extends ConnectionWrapper {
             statistics.incrementCreateSessionExceptionCount();
             throw e;
         } finally {
-            statistics.incrementCreatedSessionCount();
+            statistics.incrementCreateSessionCount();
         }
     }
 }

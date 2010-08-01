@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2009 Xebia and the original author or authors.
+ * Copyright 2008-2010 Xebia and the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package fr.xebia.management.jms;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -25,9 +28,153 @@ import javax.jms.JMSException;
  */
 public class ManagedConnectionFactory implements ConnectionFactory, ManagedConnectionFactoryMBean {
 
+    public static class Statistics {
+
+        private final AtomicInteger createConnectionCount = new AtomicInteger();
+
+        private final AtomicInteger createConnectionExceptionCount = new AtomicInteger();
+
+        private final AtomicInteger createMessageConsumerCount = new AtomicInteger();
+
+        private final AtomicInteger createMessageConsumerExceptionCount = new AtomicInteger();
+
+        private final AtomicInteger createMessageProducerCount = new AtomicInteger();
+
+        private final AtomicInteger createMessageProducerExceptionCount = new AtomicInteger();
+
+        private final AtomicInteger createSessionCount = new AtomicInteger();
+
+        private final AtomicInteger createSessionExceptionCount = new AtomicInteger();
+
+        private final AtomicInteger receiveMessageCount = new AtomicInteger();
+
+        private final AtomicLong receiveMessageDurationInMillis = new AtomicLong();
+
+        private final AtomicInteger receiveMessageExceptionCount = new AtomicInteger();
+
+        private final AtomicInteger sendMessageCount = new AtomicInteger();
+
+        private final AtomicLong sendMessageDurationInMillis = new AtomicLong();
+
+        private final AtomicInteger sendMessageExceptionCount = new AtomicInteger();
+
+        public int getCreateConnectionCount() {
+            return createConnectionCount.get();
+        }
+
+        public int getCreateConnectionExceptionCount() {
+            return createConnectionExceptionCount.get();
+        }
+
+        public int getCreateMessageConsumerCount() {
+            return createMessageConsumerCount.get();
+        }
+
+        public int getCreateMessageConsumerExceptionCount() {
+            return createMessageConsumerExceptionCount.get();
+        }
+
+        public int getCreateMessageProducerCount() {
+            return createMessageProducerCount.get();
+        }
+
+        public int getCreateMessageProducerExceptionCount() {
+            return createMessageProducerExceptionCount.get();
+        }
+
+        public int getCreateSessionCount() {
+            return createSessionCount.get();
+        }
+
+        public int getCreateSessionExceptionCount() {
+            return createSessionExceptionCount.get();
+        }
+
+        public int getReceiveMessageCount() {
+            return receiveMessageCount.get();
+        }
+
+        public long getReceiveMessageDurationInMillis() {
+            return receiveMessageDurationInMillis.get();
+        }
+
+        public int getReceiveMessageExceptionCount() {
+            return receiveMessageExceptionCount.get();
+        }
+
+        public int getSendMessageCount() {
+            return sendMessageCount.get();
+        }
+
+        public long getSendMessageDurationInMillis() {
+            return sendMessageDurationInMillis.get();
+        }
+
+        public int getSendMessageExceptionCount() {
+            return sendMessageExceptionCount.get();
+        }
+
+        public void incrementCreateConnectionCount() {
+            createConnectionCount.incrementAndGet();
+        }
+
+        public void incrementCreateConnectionExceptionCount() {
+            createConnectionExceptionCount.incrementAndGet();
+        }
+
+        public void incrementCreateMessageConsumerCount() {
+            createMessageConsumerCount.incrementAndGet();
+        }
+
+        public void incrementCreateMessageConsumerExceptionCount() {
+            createMessageConsumerExceptionCount.incrementAndGet();
+        }
+
+        public void incrementCreateMessageProducerCount() {
+            createMessageProducerCount.incrementAndGet();
+        }
+
+        public void incrementCreateMessageProducerExceptionCount() {
+            createMessageProducerExceptionCount.incrementAndGet();
+        }
+
+        public void incrementCreateSessionCount() {
+            createSessionCount.incrementAndGet();
+        }
+
+        public void incrementCreateSessionExceptionCount() {
+            createSessionExceptionCount.incrementAndGet();
+        }
+
+        public void incrementReceivedMessageCount() {
+            receiveMessageCount.incrementAndGet();
+        }
+
+        public void incrementReceivedMessageExceptionCount() {
+            receiveMessageExceptionCount.incrementAndGet();
+        }
+
+        public void incrementReceiveMessageDurationInMillis(long delta) {
+            receiveMessageDurationInMillis.addAndGet(delta);
+        }
+
+        public void incrementSendMessageCount() {
+            sendMessageCount.incrementAndGet();
+        }
+
+        public void incrementSendMessageDurationInMillis(long delta) {
+            sendMessageDurationInMillis.addAndGet(delta);
+        }
+
+        public void incrementSendMessageExceptionCount() {
+            sendMessageExceptionCount.incrementAndGet();
+        }
+
+    }
+
     private ConnectionFactory delegate;
 
-    private final JmsStatistics statistics = new JmsStatistics();
+    private final Statistics statistics = new Statistics();
 
     public Connection createConnection() throws JMSException {
         try {
@@ -39,7 +186,7 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
             statistics.incrementCreateConnectionExceptionCount();
             throw e;
         } finally {
-            statistics.incrementCreatedConnectionCount();
+            statistics.incrementCreateConnectionCount();
         }
     }
 
@@ -53,28 +200,36 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
             statistics.incrementCreateConnectionExceptionCount();
             throw e;
         } finally {
-            statistics.incrementCreatedConnectionCount();
+            statistics.incrementCreateConnectionCount();
         }
+    }
+
+    public int getCreateConnectionCount() {
+        return statistics.getCreateConnectionCount();
     }
 
     public int getCreateConnectionExceptionCount() {
         return statistics.getCreateConnectionExceptionCount();
     }
 
-    public int getCreatedConnectionCount() {
-        return statistics.getCreatedConnectionCount();
+    public int getCreateMessageConsumerCount() {
+        return statistics.getCreateMessageProducerCount();
     }
 
-    public int getCreatedMessageProducerCount() {
-        return statistics.getCreatedMessageProducerCount();
+    public int getCreateMessageConsumerExceptionCount() {
+        return getCreateMessageConsumerExceptionCount();
     }
 
-    public int getCreatedSessionCount() {
-        return statistics.getCreatedSessionCount();
+    public int getCreateMessageProducerCount() {
+        return statistics.getCreateMessageProducerCount();
     }
 
     public int getCreateMessageProducerExceptionCount() {
         return statistics.getCreateMessageProducerExceptionCount();
+    }
+
+    public int getCreateSessionCount() {
+        return statistics.getCreateSessionCount();
     }
 
     public int getCreateSessionExceptionCount() {
@@ -85,28 +240,28 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         return delegate;
     }
 
-    public int getReceivedMessageCount() {
-        return statistics.getReceivedMessageCount();
-    }
-
-    public int getReceivedMessageExceptionCount() {
-        return statistics.getReceivedMessageExceptionCount();
+    public int getReceiveMessageCount() {
+        return statistics.getReceiveMessageCount();
     }
 
     public long getReceiveMessageDurationInMillis() {
         return statistics.getReceiveMessageDurationInMillis();
     }
 
+    public int getReceiveMessageExceptionCount() {
+        return statistics.getReceiveMessageExceptionCount();
+    }
+
+    public int getSendMessageCount() {
+        return statistics.getSendMessageCount();
+    }
+
     public long getSendMessageDurationInMillis() {
         return statistics.getSendMessageDurationInMillis();
     }
 
-    public int getSentMessageCount() {
-        return statistics.getSentMessageCount();
-    }
-
-    public int getSentMessageExceptionCount() {
-        return statistics.getSentMessageExceptionCount();
+    public int getSendMessageExceptionCount() {
+        return statistics.getSendMessageExceptionCount();
     }
 
     public void setDelegate(ConnectionFactory delegate) {

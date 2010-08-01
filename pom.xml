@@ -142,7 +142,7 @@
    </dependencies>
    <properties>
       <spring.version>3.0.3.RELEASE</spring.version>
-      <spring-security.version>3.0.3.RELEASE</spring-security.version>
+      <spring-security.version>3.0.2.RELEASE</spring-security.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
 </project>

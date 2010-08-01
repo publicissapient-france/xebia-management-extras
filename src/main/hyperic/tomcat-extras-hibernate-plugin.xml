@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+ <!--                                                                           -->
+ <!--  Copyright 2008-2010 Xebia and the original author or authors.            -->
+ <!--                                                                           -->
+ <!--  Licensed under the Apache License, Version 2.0 (the "License");          -->
+ <!--  you may not use this file except in compliance with the License.         -->
+ <!--  You may obtain a copy of the License at                                  -->
+ <!--                                                                           -->
+ <!--       http://www.apache.org/licenses/LICENSE-2.0                          -->
+ <!--                                                                           -->
+ <!--  Unless required by applicable law or agreed to in writing, software      -->
+ <!--  distributed under the License is distributed on an "AS IS" BASIS,        -->
+ <!--  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+ <!--  See the License for the specific language governing permissions and      -->
+ <!--  limitations under the License.                                           -->
+ <!--  Hyperic jvm-plugin extensions for CXF metrics                            -->
+ <!--                                                                           -->
+ <!--   Hyperic tomcat-plugin extensions for Hibernate metrics                  -->
+ <!--   Inspired by :                                                           -->
+ <!--   http://svn.hyperic.org/projects/hq/trunk/plugins/jboss/etc/hibernate-plugin.xml -->
+ <!--                                                                           -->
+<plugin name="tomcat-extras-hibernate">
+
+	<service name="Hibernate Session Factory" server="Apache Tomcat" version="6.0">
+
+		<property name="OBJECT_NAME" value="org.hibernate.jmx:name=hibernateStatistics,type=StatisticsService,host=*,path=*" />
+
+		<property name="AUTOINVENTORY_NAME" value="%serverName% %path% Hibernate Session Factory" />
+
+		<plugin type="autoinventory" />
+
+		<config>
+			<option name="host" description="Hostname" default="" />
+			<option name="path" description="Path of the web application" default="/" />
+		</config>
+
+		<filter name="template" value="${OBJECT_NAME}:${alias}" />
+
+		<metric name="Availability" indicator="true" />
+
+		<metric name="Entity Insert Count" alias="EntityInsertCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT" indicator="true"
+			collectionType="trendsup" />
+
+		<metric name="Query Execution Max Time" alias="QueryExecutionMaxTime" template="${OBJECT_NAME}:${alias}" category="PERFORMANCE"
+			indicator="true" units="ms" />
+
+		<metric name="Entity Update Count" alias="EntityUpdateCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Collection Update Count" alias="CollectionUpdateCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Entity Load Count" alias="EntityLoadCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT" collectionType="trendsup"
+			indicator="true" />
+
+		<metric name="Entity Fetch Count" alias="EntityFetchCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT" indicator="true"
+			collectionType="trendsup" />
+
+		<metric name="Entity Delete Count" alias="EntityDeleteCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Collection Recreate Count" alias="CollectionRecreateCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Query Execution Count" alias="QueryExecutionCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Flush Count" alias="FlushCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT" collectionType="trendsup"
+			indicator="true" />
+
+		<metric name="Collection Load Count" alias="CollectionLoadCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Successful Transaction Count" alias="SuccessfulTransactionCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Query Cache Hit Count" alias="QueryCacheHitCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Collection Remove Count" alias="CollectionRemoveCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Connect Count" alias="ConnectCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT" collectionType="trendsup"
+			indicator="true" />
+
+		<metric name="Start Time" alias="StartTime" template="${OBJECT_NAME}:${alias}" category="AVAILABILITY" units="epoch-millis"
+			collectionType="static" />
+
+		<metric name="Second Level Cache Put Count" alias="SecondLevelCachePutCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Query Cache Put Count" alias="QueryCachePutCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Session Open Count" alias="SessionOpenCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT" collectionType="trendsup"
+			indicator="true" />
+
+		<metric name="Transaction Count" alias="TransactionCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT" collectionType="trendsup"
+			indicator="true" />
+
+		<metric name="Collection Fetch Count" alias="CollectionFetchCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Session Close Count" alias="SessionCloseCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Query Cache Miss Count" alias="QueryCacheMissCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+		<metric name="Second Level Cache Miss Count" alias="SecondLevelCacheMissCount" template="${OBJECT_NAME}:${alias}" category="THROUGHPUT"
+			collectionType="trendsup" indicator="true" />
+
+	</service>
+</plugin>

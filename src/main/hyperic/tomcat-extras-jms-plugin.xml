@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+   <!--                                                                           -->
+   <!--  Copyright 2008-2010 Xebia and the original author or authors.            -->
+   <!--                                                                           -->
+   <!--  Licensed under the Apache License, Version 2.0 (the "License");          -->
+   <!--  you may not use this file except in compliance with the License.         -->
+   <!--  You may obtain a copy of the License at                                  -->
+   <!--                                                                           -->
+   <!--       http://www.apache.org/licenses/LICENSE-2.0                          -->
+   <!--                                                                           -->
+   <!--  Unless required by applicable law or agreed to in writing, software      -->
+   <!--  distributed under the License is distributed on an "AS IS" BASIS,        -->
+   <!--  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+   <!--  See the License for the specific language governing permissions and      -->
+   <!--  limitations under the License.                                           -->
+   <!--  Hyperic jvm-plugin extensions for JMS Connection Factory                 -->
+   <!--                                                                           -->
+<plugin name="tomcat-extras-jms">
+   <service name="JMS Connection Factory" server="Apache Tomcat" version="6.0">
+
+      <property name="OBJECT_NAME" value="javax.jms:type=ConnectionFactory,name=*,host=*,path=*" />
+
+      <plugin type="autoinventory" />
+
+      <config>
+         <option name="name" description="Name of the JMS Connection Factory" default="" />
+      </config>
+
+      <filter name="template" value="${OBJECT_NAME}:${alias}" />
+
+      <metric name="Availability" indicator="true" />
+
+      <!-- Create Session -->
+      <metric name="Create Session Count" alias="CreateSessionCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Create Session Exception Count" alias="CreateSessionExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <!-- Create Message Producer -->
+      <metric name="Create Message Producer Count" alias="CreateMessageProducerCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Create Message Producer Exception Count" alias="CreateMessageProducerExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <!-- Create Message Consumer -->
+      <metric name="Create Message Consumer Count" alias="CreateMessageConsumerCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Create Message Consumer Exception Count" alias="CreateMessageConsumerExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <!-- Send Message -->
+      <metric name="Send Message Duration In Millis" alias="SendMessageDurationInMillis" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="ms" collectionType="trendsup" category="PERFORMANCE" />
+
+      <metric name="Send Message Count" alias="SendMessageCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Send Message Exception Count" alias="SendMessageExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <!-- Receive Message -->
+      <metric name="Receive Message Duration In Millis" alias="ReceiveMessageDurationInMillis" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="ms" collectionType="trendsup" category="PERFORMANCE" />
+
+      <metric name="Receive Message Count" alias="ReceiveMessageCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Receive Message Exception Count" alias="ReceiveMessageExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+   </service>
+
+</plugin>

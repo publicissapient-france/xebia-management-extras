@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+ <!--                                                                           -->
+ <!--  Copyright 2008-2010 Xebia and the original author or authors.            -->
+ <!--                                                                           -->
+ <!--  Licensed under the Apache License, Version 2.0 (the "License");          -->
+ <!--  you may not use this file except in compliance with the License.         -->
+ <!--  You may obtain a copy of the License at                                  -->
+ <!--                                                                           -->
+ <!--       http://www.apache.org/licenses/LICENSE-2.0                          -->
+ <!--                                                                           -->
+ <!--  Unless required by applicable law or agreed to in writing, software      -->
+ <!--  distributed under the License is distributed on an "AS IS" BASIS,        -->
+ <!--  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+ <!--  See the License for the specific language governing permissions and      -->
+ <!--  limitations under the License.                                           -->
+ <!--  Hyperic jvm-plugin extensions for CXF metrics                            -->
+ <!--                                                                           -->
+ <!--   Hyperic jvm-plugin extensions for EH Cache metrics                      -->
+ <!--                                                                           -->
+<plugin name="tomcat-extras-ehcache">
+
+   <service name="EHCache" server="Apache Tomcat" version="6.0">
+
+      <property name="OBJECT_NAME" value="net.sf.ehcache:CacheManager=*,name=*,type=CacheStatistics,host=*,path=*" />
+
+      <property name="AUTOINVENTORY_NAME" value="%serverName% %path% %CacheManager% %name% EHCache" />
+
+      <plugin type="autoinventory" />
+
+      <config>
+         <option name="CacheManager" description="Name of the CacheManager" />
+         <option name="name" description="Name of Cache" />
+         <option name="host" description="Hostname" default="" />
+         <option name="path" description="Path of the web application" default="/" />
+      </config>
+
+      <filter name="template" value="${OBJECT_NAME}:${alias}" />
+
+      <metric name="Availability" indicator="true" />
+      
+      <metric name="Cache Hits" alias="CacheHits" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" collectionType="trendsup"
+         category="THROUGHPUT" />
+         
+      <metric name="In Memory Hits" alias="InMemoryHits" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+         
+      <metric name="On Disk Hits" alias="OnDiskHits" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" collectionType="trendsup"
+         category="THROUGHPUT" />
+         
+      <metric name="Object Count" alias="ObjectCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" category="UTILIZATION" />
+   </service>
+</plugin>
