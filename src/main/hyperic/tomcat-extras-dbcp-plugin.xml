@@ -30,9 +30,9 @@
 
       <metric name="Availability" indicator="true" />
 
-      <metric name="Idle DataSource Connections" alias="numIdle" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" />
+      <metric name="Idle DataSource Connections" alias="NumIdle" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" />
       
-      <metric name="Active DataSource Connections" alias="numActive" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" />
+      <metric name="Active DataSource Connections" alias="NumActive" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" />
       
    </service>
 

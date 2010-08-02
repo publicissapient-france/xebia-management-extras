@@ -217,7 +217,7 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
     }
 
     public int getCreateMessageConsumerExceptionCount() {
-        return getCreateMessageConsumerExceptionCount();
+        return statistics.getCreateMessageConsumerExceptionCount();
     }
 
     public int getCreateMessageProducerCount() {

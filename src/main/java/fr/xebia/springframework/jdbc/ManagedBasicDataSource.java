@@ -20,6 +20,7 @@ import javax.management.ObjectName;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.jmx.export.naming.SelfNaming;
 
 /**
@@ -27,7 +28,8 @@ import org.springframework.jmx.export.naming.SelfNaming;
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class ManagedBasicDataSource extends BasicDataSource implements ManagedBasicDataSourceMBean, BeanNameAware, SelfNaming {
+public class ManagedBasicDataSource extends BasicDataSource implements ManagedBasicDataSourceMBean, BeanNameAware, SelfNaming,
+        DisposableBean {
 
     private String beanName;
 
@@ -50,5 +52,9 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
 
     public void setObjectName(String objectName) throws MalformedObjectNameException {
         this.objectName = ObjectName.getInstance(objectName);
+    }
+
+    public void destroy() throws Exception {
+        this.close();
     }
 }

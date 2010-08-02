@@ -38,18 +38,18 @@
          units="none" collectionType="trendsup" category="THROUGHPUT" />
 
       <!-- Create Message Producer -->
-      <metric name="Create Message Producer Count" alias="CreateMessageProducerCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
-         collectionType="trendsup" category="THROUGHPUT" />
-
-      <metric name="Create Message Producer Exception Count" alias="CreateMessageProducerExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+      <metric name="Create Message Producer Count" alias="CreateMessageProducerCount" indicator="true" template="${OBJECT_NAME}:${alias}"
          units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Create Message Producer Exception Count" alias="CreateMessageProducerExceptionCount" indicator="true"
+         template="${OBJECT_NAME}:${alias}" units="none" collectionType="trendsup" category="THROUGHPUT" />
 
       <!-- Create Message Consumer -->
-      <metric name="Create Message Consumer Count" alias="CreateMessageConsumerCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
-         collectionType="trendsup" category="THROUGHPUT" />
-
-      <metric name="Create Message Consumer Exception Count" alias="CreateMessageConsumerExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+      <metric name="Create Message Consumer Count" alias="CreateMessageConsumerCount" indicator="true" template="${OBJECT_NAME}:${alias}"
          units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Create Message Consumer Exception Count" alias="CreateMessageConsumerExceptionCount" indicator="true"
+         template="${OBJECT_NAME}:${alias}" units="none" collectionType="trendsup" category="THROUGHPUT" />
 
       <!-- Send Message -->
       <metric name="Send Message Duration In Millis" alias="SendMessageDurationInMillis" indicator="true" template="${OBJECT_NAME}:${alias}"
@@ -71,6 +71,21 @@
       <metric name="Receive Message Exception Count" alias="ReceiveMessageExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
          units="none" collectionType="trendsup" category="THROUGHPUT" />
 
+   </service>
+   <service name="JMS Caching Connection Factory" server="Apache Tomcat" version="6.0">
+
+      <property name="OBJECT_NAME" value="javax.jms:type=CachingConnectionFactory,name=*,host=*,path=*" />
+      <config>
+         <option name="name" description="Name of the JMS Caching Connection Factory" default="" />
+      </config>
+
+      <plugin type="autoinventory" />
+      <plugin type="control" class="org.hyperic.hq.product.jmx.MxControlPlugin" />
+
+      <actions include="resetConnection" />
+
+      <filter name="template" value="${OBJECT_NAME}:${alias}" />
+      <metric name="Availability" indicator="true" />
    </service>
 
 </plugin>
