@@ -47,7 +47,7 @@
             
             out.println("<h2> MbeanServer domain = " + mbeanServer.getDefaultDomain() + "</h2>");
             {
-                out.println("<h2>ThreadPoolExecutor</h2>");
+                out.println("<h2>Data Source</h2>");
                 Set<ObjectInstance> objectInstances = mbeanServer
                     .queryMBeans(new ObjectName("javax.sql:type=DataSource,*"), null);
                 dumpMbeans(objectInstances, out, mbeanServer, "NumActive", "NumIdle", "MinIdle", "MaxIdle", "MaxActive", "MaxWait");

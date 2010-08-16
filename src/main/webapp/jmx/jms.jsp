@@ -49,7 +49,7 @@
 
             out.println("<h2> MbeanServer domain = " + mbeanServer.getDefaultDomain() + "</h2>");
             {
-                out.println("<h2>ThreadPoolExecutor</h2>");
+                out.println("<h2>JMS Connection Factory</h2>");
                 Set<ObjectInstance> objectInstances = mbeanServer.queryMBeans(new ObjectName("javax.jms:type=ConnectionFactory,*"),
                         null);
                 dumpMbeans(objectInstances, out, mbeanServer, "SendMessageCount", "SendMessageExceptionCount",
@@ -57,6 +57,14 @@
                         "ReceiveMessageDurationInMillis", "CreateConnectionCount", "CreateConnectionExceptionCount",
                         "CreateSessionCount", "CreateSessionExceptionCount", "CreateMessageConsumerCount",
                         "CreateMessageConsumerExceptionCount", "CreateMessageProducerCount", "CreateMessageProducerExceptionCount");
+            }
+
+            {
+                out.println("<h2>JMS Message Listener Container</h2>");
+                Set<ObjectInstance> objectInstances = mbeanServer.queryMBeans(new ObjectName(
+                        "javax.jms:type=MessageListenerContainer,*"), null);
+                dumpMbeans(objectInstances, out, mbeanServer, "DestinationName", "ActiveConsumerCount", "ConcurrentConsumers",
+                        "IdleConsumerLimit", "MaxConcurrentConsumers", "PausedTaskCount", "ScheduledConsumerCount", "Running");
             }
 
         }
