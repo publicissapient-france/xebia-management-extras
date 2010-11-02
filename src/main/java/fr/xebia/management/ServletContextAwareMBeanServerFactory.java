@@ -47,25 +47,25 @@ import org.springframework.web.context.ServletContextAware;
  * in different web applications.
  * </p>
  * <p>
- * On Tomcat, an extra property named <code>host</code> with the name of the
+ * On Tomcat, an extra property named <code>"host"</code> with the name of the
  * Tomcat host in which the webapp is declared is added (value
- * <code>org.apache.catalina.core.ApplicationContextFacade#context#context#hostName</code>
+ * <code>"org.apache.catalina.core.ApplicationContextFacade#context#context#hostName"</code>
  * ).
  * </p>
  * <p>
  * Sample : EHCache's {@link net.sf.ehcache.management.ManagementService} will
- * register Hibernate's {@linkplain org.hibernate.cache.StandardQueryCache} as "
- * <code>net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics</code>
- * " that could collide with other applications and this MBeanServer will add
- * the <code>path</code> attribute to prevent problems : "
- * <code>net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics,path=/my-application</code>
+ * register Hibernate's {@linkplain org.hibernate.cache.StandardQueryCache} as 
+ * <code>"net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics"</code>
+ * that could collide with other applications and this MBeanServer will add
+ * the <code>"path"</code> attribute to prevent problems : 
+ * <code>"net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics,path=/my-application</code>
  * " .
  * </p>
  * <p>
  * Implementation decisions:
  * </p>
  * <ul>
- * <li>The added property was named "<code>path</code>" to follow Tomcat JMX
+ * <li>The added property was named <code>"path"</code> to follow Tomcat JMX
  * beans naming convention,</li>
  * <li>This {@link FactoryBean} doesn't extend {@link AbstractFactoryBean} due
  * to <a href="http://jira.springframework.org/browse/SPR-4968">SPR-4968 : Error
@@ -79,35 +79,38 @@ import org.springframework.web.context.ServletContextAware;
  * 
  * <pre>
  * <code>
+ * &lt;beans ... &gt;
  *    &lt;context:mbean-server id="rawMbeanServer" /&gt;
  *    &lt;bean id="mbeanServer" class="fr.xebia.management.ServletContextAwareMBeanServerFactory"&gt;
  *       &lt;property name="mbeanServer" ref="rawMbeanServer" /&gt;
  *    &lt;/bean&gt;
  *    &lt;context:mbean-export server="mbeanServer" /&gt;
+ *    ...
+ * &lt;/beans&gt;
  * </code>
  * </pre>
  * 
  * <p>
- * An object name "
- * <code>net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache</code>
- * " will be registered as "
- * <code>net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache,host=localhost,path=/my-application</code>
- * " for an application "my-application" declared in the "localhost" host of a
- * Tomcat server: attributes "<code>path=/my-application</code>" and "
- * <code>host=localhost</code>" are added to the object name.
+ * An object name 
+ * <code>"net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache</code>
+ * " will be registered as 
+ * <code>"net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache,host=localhost,path=/my-application"</code>
+ * for an application "my-application" declared in the "localhost" host of a
+ * Tomcat server: attributes <code>"path=/my-application"</code> and 
+ * <code>"host=localhost"</code> are added to the object name.
  * </p>
  * <p>
  * <strong>Advanced configuration sample:</strong>
  * </p>
  * <p>
- * The "<code>objectNameExtraAttributes</code>
- * " property allows to manually add extra attributes in addition to the "
- * <code>path</code>" (and "<code>host</code>") attribute that is automatically
+ * The <code>"objectNameExtraAttributes"</code> property allows to manually add extra attributes in addition to the 
+ * <code>"path"</code> (and <code>"host"</code>) attribute that is automatically
  * added.
  * </p>
  * 
  * <pre>
  * <code>
+ * &lt;beans ... &gt;
  *    &lt;context:mbean-server id="rawMbeanServer" /&gt;
  *    &lt;bean id="mbeanServer" class="fr.xebia.management.ServletContextAwareMBeanServerFactory"&gt;
  *       &lt;property name="mbeanServer" ref="rawMbeanServer" /&gt;
@@ -118,18 +121,20 @@ import org.springframework.web.context.ServletContextAware;
  *       &lt;/property&gt;
  *    &lt;/bean&gt;
  *    &lt;context:mbean-export server="mbeanServer" /&gt;
+ *    ...
+ * &lt;/beans&gt;
  * </code>
  * </pre>
  * 
  * <p>
- * An object name "
- * <code>net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache</code>
- * " will be registered as "
- * <code>net.sf.ehcache:CacheManager=my-cache-manager,ze-app-id-asked-by-ze-monitoring-team=my-application-id,name=my-cache,type=Cache,host=localhost,path=/my-application</code>
- * " for an application "my-application" declared in the "localhost" host of a
- * Tomcat server: attributes "<code>path=/my-application</code>", "
- * <code>host=localhost</code>"and "
- * <code>ze-app-id-asked-by-ze-monitoring-team=my-application-id</code>" are
+ * An object name
+ * <code>"net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache"</code>
+ * will be registered as
+ * <code>"net.sf.ehcache:CacheManager=my-cache-manager,ze-app-id-asked-by-ze-monitoring-team=my-application-id,name=my-cache,type=Cache,host=localhost,path=/my-application"</code>
+ * for an application "my-application" declared in the "localhost" host of a
+ * Tomcat server: attributes <code>"path=/my-application"</code>, 
+ * <code>"host=localhost"</code>and 
+ * <code>"ze-app-id-asked-by-ze-monitoring-team=my-application-id"</code> are
  * added to the object name.
  * </p>
  * 
