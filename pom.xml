@@ -88,12 +88,12 @@
             <filtering>true</filtering>
          </resource>
          <resource>
-           <directory>${basedir}</directory>
-           <targetPath>META-INF</targetPath>
-           <includes>
-              <include>LICENSE.txt</include>
-              <include>NOTICE.txt</include>
-           </includes>
+            <directory>${basedir}</directory>
+            <targetPath>META-INF</targetPath>
+            <includes>
+               <include>LICENSE.txt</include>
+               <include>NOTICE.txt</include>
+            </includes>
          </resource>
       </resources>
    </build>
@@ -139,9 +139,27 @@
          <optional>true</optional>
       </dependency>
       <dependency>
+         <!-- for spring aop -->
          <groupId>org.aspectj</groupId>
          <artifactId>aspectjrt</artifactId>
          <version>1.6.8</version>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <!-- for spring aop -->
+         <groupId>org.aspectj</groupId>
+         <artifactId>aspectjweaver</artifactId>
+         <version>1.6.8</version>
+         <scope>runtime</scope>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <!-- for spring aop -->
+         <groupId>cglib</groupId>
+         <artifactId>cglib-nodep</artifactId>
+         <version>2.2</version>
+         <scope>runtime</scope>
+         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>org.springframework</groupId>
@@ -149,7 +167,7 @@
          <version>${spring.version}</version>
          <optional>true</optional>
       </dependency>
-      
+
 
       <dependency>
          <groupId>commons-dbcp</groupId>
@@ -195,6 +213,12 @@
          <groupId>org.apache.activemq</groupId>
          <artifactId>activemq-core</artifactId>
          <version>5.3.2</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-test</artifactId>
+         <version>${spring.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
