@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--                                                                           -->
+<!--  Copyright 2008-2010 Xebia and the original author or authors.            -->
+<!--                                                                           -->
+<!--  Licensed under the Apache License, Version 2.0 (the "License");          -->
+<!--  you may not use this file except in compliance with the License.         -->
+<!--  You may obtain a copy of the License at                                  -->
+<!--                                                                           -->
+<!--       http://www.apache.org/licenses/LICENSE-2.0                          -->
+<!--                                                                           -->
+<!--  Unless required by applicable law or agreed to in writing, software      -->
+<!--  distributed under the License is distributed on an "AS IS" BASIS,        -->
+<!--  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+<!--  See the License for the specific language governing permissions and      -->
+<!--  limitations under the License.                                           -->
+<!--                                                                           -->
+<!--  Hyperic tomcat-plugin extensions for f.x.m.statistics.ServiceStatistics  -->
+<!--                                                                           -->
+<plugin name="tomcat-extras-service">
+
+   <service name="Service Statistics" server="Apache Tomcat" version="6.0">
+
+      <property name="OBJECT_NAME" value="fr.xebia:type=ServiceStatistics,name=*,host=*,path=*" />
+
+      <property name="AUTOINVENTORY_NAME" value="%serverName% %path% %name% Service" />
+
+      <plugin type="autoinventory" />
+
+      <config>
+         <option name="name" description="Name of the Remote Service" default="" />
+         <option name="host" description="Hostname" default="" />
+         <option name="path" description="Path of the web application" default="/" />
+      </config>
+
+      <filter name="template" value="${OBJECT_NAME}:${alias}" />
+
+      <metric name="Availability" indicator="true" />
+
+      <metric name="Business Exception Count" alias="BusinessExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Communication Exception Count" alias="CommunicationExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Invocation Count" alias="InvocationCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Slow Invocation Count" alias="SlowInvocationCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Very Slow Invocation Count" alias="VerySlowInvocationCount" indicator="true" template="${OBJECT_NAME}:${alias}" units="none"
+         collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Other Exception Count" alias="OtherExceptionCount" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="none" collectionType="trendsup" category="THROUGHPUT" />
+
+      <metric name="Total Duration In Nanos" alias="TotalDurationInNanos" indicator="true" template="${OBJECT_NAME}:${alias}"
+         units="ns" collectionType="trendsup" category="PERFORMANCE" />
+
+      <metric name="Current Active" alias="CurrentActive" indicator="true" template="${OBJECT_NAME}:${alias}" units="none" category="UTILIZATION" />
+   </service>
+</plugin>

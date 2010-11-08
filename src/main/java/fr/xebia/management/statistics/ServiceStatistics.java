@@ -137,7 +137,7 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     public ObjectName getObjectName() throws MalformedObjectNameException {
-        return new ObjectName("fr.xebia:type=RemoteServiceStatistics,name=" + ObjectName.quote(this.name));
+        return new ObjectName("fr.xebia:type=ServiceStatistics,name=" + this.name);
     }
 
     @ManagedMetric(description = "Number of non business exceptions excluding communication exceptions", metricType = MetricType.COUNTER, category = "throughput")
@@ -145,8 +145,18 @@ public class ServiceStatistics implements SelfNaming {
         return otherExceptionCounter.get();
     }
 
-    public AtomicInteger getotherExceptionCounter() {
+    public AtomicInteger getOtherExceptionCounter() {
         return otherExceptionCounter;
+    }
+
+    @ManagedMetric(description = "Number of slow invocations", metricType = MetricType.COUNTER, category = "throughput")
+    public int getSlowInvocationCount() {
+        return slowInvocationCounter.get();
+    }
+
+    @ManagedMetric(description = "Number of very slow invocations", metricType = MetricType.COUNTER, category = "throughput")
+    public int getVerySlowInvocationCount() {
+        return verySlowInvocationCounter.get();
     }
 
     public long getSlowInvocationThresholdInNanos() {
