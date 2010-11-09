@@ -35,7 +35,47 @@ import org.springframework.util.StringUtils;
 @Aspect
 public class ProfileAspect implements BeanNameAware, SelfNaming {
 
+    public enum ClassNameStyle {
+        COMPACT_FULLY_QUALIFIED, FULLY_QUALIFIED, SHORT_NAME
+    };
+
+    protected static String getClassName(String fullyQualifiedName, ClassNameStyle classNameStyle) {
+        String className;
+        switch (classNameStyle) {
+        case FULLY_QUALIFIED:
+            className = fullyQualifiedName;
+            break;
+        case COMPACT_FULLY_QUALIFIED:
+            String[] splittedFullyQualifiedName = StringUtils.delimitedListToStringArray(fullyQualifiedName, ".");
+            StringBuilder sb = new StringBuilder(fullyQualifiedName.length());
+            for (int i = 0; i < splittedFullyQualifiedName.length - 1; i++) {
+                sb.append(splittedFullyQualifiedName[i].charAt(0)).append(".");
+            }
+            sb.append(splittedFullyQualifiedName[splittedFullyQualifiedName.length - 1]);
+            className = sb.toString();
+            break;
+        case SHORT_NAME:
+            className = StringUtils.unqualify(fullyQualifiedName);
+            break;
+        default:
+            // should not occur
+            className = fullyQualifiedName;
+            break;
+        }
+        return className;
+    }
+
+    private ClassNameStyle classNameStyle = ClassNameStyle.COMPACT_FULLY_QUALIFIED;
+
     private MBeanExporter mbeanExporter;
+
+    /**
+     * 
+     * @param classNameStyle COMPACT_FULLY_QUALIFIED, FULLY_QUALIFIED or SHORT_NAME
+     */
+    public void setClassNameStyle(ClassNameStyle classNameStyle) {
+        this.classNameStyle = classNameStyle;
+    }
 
     private String name;
 
@@ -93,13 +133,12 @@ public class ProfileAspect implements BeanNameAware, SelfNaming {
 
             if (previousServiceStatistics == null) {
                 serviceStatistics = newServiceStatistics;
-                /*
-                 * Don't call {@link
-                 * MBeanExporter#registerManagedResource(Object)} method which
-                 * by default appends a unique identifier attribute to the
-                 * ObjectName.
-                 */
-                mbeanExporter.registerManagedResource(serviceStatistics, serviceStatistics.getObjectName());
+                String declaringTypeName = pjp.getStaticPart().getSignature().getDeclaringTypeName();
+
+                String className = ProfileAspect.getClassName(declaringTypeName, classNameStyle);
+
+                mbeanExporter.registerManagedResource(serviceStatistics, new ObjectName("fr.xebia:type=ServiceStatistics,name="
+                        + className + "." + pjp.getStaticPart().getSignature().getName()));
             } else {
                 serviceStatistics = previousServiceStatistics;
             }
