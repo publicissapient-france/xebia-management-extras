@@ -23,7 +23,7 @@
    <aop:aspectj-autoproxy />
    <bean id="profileAspect" class="fr.xebia.management.statistics.ProfileAspect">
       <property name="mbeanExporter" ref="mbeanExporter" />
-      <property name="classNameStyle" value="FULLY_QUALIFIED" />
+      <property name="classNameStyle" value="FULLY_QUALIFIED_NAME" />
    </bean>
    <bean id="testService" class="fr.xebia.management.statistics.ProfileAspectTest.TestService" />
 

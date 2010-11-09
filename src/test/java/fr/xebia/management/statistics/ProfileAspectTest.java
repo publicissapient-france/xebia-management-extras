@@ -62,13 +62,13 @@ public class ProfileAspectTest {
 
     @Test
     public void testGetClassNameCompactFullyQualifiedName() {
-        String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.COMPACT_FULLY_QUALIFIED);
+        String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME);
         assertEquals("j.l.String", actual);
     }
 
     @Test
     public void testGetClassNameFullyQualifiedName() {
-        String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.FULLY_QUALIFIED);
+        String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.FULLY_QUALIFIED_NAME);
         assertEquals("java.lang.String", actual);
     }
 

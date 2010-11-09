@@ -36,16 +36,16 @@ import org.springframework.util.StringUtils;
 public class ProfileAspect implements BeanNameAware, SelfNaming {
 
     public enum ClassNameStyle {
-        COMPACT_FULLY_QUALIFIED, FULLY_QUALIFIED, SHORT_NAME
+        COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME, SHORT_NAME
     };
 
     protected static String getClassName(String fullyQualifiedName, ClassNameStyle classNameStyle) {
         String className;
         switch (classNameStyle) {
-        case FULLY_QUALIFIED:
+        case FULLY_QUALIFIED_NAME:
             className = fullyQualifiedName;
             break;
-        case COMPACT_FULLY_QUALIFIED:
+        case COMPACT_FULLY_QUALIFIED_NAME:
             String[] splittedFullyQualifiedName = StringUtils.delimitedListToStringArray(fullyQualifiedName, ".");
             StringBuilder sb = new StringBuilder(fullyQualifiedName.length());
             for (int i = 0; i < splittedFullyQualifiedName.length - 1; i++) {
@@ -65,13 +65,13 @@ public class ProfileAspect implements BeanNameAware, SelfNaming {
         return className;
     }
 
-    private ClassNameStyle classNameStyle = ClassNameStyle.COMPACT_FULLY_QUALIFIED;
+    private ClassNameStyle classNameStyle = ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME;
 
     private MBeanExporter mbeanExporter;
 
     /**
      * 
-     * @param classNameStyle COMPACT_FULLY_QUALIFIED, FULLY_QUALIFIED or SHORT_NAME
+     * @param classNameStyle COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME or SHORT_NAME
      */
     public void setClassNameStyle(ClassNameStyle classNameStyle) {
         this.classNameStyle = classNameStyle;
