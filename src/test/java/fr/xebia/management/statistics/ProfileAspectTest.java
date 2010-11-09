@@ -29,7 +29,7 @@ import fr.xebia.management.statistics.ProfileAspect.ClassNameStyle;
 public class ProfileAspectTest {
 
     public static class TestService {
-        @Profiled
+        @Profiled(slowInvocationThresholdInMillis = 100, verySlowInvocationThresholdInMillis=200)
         public void doJob() {
 
         }

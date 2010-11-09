@@ -127,7 +127,7 @@ public class ProfileAspect implements BeanNameAware, SelfNaming {
             ServiceStatistics newServiceStatistics = new ServiceStatistics(name, profiled.businessExceptionsTypes(),
                     profiled.communicationExceptionsTypes());
             newServiceStatistics.setSlowInvocationThresholdInNanos(profiled.slowInvocationThresholdInMillis());
-            newServiceStatistics.setVerySlowInvocationThresholdInNanos(profiled.veryInvocationThresholdInMillis());
+            newServiceStatistics.setVerySlowInvocationThresholdInNanos(profiled.verySlowInvocationThresholdInMillis());
 
             ServiceStatistics previousServiceStatistics = serviceStatisticsByName.putIfAbsent(name, newServiceStatistics);
 

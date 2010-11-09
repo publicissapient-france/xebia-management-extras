@@ -25,17 +25,29 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 public @interface Profiled {
 
-    Class<? extends Throwable>[] communicationExceptionsTypes() default {IOException.class};
+    /**
+     * By default {@link IOException}
+     */
+    Class<? extends Throwable>[] communicationExceptionsTypes() default { IOException.class };
 
+    /**
+     * By default, no exception type is defined
+     */
     Class<? extends Throwable>[] businessExceptionsTypes() default {};
 
     /**
-     * by default, the fully qualified method name will be used (e.g. "
-     * <code>com.mycompany.MyClass.myMethod</code>")
+     * By default, the compact fully qualified method name will be used (e.g. "
+     * <code>c.m.MyClass.myMethod</code>")
      */
     String name() default "";
 
+    /**
+     * By default 500 ms
+     */
     long slowInvocationThresholdInMillis() default 500;
 
-    long veryInvocationThresholdInMillis() default 1000;
+    /**
+     * By default 1000 ms
+     */
+    long verySlowInvocationThresholdInMillis() default 1000;
 }
