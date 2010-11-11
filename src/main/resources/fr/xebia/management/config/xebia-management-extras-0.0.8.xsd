@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns="http://www.springframework.org/schema/context" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns:beans="http://www.springframework.org/schema/beans"
+      xmlns:tool="http://www.springframework.org/schema/tool"
+      targetNamespace="http://www.springframework.org/schema/context" elementFormDefault="qualified"
+      attributeFormDefault="unqualified">
+
+   <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"/>
+   <xsd:import namespace="http://www.springframework.org/schema/tool" schemaLocation="http://www.springframework.org/schema/tool/spring-tool-3.0.xsd"/>
+
+   <xsd:annotation>
+      <xsd:documentation><![CDATA[
+   Defines the configuration elements for the Xebia Management extras
+   context support.
+      ]]></xsd:documentation>
+   </xsd:annotation>
+   
+   <xsd:element name="mbean-server">
+      <xsd:annotation>
+         <xsd:documentation source="java:org.springframework.jmx.support.MBeanServerFactoryBean">
+         <![CDATA[
+   Exposes a default MBeanServer for the current platform.
+   Autodetects WebLogic 9+, WebSphere 5.1+ and the JDK 1.5+ platform MBeanServer.
+
+   The default bean name for the exposed MBeanServer is "mbeanServer".
+   This may be customized through specifying the "id" attribute.
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="javax.management.MBeanServer"/>
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+              
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+</xsd:schema>
