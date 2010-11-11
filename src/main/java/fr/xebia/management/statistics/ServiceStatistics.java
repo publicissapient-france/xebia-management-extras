@@ -69,6 +69,8 @@ public class ServiceStatistics implements SelfNaming {
 
     private final String name;
 
+    private ObjectName objectName;
+
     private final AtomicInteger otherExceptionCounter = new AtomicInteger();
 
     private final AtomicInteger slowInvocationCounter = new AtomicInteger();
@@ -135,9 +137,12 @@ public class ServiceStatistics implements SelfNaming {
     public String getName() {
         return name;
     }
-
+    
     public ObjectName getObjectName() throws MalformedObjectNameException {
-        return new ObjectName("fr.xebia:type=ServiceStatistics,name=" + this.name);
+        if(objectName == null) {
+            objectName = new ObjectName("fr.xebia:type=ServiceStatistics,name=" + this.name);
+        }
+        return objectName;
     }
 
     @ManagedMetric(description = "Number of non business exceptions excluding communication exceptions", metricType = MetricType.COUNTER, category = "throughput")
@@ -154,9 +159,9 @@ public class ServiceStatistics implements SelfNaming {
         return slowInvocationCounter.get();
     }
 
-    @ManagedMetric(description = "Number of very slow invocations", metricType = MetricType.COUNTER, category = "throughput")
-    public int getVerySlowInvocationCount() {
-        return verySlowInvocationCounter.get();
+    @ManagedAttribute
+    public long getSlowInvocationThresholdInMillis() {
+        return TimeUnit.MILLISECONDS.convert(slowInvocationThresholdInNanos, TimeUnit.NANOSECONDS);
     }
 
     public long getSlowInvocationThresholdInNanos() {
@@ -175,6 +180,16 @@ public class ServiceStatistics implements SelfNaming {
 
     public AtomicLong getTotalDurationInNanosCounter() {
         return totalDurationInNanosCounter;
+    }
+
+    @ManagedMetric(description = "Number of very slow invocations", metricType = MetricType.COUNTER, category = "throughput")
+    public int getVerySlowInvocationCount() {
+        return verySlowInvocationCounter.get();
+    }
+
+    @ManagedAttribute
+    public long getVerySlowInvocationThresholdInMillis() {
+        return TimeUnit.MILLISECONDS.convert(this.verySlowInvocationThresholdInNanos, TimeUnit.NANOSECONDS);
     }
 
     public long getVerySlowInvocationThresholdInNanos() {
@@ -285,12 +300,23 @@ public class ServiceStatistics implements SelfNaming {
         totalDurationInNanosCounter.addAndGet(deltaInNanos);
     }
 
+    public void setObjectName(ObjectName objectName) {
+        this.objectName = objectName;
+    }
+
+    public void setSlowInvocationThresholdInMillis(long slowInvocationThresholdInMillis) {
+        this.slowInvocationThresholdInNanos = TimeUnit.NANOSECONDS.convert(slowInvocationThresholdInMillis, TimeUnit.MILLISECONDS);
+    }
+
     public void setSlowInvocationThresholdInNanos(long slowInvocationThresholdInNanos) {
         this.slowInvocationThresholdInNanos = slowInvocationThresholdInNanos;
+    }
+
+    public void setVerySlowInvocationThresholdInMillis(long verySlowInvocationThresholdInMillis) {
+        this.verySlowInvocationThresholdInNanos = TimeUnit.NANOSECONDS.convert(verySlowInvocationThresholdInMillis, TimeUnit.MILLISECONDS);
     }
 
     public void setVerySlowInvocationThresholdInNanos(long verySlowInvocationThresholdInNanos) {
         this.verySlowInvocationThresholdInNanos = verySlowInvocationThresholdInNanos;
     }
-
 }

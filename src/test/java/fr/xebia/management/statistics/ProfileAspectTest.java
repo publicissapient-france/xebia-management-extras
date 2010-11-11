@@ -29,9 +29,29 @@ import fr.xebia.management.statistics.ProfileAspect.ClassNameStyle;
 public class ProfileAspectTest {
 
     public static class TestService {
-        @Profiled(slowInvocationThresholdInMillis = 100, verySlowInvocationThresholdInMillis=200)
-        public void doJob() {
+        @Profiled(slowInvocationThresholdInMillis = 100, verySlowInvocationThresholdInMillis = 200)
+        public void doJobWithDefaultName() {
 
+        }
+
+        @Profiled(name = "my-name")
+        public void doJobWithStaticName() {
+
+        }
+
+        @Profiled(name = "my-name(#{args[0]}-#{args[1]})")
+        public void doJobWithElName(String arg1, String arg2) {
+
+        }
+
+        @Profiled(name = "test-slow-invocation-threshold", slowInvocationThresholdInMillis = 50, verySlowInvocationThresholdInMillis = 100)
+        public void testSlowInvocationThreshold() throws InterruptedException {
+            Thread.sleep(75);
+        }
+
+        @Profiled(name = "test-very-slow-invocation-threshold", slowInvocationThresholdInMillis = 25, verySlowInvocationThresholdInMillis = 50)
+        public void testVerySlowInvocationThreshold() throws InterruptedException {
+            Thread.sleep(75);
         }
     }
 
@@ -42,19 +62,97 @@ public class ProfileAspectTest {
     protected ProfileAspect profileAspect;
 
     @Test
-    public void testProfiledAnnotation() throws Exception {
-        testService.doJob();
+    public void testProfiledAnnotationWithDefaultName() throws Exception {
 
-        assertEquals(1, profileAspect.getRegisteredServiceStatisticsCount());
+        // test
+        testService.doJobWithDefaultName();
+
+        // verify
 
         // don't use getClass().getName() because the class is enhanced by CGLib
         // and its name looks like
         // "...ProfileAspectTest$TestService$$EnhancerByCGLIB$$9b64fd54"
-        String name = "fr.xebia.management.statistics.ProfileAspectTest$TestService.doJob";
-
-        ServiceStatistics serviceStatistics = profileAspect.getServiceStatisticsByName().get(name);
+        String name = "fr.xebia.management.statistics.ProfileAspectTest$TestService.doJobWithDefaultName";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
         assertNotNull(serviceStatistics);
         assertEquals(1, serviceStatistics.getInvocationCount());
+        assertEquals(0, serviceStatistics.getSlowInvocationCount());
+        assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
+        assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
+        assertEquals(0, serviceStatistics.getOtherExceptionCount());
+    }
+
+    @Test
+    public void testProfiledAnnotationWithStaticName() throws Exception {
+
+        // test
+        testService.doJobWithStaticName();
+
+        // verify
+        String name = "my-name";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        assertEquals(1, serviceStatistics.getInvocationCount());
+        assertEquals(0, serviceStatistics.getSlowInvocationCount());
+        assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
+        assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
+        assertEquals(0, serviceStatistics.getOtherExceptionCount());
+    }
+
+    @Test
+    public void testProfiledAnnotationWithElName() throws Exception {
+
+        // test
+        testService.doJobWithElName("foo", "bar");
+
+        // verify
+
+        String name = "my-name(foo-bar)";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        assertEquals(1, serviceStatistics.getInvocationCount());
+        assertEquals(0, serviceStatistics.getSlowInvocationCount());
+        assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
+        assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
+        assertEquals(0, serviceStatistics.getOtherExceptionCount());
+    }
+
+    @Test
+    public void testSlowInvocationThreshold() throws Exception {
+
+        // test
+        testService.testSlowInvocationThreshold();
+
+        // verify
+        String name = "test-slow-invocation-threshold";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        assertNotNull(serviceStatistics);
+        assertEquals(1, serviceStatistics.getInvocationCount());
+        assertEquals(1, serviceStatistics.getSlowInvocationCount());
+        assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
+        assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
+        assertEquals(0, serviceStatistics.getOtherExceptionCount());
+    }
+
+    @Test
+    public void testVerySlowInvocationThreshold() throws Exception {
+
+        // test
+        testService.testVerySlowInvocationThreshold();
+
+        // verify
+        String name = "test-very-slow-invocation-threshold";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        assertNotNull(serviceStatistics);
+        assertEquals(1, serviceStatistics.getInvocationCount());
+        assertEquals(0, serviceStatistics.getSlowInvocationCount());
+        assertEquals(1, serviceStatistics.getVerySlowInvocationCount());
         assertEquals(0, serviceStatistics.getBusinessExceptionCount());
         assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
         assertEquals(0, serviceStatistics.getOtherExceptionCount());

@@ -15,17 +15,29 @@
  */
 package fr.xebia.management.statistics;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
+import org.springframework.expression.common.LiteralExpression;
+import org.springframework.expression.common.TemplateParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
@@ -33,12 +45,46 @@ import org.springframework.util.StringUtils;
 
 @ManagedResource
 @Aspect
-public class ProfileAspect implements BeanNameAware, SelfNaming {
+public class ProfileAspect implements InitializingBean, DisposableBean, BeanNameAware, SelfNaming {
 
     public enum ClassNameStyle {
         COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME, SHORT_NAME
     };
 
+    protected static class RootObject {
+
+        private final ProceedingJoinPoint pjp;
+
+        private RootObject(ProceedingJoinPoint pjp) {
+            super();
+            this.pjp = pjp;
+        }
+
+        public Object[] getArgs() {
+            return pjp.getArgs();
+        }
+
+        public Object getInvokedObject() {
+            return pjp.getThis();
+        }
+    }
+
+    /**
+     * <p>
+     * Formats the given <code>fullyQualifiedName</code> according to the given
+     * <code>classNameStyle</code>.
+     * </p>
+     * <p>
+     * Samples with <code>java.lang.String</code>:
+     * <ul>
+     * <li>{@link ClassNameStyle#FULLY_QUALIFIED_NAME} :
+     * <code>java.lang.String</code></li>
+     * <li>{@link ClassNameStyle#COMPACT_FULLY_QUALIFIED_NAME} :
+     * <code>j.l.String</code></li>
+     * <li>{@link ClassNameStyle#SHORT_NAME} : <code>String</code></li>
+     * </ul>
+     * </p>
+     */
     protected static String getClassName(String fullyQualifiedName, ClassNameStyle classNameStyle) {
         String className;
         switch (classNameStyle) {
@@ -67,21 +113,38 @@ public class ProfileAspect implements BeanNameAware, SelfNaming {
 
     private ClassNameStyle classNameStyle = ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME;
 
-    private MBeanExporter mbeanExporter;
+    private Map<String, Expression> expressionCache = new ConcurrentHashMap<String, Expression>();
+
+    private ExpressionParser expressionParser = new SpelExpressionParser();
 
     /**
-     * 
-     * @param classNameStyle COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME or SHORT_NAME
+     * @see ObjectName#getDomain()
      */
-    public void setClassNameStyle(ClassNameStyle classNameStyle) {
-        this.classNameStyle = classNameStyle;
-    }
+    private String jmxDomain = "fr.xebia";
+
+    private MBeanExporter mbeanExporter;
+
+    private MBeanServer mbeanServer;
 
     private String name;
 
     private ObjectName objectName;
 
-    private ConcurrentMap<String, ServiceStatistics> serviceStatisticsByName = new ConcurrentHashMap<String, ServiceStatistics>();
+    private ParserContext parserContext = new TemplateParserContext();
+
+    protected ConcurrentMap<String, ServiceStatistics> serviceStatisticsByName = new ConcurrentHashMap<String, ServiceStatistics>();
+
+    public void afterPropertiesSet() throws Exception {
+        this.mbeanExporter = new AnnotationMBeanExporter();
+        mbeanExporter.setEnsureUniqueRuntimeObjectNames(false);
+        mbeanExporter.setServer(this.mbeanServer);
+        mbeanExporter.setAutodetectMode(MBeanExporter.AUTODETECT_NONE);
+        mbeanExporter.afterPropertiesSet();
+    }
+
+    public void destroy() throws Exception {
+        this.mbeanExporter.destroy();
+    }
 
     public MBeanExporter getMbeanExporter() {
         return mbeanExporter;
@@ -89,7 +152,7 @@ public class ProfileAspect implements BeanNameAware, SelfNaming {
 
     public ObjectName getObjectName() throws MalformedObjectNameException {
         if (objectName == null) {
-            String objectNameAsString = "fr.xebia:type=ProfileAspect";
+            String objectNameAsString = jmxDomain + ":type=ProfileAspect";
             if (StringUtils.hasLength(name)) {
                 objectNameAsString += ",name=" + ObjectName.quote(name);
             }
@@ -103,47 +166,59 @@ public class ProfileAspect implements BeanNameAware, SelfNaming {
         return this.serviceStatisticsByName.size();
     }
 
-    /**
-     * Visible for tests
-     */
-    protected ConcurrentMap<String, ServiceStatistics> getServiceStatisticsByName() {
-        return serviceStatisticsByName;
-    }
-
     @Around(value = "execution(* *(..)) && @annotation(profiled)", argNames = "pjp,profiled")
     public Object profileInvocation(ProceedingJoinPoint pjp, Profiled profiled) throws Throwable {
 
+        Signature jointPointSignature = pjp.getStaticPart().getSignature();
+
+        // COMPUTE SERVICE STATISTICS NAME
         String name;
         if (StringUtils.hasLength(profiled.name())) {
-            name = profiled.name();
+            String template = profiled.name();
+            Expression expression = expressionCache.get(template);
+            if (expression == null) {
+                expression = expressionParser.parseExpression(template, parserContext);
+                expressionCache.put(template, expression);
+            }
+
+            if (expression instanceof LiteralExpression) {
+                // Optimization : prevent useless objects instantiations
+                name = expression.getExpressionString();
+            } else {
+                name = expression.getValue(new RootObject(pjp), String.class);
+            }
         } else {
-            String methodName = pjp.getStaticPart().getSignature().getName();
-            String className = pjp.getStaticPart().getSignature().getDeclaringTypeName();
-            name = className + "." + methodName;
+            name = jointPointSignature.getDeclaringTypeName() + "." + jointPointSignature.getName();
         }
+
+        //
         ServiceStatistics serviceStatistics = serviceStatisticsByName.get(name);
         if (serviceStatistics == null) {
-
+            // INSTIANCIATE NEW SERVICE STATISTICS
             ServiceStatistics newServiceStatistics = new ServiceStatistics(name, profiled.businessExceptionsTypes(),
                     profiled.communicationExceptionsTypes());
-            newServiceStatistics.setSlowInvocationThresholdInNanos(profiled.slowInvocationThresholdInMillis());
-            newServiceStatistics.setVerySlowInvocationThresholdInNanos(profiled.verySlowInvocationThresholdInMillis());
+            newServiceStatistics.setSlowInvocationThresholdInMillis(profiled.slowInvocationThresholdInMillis());
+            newServiceStatistics.setVerySlowInvocationThresholdInMillis(profiled.verySlowInvocationThresholdInMillis());
+            String nameAttribute;
+            if (StringUtils.hasLength(profiled.name())) {
+                nameAttribute = name;
+            } else {
+                nameAttribute = ProfileAspect.getClassName(jointPointSignature.getDeclaringTypeName(), classNameStyle) + "."
+                        + jointPointSignature.getName();
+
+            }
+            newServiceStatistics.setObjectName(new ObjectName(this.jmxDomain + ":type=ServiceStatistics,name=" + nameAttribute));
 
             ServiceStatistics previousServiceStatistics = serviceStatisticsByName.putIfAbsent(name, newServiceStatistics);
-
             if (previousServiceStatistics == null) {
                 serviceStatistics = newServiceStatistics;
-                String declaringTypeName = pjp.getStaticPart().getSignature().getDeclaringTypeName();
-
-                String className = ProfileAspect.getClassName(declaringTypeName, classNameStyle);
-
-                mbeanExporter.registerManagedResource(serviceStatistics, new ObjectName("fr.xebia:type=ServiceStatistics,name="
-                        + className + "." + pjp.getStaticPart().getSignature().getName()));
+                mbeanExporter.registerManagedResource(serviceStatistics);
             } else {
                 serviceStatistics = previousServiceStatistics;
             }
         }
 
+        // INVOKE AND PROFILE
         long nanosBefore = System.nanoTime();
         serviceStatistics.incrementCurrentActiveCount();
         try {
@@ -162,7 +237,21 @@ public class ProfileAspect implements BeanNameAware, SelfNaming {
         this.name = name;
     }
 
-    public void setMbeanExporter(MBeanExporter mbeanExporter) {
-        this.mbeanExporter = mbeanExporter;
+    /**
+     * 
+     * @param classNameStyle
+     *            COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME or
+     *            SHORT_NAME
+     */
+    public void setClassNameStyle(ClassNameStyle classNameStyle) {
+        this.classNameStyle = classNameStyle;
+    }
+
+    public void setJmxDomain(String jmxDomain) {
+        this.jmxDomain = jmxDomain;
+    }
+
+    public void setMbeanServer(MBeanServer mbeanServer) {
+        this.mbeanServer = mbeanServer;
     }
 }
