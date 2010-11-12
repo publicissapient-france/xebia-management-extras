@@ -41,6 +41,7 @@ import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
+import org.springframework.jmx.support.JmxUtils;
 import org.springframework.util.StringUtils;
 
 @ManagedResource
@@ -124,7 +125,7 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
     private MBeanExporter mbeanExporter;
 
-    private MBeanServer mbeanServer;
+    private MBeanServer server;
 
     private String name;
 
@@ -135,11 +136,15 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
     protected ConcurrentMap<String, ServiceStatistics> serviceStatisticsByName = new ConcurrentHashMap<String, ServiceStatistics>();
 
     public void afterPropertiesSet() throws Exception {
+        if (this.server == null) {
+            this.server = JmxUtils.locateMBeanServer();
+        }
+
         this.mbeanExporter = new AnnotationMBeanExporter();
-        mbeanExporter.setEnsureUniqueRuntimeObjectNames(false);
-        mbeanExporter.setServer(this.mbeanServer);
-        mbeanExporter.setAutodetectMode(MBeanExporter.AUTODETECT_NONE);
-        mbeanExporter.afterPropertiesSet();
+        this.mbeanExporter.setEnsureUniqueRuntimeObjectNames(false);
+        this.mbeanExporter.setServer(this.server);
+        this.mbeanExporter.setAutodetectMode(MBeanExporter.AUTODETECT_NONE);
+        this.mbeanExporter.afterPropertiesSet();
     }
 
     public void destroy() throws Exception {
@@ -237,21 +242,25 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
         this.name = name;
     }
 
+    public void setClassNameStyle(ClassNameStyle classNameStyle) {
+        this.classNameStyle = classNameStyle;
+    }
+
     /**
      * 
      * @param classNameStyle
-     *            COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME or
+     *            one of COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME and
      *            SHORT_NAME
      */
-    public void setClassNameStyle(ClassNameStyle classNameStyle) {
-        this.classNameStyle = classNameStyle;
+    public void setClassNameStyle(String classNameStyle) {
+        this.classNameStyle = ClassNameStyle.valueOf(classNameStyle);
     }
 
     public void setJmxDomain(String jmxDomain) {
         this.jmxDomain = jmxDomain;
     }
 
-    public void setMbeanServer(MBeanServer mbeanServer) {
-        this.mbeanServer = mbeanServer;
+    public void setServer(MBeanServer server) {
+        this.server = server;
     }
 }

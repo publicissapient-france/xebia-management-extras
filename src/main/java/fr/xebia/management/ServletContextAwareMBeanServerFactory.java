@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.jmx.support.JmxUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.ServletContextAware;
@@ -54,10 +55,10 @@ import org.springframework.web.context.ServletContextAware;
  * </p>
  * <p>
  * Sample : EHCache's {@link net.sf.ehcache.management.ManagementService} will
- * register Hibernate's {@linkplain org.hibernate.cache.StandardQueryCache} as 
+ * register Hibernate's {@linkplain org.hibernate.cache.StandardQueryCache} as
  * <code>"net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics"</code>
- * that could collide with other applications and this MBeanServer will add
- * the <code>"path"</code> attribute to prevent problems : 
+ * that could collide with other applications and this MBeanServer will add the
+ * <code>"path"</code> attribute to prevent problems :
  * <code>"net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics,path=/my-application</code>
  * " .
  * </p>
@@ -91,21 +92,21 @@ import org.springframework.web.context.ServletContextAware;
  * </pre>
  * 
  * <p>
- * An object name 
+ * An object name
  * <code>"net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache</code>
- * " will be registered as 
+ * " will be registered as
  * <code>"net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache,host=localhost,path=/my-application"</code>
  * for an application "my-application" declared in the "localhost" host of a
- * Tomcat server: attributes <code>"path=/my-application"</code> and 
+ * Tomcat server: attributes <code>"path=/my-application"</code> and
  * <code>"host=localhost"</code> are added to the object name.
  * </p>
  * <p>
  * <strong>Advanced configuration sample:</strong>
  * </p>
  * <p>
- * The <code>"objectNameExtraAttributes"</code> property allows to manually add extra attributes in addition to the 
- * <code>"path"</code> (and <code>"host"</code>) attribute that is automatically
- * added.
+ * The <code>"objectNameExtraAttributes"</code> property allows to manually add
+ * extra attributes in addition to the <code>"path"</code> (and
+ * <code>"host"</code>) attribute that is automatically added.
  * </p>
  * 
  * <pre>
@@ -132,8 +133,8 @@ import org.springframework.web.context.ServletContextAware;
  * will be registered as
  * <code>"net.sf.ehcache:CacheManager=my-cache-manager,ze-app-id-asked-by-ze-monitoring-team=my-application-id,name=my-cache,type=Cache,host=localhost,path=/my-application"</code>
  * for an application "my-application" declared in the "localhost" host of a
- * Tomcat server: attributes <code>"path=/my-application"</code>, 
- * <code>"host=localhost"</code>and 
+ * Tomcat server: attributes <code>"path=/my-application"</code>,
+ * <code>"host=localhost"</code>and
  * <code>"ze-app-id-asked-by-ze-monitoring-team=my-application-id"</code> are
  * added to the object name.
  * </p>
@@ -146,14 +147,18 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
 
     protected MBeanServer instance;
 
-    protected MBeanServer mbeanServer;
+    protected MBeanServer server;
 
     protected Map<String, String> objectNameExtraAttributes = new HashMap<String, String>();
 
     protected ServletContext servletContext;
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.mbeanServer, "mbeanServer can NOT be null");
+
+        if (this.server == null) {
+            this.server = JmxUtils.locateMBeanServer();
+        }
+
         Assert.notNull(this.servletContext, "servletContext can NOT be null");
 
         objectNameExtraAttributes.put("path", servletContext.getContextPath());
@@ -211,7 +216,7 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
                         logger.debug(method + " : " + Arrays.asList(modifiedArgs));
                     }
                     try {
-                        return method.invoke(mbeanServer, modifiedArgs);
+                        return method.invoke(server, modifiedArgs);
                     } catch (InvocationTargetException ite) {
                         throw ite.getCause();
                     }
@@ -232,8 +237,23 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
         return true;
     }
 
+    public void setServer(MBeanServer server) {
+        this.server = server;
+    }
+
+    /**
+     * <p>
+     * Use {@link #setServer(MBeanServer)}.
+     * </p>
+     * <p>
+     * Deprecated to match
+     * {@link org.springframework.jmx.export.MBeanExporter#setServer(MBeanServer)}
+     * .
+     * </p>
+     */
+    @Deprecated
     public void setMbeanServer(MBeanServer mbeanServer) {
-        this.mbeanServer = mbeanServer;
+        this.server = mbeanServer;
     }
 
     public void setObjectNameExtraAttributes(Map<String, String> objectNameExtraAttributes) {
