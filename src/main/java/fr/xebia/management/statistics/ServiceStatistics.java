@@ -34,6 +34,9 @@ import org.springframework.jmx.support.MetricType;
 @ManagedResource
 public class ServiceStatistics implements SelfNaming {
 
+    /**
+     * Returns <code>true</code> if the given <code>throwable</code> or one of its cause is an instance of one of the given <code>throwableTypes</code>.
+     */
     public static boolean containsThrowableOfType(Throwable throwable, Class<?>... throwableTypes) {
         List<Throwable> alreadyProcessedThrowables = new ArrayList<Throwable>();
         while (true) {
@@ -83,10 +86,26 @@ public class ServiceStatistics implements SelfNaming {
 
     private long verySlowInvocationThresholdInNanos;
 
+    /**
+     * Instantiate service statistics with predefined {@link IOException} as communication exceptions and no business exception defined.
+     * 
+     * @param name
+     *            identifier of the service
+     * @see #ServiceStatistics(String, Class[], Class[])
+     */
     public ServiceStatistics(String name) {
-        this(name, new Class<?>[] {}, new Class<?>[] { IOException.class });
+        this(name, new Class<?>[] {}, new Class<?>[] {IOException.class});
     }
 
+    /**
+     * 
+     * @param name
+     *            identifier of the service
+     * @param businessExceptionsTypes
+     *            types of exceptions that are categorized as business exceptions
+     * @param communicationExceptionsTypes
+     *            types of exceptions that are categorized as communication exceptions
+     */
     public ServiceStatistics(String name, Class<?>[] businessExceptionsTypes, Class<?>[] communicationExceptionsTypes) {
         super();
         this.name = name;
@@ -94,50 +113,85 @@ public class ServiceStatistics implements SelfNaming {
         this.communicationExceptionsTypes = communicationExceptionsTypes;
     }
 
+    /**
+     * Decrements the {@link #currentActiveCounter}.
+     */
     public void decrementCurrentActiveCount() {
         currentActiveCounter.decrementAndGet();
     }
 
+    /**
+     * <p>
+     * Number of throwned communication exceptions.
+     * </p>
+     * <p>
+     * Exceptions are categorized in:
+     * <ul>
+     * <li>{@link #getCommunicationExceptionCount()}</li>
+     * <li>{@link #getBusinessExceptionCount()}</li>
+     * <li>{@link #getOtherExceptionCount()}</li>
+     * </ul>
+     * </p>
+     * 
+     * @see #incrementBusinessExceptionCount()
+     */
     @ManagedMetric(description = "Number of business exceptions", metricType = MetricType.COUNTER, category = "throughput")
     public int getBusinessExceptionCount() {
         return businessExceptionCounter.get();
     }
 
-    public AtomicInteger getBusinessExceptionCounter() {
-        return businessExceptionCounter;
-    }
-
+    /**
+     * <p>
+     * Number of throwned communication exceptions.
+     * </p>
+     * <p>
+     * Exceptions are categorized in:
+     * <ul>
+     * <li>{@link #getCommunicationExceptionCount()}</li>
+     * <li>{@link #getBusinessExceptionCount()}</li>
+     * <li>{@link #getOtherExceptionCount()}</li>
+     * </ul>
+     * </p>
+     * 
+     * @see #incrementCommunicationExceptionCount()
+     */
     @ManagedMetric(description = "Number of communication exceptions (timeout, connection refused, etc)", metricType = MetricType.COUNTER, category = "throughput")
     public int getCommunicationExceptionCount() {
         return communicationExceptionCounter.get();
     }
 
-    public AtomicInteger getCommunicationExceptionCounter() {
-        return communicationExceptionCounter;
-    }
-
+    /**
+     * Number of active invocations
+     * 
+     * see {@link #incrementCurrentActiveCount()}
+     * 
+     * @see #decrementCurrentActiveCount()
+     */
     @ManagedMetric(description = "Number of currently active invocations", metricType = MetricType.GAUGE, category = "utilization")
     public int getCurrentActive() {
         return currentActiveCounter.get();
     }
 
-    public AtomicInteger getCurrentActiveCounter() {
-        return currentActiveCounter;
-    }
-
+    /**
+     * Number of invocations
+     * 
+     * @see #incrementInvocationCount()
+     */
     @ManagedMetric(description = "Number of invocations", metricType = MetricType.COUNTER, category = "throughput")
     public int getInvocationCount() {
         return invocationCounter.get();
     }
 
-    public AtomicInteger getInvocationCounter() {
-        return invocationCounter;
-    }
-
+    /**
+     * Identifier of the service. Used by to build the {@link ObjectName} (see {@link #getObjectName()}).
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * ObjectName of the service statics.
+     */
     public ObjectName getObjectName() throws MalformedObjectNameException {
         if(objectName == null) {
             objectName = new ObjectName("fr.xebia:type=ServiceStatistics,name=" + this.name);
@@ -145,6 +199,10 @@ public class ServiceStatistics implements SelfNaming {
         return objectName;
     }
 
+    /**
+     * 
+     * @return
+     */
     @ManagedMetric(description = "Number of non business exceptions excluding communication exceptions", metricType = MetricType.COUNTER, category = "throughput")
     public int getOtherExceptionCount() {
         return otherExceptionCounter.get();
@@ -164,6 +222,9 @@ public class ServiceStatistics implements SelfNaming {
         return TimeUnit.MILLISECONDS.convert(slowInvocationThresholdInNanos, TimeUnit.NANOSECONDS);
     }
 
+    /**
+     * 
+     */
     public long getSlowInvocationThresholdInNanos() {
         return slowInvocationThresholdInNanos;
     }
@@ -230,9 +291,8 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     /**
-     * Increment the {@link #communicationExceptionCounter} if the given
-     * throwable or one of its cause is an instance of {@link IOException} ;
-     * otherwise, increment {@link #otherExceptionCounter}.
+     * Increment the {@link #communicationExceptionCounter} if the given throwable or one of its cause is an instance of {@link IOException} ; otherwise,
+     * increment {@link #otherExceptionCounter}.
      */
     public void incrementExceptionCount(Throwable throwable) {
 
@@ -253,9 +313,8 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     /**
-     * Increment {@link #totalDurationInNanosCounter},
-     * {@link #invocationCounter} and, if eligible,
-     * {@link #verySlowInvocationCounter} or {@link #slowInvocationCounter}.
+     * Increment {@link #totalDurationInNanosCounter}, {@link #invocationCounter} and, if eligible, {@link #verySlowInvocationCounter} or
+     * {@link #slowInvocationCounter}.
      * 
      * @param deltaInNanos
      *            delta in nanos
