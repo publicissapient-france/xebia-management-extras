@@ -185,4 +185,69 @@
          </xsd:complexContent>
       </xsd:complexType>
    </xsd:element>
+
+   <xsd:element name="eh-cache-management-service">
+      <xsd:annotation>
+         <xsd:documentation source="java:net.sf.ehcache.management.ManagementService">
+         <![CDATA[
+   Wraps a JMS ConnectionFactory to expose various metrics on an mbean named <code>javax.jms:type=ConnectionFactory,name=${bean-id}</code>
+   Where <code>${bean-id} is the id of this element.</code>
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="net.sf.ehcache.management.ManagementService" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="mbean-server" type="xsd:string" use="required">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Reference to the MBean Server
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="cache-manager" type="xsd:string" use="required">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Reference to the Cache Manager
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               
+               <xsd:attribute name="register-cache-manager" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates weither CacheManager MBean should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="register-caches" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates weither Caches MBeans should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="register-cache-configurations" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates weither Cache Configurations MBeans should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="register-cache-statistics" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates weither Cache Statistics MBeans should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
 </xsd:schema>

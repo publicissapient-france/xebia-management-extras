@@ -18,8 +18,8 @@ package fr.xebia.management.config;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
- * {@link org.springframework.beans.factory.xml.NamespaceHandler}
- * for the '<code>management</code>' namespace.
+ * {@link org.springframework.beans.factory.xml.NamespaceHandler} for the '
+ * <code>management</code>' namespace.
  */
 public class ManagementNamespaceHandler extends NamespaceHandlerSupport {
 
@@ -28,8 +28,8 @@ public class ManagementNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("profile-aspect", new ProfileAspectDefinitionParser());
         registerBeanDefinitionParser("application-version-mbean", new WebApplicationMavenInformationDefinitionParser());
         registerBeanDefinitionParser("jms-connection-factory-wrapper", new SpringManagedConnectionFactoryDefinitionParser());
+        registerBeanDefinitionParser("eh-cache-management-service", new EhCacheManagementServiceDefinitionParser());
 
-        
     }
 
 }
