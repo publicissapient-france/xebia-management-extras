@@ -23,7 +23,12 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
 /**
- * 
+ * <p>
+ * JMX MBean compatible wrapper of a {@link ConnectionFactory}.
+ * </p>
+ * <p>
+ * Expose MBean attributes and methods via a standard xxxMBean interface rather than with spring annotations to support usage without Spring
+ * </p>
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
 public class ManagedConnectionFactory implements ConnectionFactory, ManagedConnectionFactoryMBean {
