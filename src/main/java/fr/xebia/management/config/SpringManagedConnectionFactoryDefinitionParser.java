@@ -22,7 +22,6 @@ import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import fr.xebia.management.ServletContextAwareMBeanServerFactory;
 import fr.xebia.management.jms.SpringManagedConnectionFactory;
 
 public class SpringManagedConnectionFactoryDefinitionParser extends AbstractBeanDefinitionParser {
