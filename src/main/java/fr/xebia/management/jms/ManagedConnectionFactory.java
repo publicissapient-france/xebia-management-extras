@@ -172,13 +172,13 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     }
 
-    private ConnectionFactory delegate;
+    private ConnectionFactory connectionFactory;
 
     private final Statistics statistics = new Statistics();
 
     public Connection createConnection() throws JMSException {
         try {
-            return new ManagedConnection(delegate.createConnection(), statistics);
+            return new ManagedConnection(connectionFactory.createConnection(), statistics);
         } catch (JMSException e) {
             statistics.incrementCreateConnectionExceptionCount();
             throw e;
@@ -192,7 +192,7 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     public Connection createConnection(String userName, String password) throws JMSException {
         try {
-            return new ManagedConnection(delegate.createConnection(userName, password), statistics);
+            return new ManagedConnection(connectionFactory.createConnection(userName, password), statistics);
         } catch (JMSException e) {
             statistics.incrementCreateConnectionExceptionCount();
             throw e;
@@ -236,8 +236,8 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         return statistics.getCreateSessionExceptionCount();
     }
 
-    public ConnectionFactory getDelegate() {
-        return delegate;
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
     }
 
     public int getReceiveMessageCount() {
@@ -264,7 +264,15 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         return statistics.getSendMessageExceptionCount();
     }
 
+    /**
+     * Use {@link #setConnectionFactory(ConnectionFactory)}.
+     */
+    @Deprecated
     public void setDelegate(ConnectionFactory delegate) {
-        this.delegate = delegate;
+        this.connectionFactory = delegate;
+    }
+
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 }

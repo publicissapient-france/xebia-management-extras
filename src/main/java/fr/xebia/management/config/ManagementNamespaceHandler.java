@@ -27,7 +27,9 @@ public class ManagementNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("servlet-context-aware-mbean-server", new ServletContextAwareMBeanServerDefinitionParser());
         registerBeanDefinitionParser("profile-aspect", new ProfileAspectDefinitionParser());
         registerBeanDefinitionParser("application-version-mbean", new WebApplicationMavenInformationDefinitionParser());
+        registerBeanDefinitionParser("jms-connection-factory-wrapper", new SpringManagedConnectionFactoryDefinitionParser());
 
+        
     }
 
 }
