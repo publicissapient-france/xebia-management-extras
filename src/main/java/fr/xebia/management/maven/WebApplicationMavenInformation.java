@@ -35,6 +35,7 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -64,6 +65,8 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
 
     private String groupId = "#UNKNOWN#";
 
+    private String jmxDomain = "fr.xebia";
+
     private ObjectName objectName;
 
     private ServletContext servletContext;
@@ -74,6 +77,37 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
         Assert.notNull(this.servletContext, "'servletConfig' can not be null");
 
         loadInformationFromPomProperties();
+    }
+
+    @ManagedAttribute(description = "Maven ${project.artifactId} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    @ManagedAttribute(description = "Maven ${project.groupId}:${project.artifactId}:${project.version} properties extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    public String getFullyQualifiedArtifactIdentifier() {
+        return groupId + ":" + artifactId + ":" + version;
+    }
+
+    @ManagedAttribute(description = "Maven ${project.groupId} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public ObjectName getObjectName() throws MalformedObjectNameException {
+        if (objectName == null) {
+            String objectNameString = jmxDomain + ":type=WebApplicationMavenInformation";
+            if (StringUtils.hasText(this.beanName)) {
+                objectNameString += ",name=" + ObjectName.quote(this.beanName);
+            }
+            objectName = ObjectName.getInstance(objectNameString);
+        }
+        return objectName;
+    }
+
+    @ManagedAttribute(description = "Maven ${project.version} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    public String getVersion() {
+        return version;
     }
 
     private void loadInformationFromPomProperties() throws URISyntaxException, IOException {
@@ -130,39 +164,16 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
         this.version = pomProperties.getProperty(POM_PROPERTY_VERSION, this.version);
     }
 
-    @ManagedAttribute(description = "Maven ${project.artifactId} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
-    public String getArtifactId() {
-        return artifactId;
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
-    @ManagedAttribute(description = "Maven ${project.groupId} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public ObjectName getObjectName() throws MalformedObjectNameException {
-        if (objectName == null) {
-            objectName = ObjectName.getInstance("fr.xebia:type=WebApplicationMavenInformation,name=" + ObjectName.quote(this.beanName));
-        }
-        return objectName;
+    public void setJmxDomain(String jmxDomain) {
+        this.jmxDomain = jmxDomain;
     }
 
     public void setObjectName(String objectName) throws MalformedObjectNameException {
         this.objectName = objectName == null ? null : ObjectName.getInstance(objectName);
-    }
-
-    @ManagedAttribute(description = "Maven ${project.version} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
-    public String getVersion() {
-        return version;
-    }
-
-    @ManagedAttribute(description = "Maven ${project.groupId}:${project.artifactId}:${project.version} properties extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
-    public String getFullyQualifiedArtifactIdentifier() {
-        return groupId + ":" + artifactId + ":" + version;
-    }
-
-    public void setBeanName(String name) {
-        this.beanName = name;
     }
 
     public void setServletContext(ServletContext servletContext) {

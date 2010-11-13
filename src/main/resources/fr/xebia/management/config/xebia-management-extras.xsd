@@ -126,4 +126,35 @@
       </xsd:complexType>
    </xsd:element>
 
+   <xsd:element name="application-version-mbean">
+      <xsd:annotation>
+         <xsd:documentation source="java:fr.xebia.management.maven.WebApplicationMavenInformation">
+         <![CDATA[
+   Exposes a WebApplicationMavenInformation bean which is registered as a JMX MBean to expose the version number version via JMX.
+   
+   Relies on the existence of a META-INF/maven/.../my-app.pom file.
+
+   The default bean name for the exposed WebApplicationMavenInformation is "webApplicationMavenInformation".
+   This may be customized through specifying the "id" attribute.
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="fr.xebia.management.maven.WebApplicationMavenInformation" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">               
+               <xsd:attribute name="jmxDomain" type="xsd:string" default="fr.xebia">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Name of the domain of the registered WebApplicationMavenInformation JMX MBean.
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
 </xsd:schema>
