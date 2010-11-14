@@ -285,6 +285,11 @@
                      <xsd:documentation><![CDATA[
    Reference to the MBean Server
                ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.management.MBeanServer" />
+                        </tool:annotation>
+                     </xsd:appinfo>
                   </xsd:annotation>
                </xsd:attribute>
                <xsd:attribute name="cache-manager" type="xsd:string" use="required">
@@ -292,6 +297,11 @@
                      <xsd:documentation><![CDATA[
    Reference to the Cache Manager
                ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="net.sf.ehcache.CacheManager" />
+                        </tool:annotation>
+                     </xsd:appinfo>
                   </xsd:annotation>
                </xsd:attribute>
 
