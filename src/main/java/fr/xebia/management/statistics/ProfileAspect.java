@@ -44,6 +44,13 @@ import org.springframework.jmx.export.naming.SelfNaming;
 import org.springframework.jmx.support.JmxUtils;
 import org.springframework.util.StringUtils;
 
+/**
+ * <p>
+ * Aspect to handle the methods annotated with the {@link Profiled} annotation.
+ * </p>
+ * 
+ * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
+ */
 @ManagedResource
 @Aspect
 public class ProfileAspect implements InitializingBean, DisposableBean, BeanNameAware, SelfNaming {
