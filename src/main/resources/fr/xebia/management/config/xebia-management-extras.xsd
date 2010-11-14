@@ -54,6 +54,11 @@
    Default is to use the platform's default MBeanServer (autodetecting
    WebLogic 9+, WebSphere 5.1+ and the JDK 1.5+ platform MBeanServer).
                ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.management.MBeanServer" />
+                        </tool:annotation>
+                     </xsd:appinfo>
                   </xsd:annotation>
                </xsd:attribute>
 
@@ -87,6 +92,11 @@
    Default is to use the platform's default MBeanServer (autodetecting
    WebLogic 9+, WebSphere 5.1+ and the JDK 1.5+ platform MBeanServer).
                ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.management.MBeanServer" />
+                        </tool:annotation>
+                     </xsd:appinfo>
                   </xsd:annotation>
                </xsd:attribute>
 
@@ -167,7 +177,7 @@
          ]]></xsd:documentation>
          <xsd:appinfo>
             <tool:annotation>
-               <tool:exports type="fr.xebia.management.jms.SpringManagedConnectionFactory" />
+               <tool:exports type="javax.jms.ConnectionFactory" />
             </tool:annotation>
          </xsd:appinfo>
       </xsd:annotation>
@@ -179,8 +189,76 @@
                      <xsd:documentation><![CDATA[
    Reference of the wrapped JMS ConnectionFactory
                ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.jms.ConnectionFactory" />
+                        </tool:annotation>
+                     </xsd:appinfo>
                   </xsd:annotation>
                </xsd:attribute>
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+
+   <xsd:element name="jms-caching-connection-factory">
+      <xsd:annotation>
+         <xsd:documentation source="java:fr.xebia.springframework.jms.ManagedCachingConnectionFactory">
+         <![CDATA[
+   Caching wrapper of a JMS ConnectionFactory. 
+   This wrapper is automatically exposed by Spring as a MBean named <code>javax.jms:type=CachingConnectionFactory,name=${bean-id}</code>
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="javax.jms.ConnectionFactory" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="connection-factory" type="xsd:string" use="required">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Reference of the wrapped JMS ConnectionFactory
+               ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.jms.ConnectionFactory" />
+                        </tool:annotation>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+               <xsd:attribute name="cache-consumers" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates weither MessageConsumers should be cached
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="cache-producers" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates weither MessageProducers should be cached
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="reconnect-on-exception" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates weither a connection should be closed and reopened when a JMSException occurs
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="session-cache-size" type="xsd:int" default="1">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Number of active JMS sessions. Default value is 1. Consider increasing this number in highly concurrent environments. 
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+
             </xsd:extension>
          </xsd:complexContent>
       </xsd:complexType>
@@ -216,7 +294,7 @@
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
-               
+
                <xsd:attribute name="register-cache-manager" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
