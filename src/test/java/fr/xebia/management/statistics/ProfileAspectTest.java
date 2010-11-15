@@ -72,8 +72,9 @@ public class ProfileAspectTest {
         // don't use getClass().getName() because the class is enhanced by CGLib
         // and its name looks like
         // "...ProfileAspectTest$TestService$$EnhancerByCGLIB$$9b64fd54"
-        String name = "fr.xebia.management.statistics.ProfileAspectTest$TestService.doJobWithDefaultName";
+        String name = "f.x.m.s.ProfileAspectTest$TestService.doJobWithDefaultName";
         ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        System.out.println(profileAspect.serviceStatisticsByName);
         assertNotNull(serviceStatistics);
         assertEquals(1, serviceStatistics.getInvocationCount());
         assertEquals(0, serviceStatistics.getSlowInvocationCount());
@@ -160,25 +161,25 @@ public class ProfileAspectTest {
 
     @Test
     public void testGetClassNameCompactFullyQualifiedName() {
-        String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME);
-        assertEquals("j.l.String", actual);
+        String actual = ProfileAspect.getFullyQualifiedMethodName("java.lang.String", "length", ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME);
+        assertEquals("j.l.String.length", actual);
     }
 
     @Test
     public void testGetClassNameFullyQualifiedName() {
-        String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.FULLY_QUALIFIED_NAME);
-        assertEquals("java.lang.String", actual);
+        String actual = ProfileAspect.getFullyQualifiedMethodName("java.lang.String", "length", ClassNameStyle.FULLY_QUALIFIED_NAME);
+        assertEquals("java.lang.String.length", actual);
     }
 
     @Test
     public void testGetClassNameShortName() {
-        String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.SHORT_NAME);
-        assertEquals("String", actual);
+        String actual = ProfileAspect.getFullyQualifiedMethodName("java.lang.String", "length", ClassNameStyle.SHORT_NAME);
+        assertEquals("String.length", actual);
     }
-    
+
     @Autowired
     ServiceStatistics serviceStatistics;
-    
+
     @Test
     public void testServiceStatistics() throws Exception {
         System.out.println(serviceStatistics);

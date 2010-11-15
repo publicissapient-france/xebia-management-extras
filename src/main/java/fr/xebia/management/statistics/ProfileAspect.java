@@ -15,7 +15,7 @@
  */
 package fr.xebia.management.statistics;
 
-import java.util.Map;
+import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -24,9 +24,9 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -79,49 +79,43 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
     /**
      * <p>
-     * Formats the given <code>fullyQualifiedName</code> according to the given
-     * <code>classNameStyle</code>.
+     * Formats the given <code>fullyQualifiedName</code> according to the given <code>classNameStyle</code>.
      * </p>
      * <p>
      * Samples with <code>java.lang.String</code>:
      * <ul>
-     * <li>{@link ClassNameStyle#FULLY_QUALIFIED_NAME} :
-     * <code>java.lang.String</code></li>
-     * <li>{@link ClassNameStyle#COMPACT_FULLY_QUALIFIED_NAME} :
-     * <code>j.l.String</code></li>
+     * <li>{@link ClassNameStyle#FULLY_QUALIFIED_NAME} : <code>java.lang.String</code></li>
+     * <li>{@link ClassNameStyle#COMPACT_FULLY_QUALIFIED_NAME} : <code>j.l.String</code></li>
      * <li>{@link ClassNameStyle#SHORT_NAME} : <code>String</code></li>
      * </ul>
      * </p>
      */
-    protected static String getClassName(String fullyQualifiedName, ClassNameStyle classNameStyle) {
-        String className;
+    protected static String getFullyQualifiedMethodName(String fullyQualifiedClassName, String methodName, ClassNameStyle classNameStyle) {
+        StringBuilder fullyQualifiedMethodName = new StringBuilder(fullyQualifiedClassName.length() + methodName.length() + 1);
         switch (classNameStyle) {
         case FULLY_QUALIFIED_NAME:
-            className = fullyQualifiedName;
+            fullyQualifiedMethodName.append(fullyQualifiedClassName);
             break;
         case COMPACT_FULLY_QUALIFIED_NAME:
-            String[] splittedFullyQualifiedName = StringUtils.delimitedListToStringArray(fullyQualifiedName, ".");
-            StringBuilder sb = new StringBuilder(fullyQualifiedName.length());
+            String[] splittedFullyQualifiedName = StringUtils.delimitedListToStringArray(fullyQualifiedClassName, ".");
             for (int i = 0; i < splittedFullyQualifiedName.length - 1; i++) {
-                sb.append(splittedFullyQualifiedName[i].charAt(0)).append(".");
+                fullyQualifiedMethodName.append(splittedFullyQualifiedName[i].charAt(0)).append(".");
             }
-            sb.append(splittedFullyQualifiedName[splittedFullyQualifiedName.length - 1]);
-            className = sb.toString();
+            fullyQualifiedMethodName.append(splittedFullyQualifiedName[splittedFullyQualifiedName.length - 1]);
             break;
         case SHORT_NAME:
-            className = StringUtils.unqualify(fullyQualifiedName);
+            fullyQualifiedMethodName.append(StringUtils.unqualify(fullyQualifiedClassName));
             break;
         default:
             // should not occur
-            className = fullyQualifiedName;
+            fullyQualifiedMethodName.append(fullyQualifiedClassName);
             break;
         }
-        return className;
+        fullyQualifiedMethodName.append(".").append(methodName);
+        return fullyQualifiedMethodName.toString();
     }
 
     private ClassNameStyle classNameStyle = ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME;
-
-    private Map<String, Expression> expressionCache = new ConcurrentHashMap<String, Expression>();
 
     private ExpressionParser expressionParser = new SpelExpressionParser();
 
@@ -178,48 +172,45 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
         return this.serviceStatisticsByName.size();
     }
 
+    ConcurrentMap<Method, Expression> profiledMethodNameAsExpressionByMethod = new ConcurrentHashMap<Method, Expression>();
+
     @Around(value = "execution(* *(..)) && @annotation(profiled)", argNames = "pjp,profiled")
     public Object profileInvocation(ProceedingJoinPoint pjp, Profiled profiled) throws Throwable {
 
-        Signature jointPointSignature = pjp.getStaticPart().getSignature();
+        MethodSignature jointPointSignature = (MethodSignature) pjp.getStaticPart().getSignature();
 
         // COMPUTE SERVICE STATISTICS NAME
-        String name;
-        if (StringUtils.hasLength(profiled.name())) {
-            String template = profiled.name();
-            Expression expression = expressionCache.get(template);
-            if (expression == null) {
-                expression = expressionParser.parseExpression(template, parserContext);
-                expressionCache.put(template, expression);
-            }
-
-            if (expression instanceof LiteralExpression) {
-                // Optimization : prevent useless objects instantiations
-                name = expression.getExpressionString();
+        Expression nameAsExpression = profiledMethodNameAsExpressionByMethod.get(jointPointSignature.getMethod());
+        if (nameAsExpression == null) {
+            if (StringUtils.hasLength(profiled.name())) {
+                String nameAsStringExpression = profiled.name();
+                nameAsExpression = expressionParser.parseExpression(nameAsStringExpression, parserContext);
             } else {
-                name = expression.getValue(new RootObject(pjp), String.class);
+                String fullyQualifiedMethodName = getFullyQualifiedMethodName( //
+                        jointPointSignature.getDeclaringTypeName(), //
+                        jointPointSignature.getName(), //
+                        this.classNameStyle);
+                nameAsExpression = new LiteralExpression(fullyQualifiedMethodName);
             }
-        } else {
-            name = jointPointSignature.getDeclaringTypeName() + "." + jointPointSignature.getName();
         }
 
-        //
+        String name;
+        if (nameAsExpression instanceof LiteralExpression) {
+            // Optimization : prevent useless objects instantiations
+            name = nameAsExpression.getExpressionString();
+        } else {
+            name = nameAsExpression.getValue(new RootObject(pjp), String.class);
+        }
+
+        // LOOKUP SERVICE STATISTICS
         ServiceStatistics serviceStatistics = serviceStatisticsByName.get(name);
         if (serviceStatistics == null) {
             // INSTIANCIATE NEW SERVICE STATISTICS
-            ServiceStatistics newServiceStatistics = new ServiceStatistics(name, profiled.businessExceptionsTypes(),
-                    profiled.communicationExceptionsTypes());
+            ServiceStatistics newServiceStatistics = new ServiceStatistics(name, profiled.businessExceptionsTypes(), profiled.communicationExceptionsTypes());
             newServiceStatistics.setSlowInvocationThresholdInMillis(profiled.slowInvocationThresholdInMillis());
             newServiceStatistics.setVerySlowInvocationThresholdInMillis(profiled.verySlowInvocationThresholdInMillis());
-            String nameAttribute;
-            if (StringUtils.hasLength(profiled.name())) {
-                nameAttribute = name;
-            } else {
-                nameAttribute = ProfileAspect.getClassName(jointPointSignature.getDeclaringTypeName(), classNameStyle) + "."
-                        + jointPointSignature.getName();
 
-            }
-            newServiceStatistics.setObjectName(new ObjectName(this.jmxDomain + ":type=ServiceStatistics,name=" + nameAttribute));
+            newServiceStatistics.setObjectName(new ObjectName(this.jmxDomain + ":type=ServiceStatistics,name=" + name));
 
             ServiceStatistics previousServiceStatistics = serviceStatisticsByName.putIfAbsent(name, newServiceStatistics);
             if (previousServiceStatistics == null) {
@@ -230,7 +221,7 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
             }
         }
 
-        // INVOKE AND PROFILE
+        // INVOKE AND PROFILE INVOCATION
         long nanosBefore = System.nanoTime();
         serviceStatistics.incrementCurrentActiveCount();
         try {
@@ -256,8 +247,7 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
     /**
      * 
      * @param classNameStyle
-     *            one of COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME and
-     *            SHORT_NAME
+     *            one of COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME and SHORT_NAME
      */
     public void setClassNameStyle(String classNameStyle) {
         this.classNameStyle = ClassNameStyle.valueOf(classNameStyle);
