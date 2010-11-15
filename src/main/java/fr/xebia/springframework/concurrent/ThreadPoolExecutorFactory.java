@@ -18,14 +18,17 @@ package fr.xebia.springframework.concurrent;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
@@ -39,18 +42,14 @@ import org.springframework.util.StringUtils;
 
 /**
  * <p>
- * To prevent need of using {@link MBeanExporter#setAllowEagerInit(boolean)} to
- * <code>true</code>, we manually call
- * {@link MBeanExporter#registerManagedResource(Object, ObjectName)}. See <a
- * href="http://jira.springframework.org/browse/SPR-4954">SPR-4954 : Add
- * property to MBeanExporter to control eager initiailization of
- * FactoryBeans</a>
+ * To prevent need of using {@link MBeanExporter#setAllowEagerInit(boolean)} to <code>true</code>, we manually call
+ * {@link MBeanExporter#registerManagedResource(Object, ObjectName)}. See <a href="http://jira.springframework.org/browse/SPR-4954">SPR-4954 : Add property to
+ * MBeanExporter to control eager initiailization of FactoryBeans</a>
  * </p>
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExecutor> implements FactoryBean<ThreadPoolExecutor>,
-        BeanNameAware {
+public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExecutor> implements FactoryBean<ThreadPoolExecutor>, BeanNameAware {
 
     private static class CountingRejectedExecutionHandler implements RejectedExecutionHandler {
 
@@ -79,10 +78,9 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
 
         private ObjectName objectName;
 
-        public SpringJmxEnabledThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, ObjectName objectName) {
-            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, new CountingRejectedExecutionHandler(
-                    new AbortPolicy()));
+        public SpringJmxEnabledThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue,
+                ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler, ObjectName objectName) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, new CountingRejectedExecutionHandler(rejectedExecutionHandler));
             this.objectName = objectName;
         }
 
@@ -119,30 +117,37 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
 
     private String beanName;
 
-    private int nbThreads;
+    private int corePoolSize;
 
-    private String objectName;
+    private long keepAliveTimeInSeconds;
 
-    private int queueCapacity;
+    private int maximumPoolSize;
 
-    private String threadNamePrefix;
+    private int queueCapacity = Integer.MAX_VALUE;
 
     @Override
     protected ThreadPoolExecutor createInstance() throws Exception {
-        Assert.isTrue(this.nbThreads > 0, "nbThreads must be greater than zero");
+        Assert.isTrue(this.corePoolSize > 0, "corePoolSize must be greater than zero");
+        Assert.isTrue(this.maximumPoolSize > 0, "maximumPoolSize must be greater than zero");
         Assert.isTrue(this.queueCapacity > 0, "queueCapacity must be greater than zero");
 
-        if (!StringUtils.hasLength(this.threadNamePrefix)) {
-            this.threadNamePrefix = this.beanName + "-";
-        }
-        CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(threadNamePrefix);
+        CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(this.beanName + "-");
         threadFactory.setDaemon(true);
-        if (!StringUtils.hasLength(objectName)) {
-            objectName = "java.util.concurrent:type=ThreadPoolExecutor,name=" + ObjectName.quote(beanName);
-        }
 
-        ThreadPoolExecutor instance = new SpringJmxEnabledThreadPoolExecutor(nbThreads, nbThreads, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(queueCapacity), threadFactory, new ObjectName(objectName));
+        BlockingQueue<Runnable> blockingQueue;
+        if(queueCapacity == 0) {
+            blockingQueue = new SynchronousQueue<Runnable>();
+        } else {
+            blockingQueue = new LinkedBlockingQueue<Runnable>(queueCapacity);
+        }
+        ThreadPoolExecutor instance = new SpringJmxEnabledThreadPoolExecutor(corePoolSize, //
+                maximumPoolSize, //
+                keepAliveTimeInSeconds, //
+                TimeUnit.SECONDS, //
+                blockingQueue, //
+                threadFactory, //
+                rejectedExecutionHandlerClass.newInstance(), //
+                new ObjectName("java.util.concurrent:type=ThreadPoolExecutor,name=" + beanName));
 
         return instance;
     }
@@ -161,19 +166,51 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
         this.beanName = name;
     }
 
-    public void setNbThreads(int nbThreads) {
-        this.nbThreads = nbThreads;
+    public void setCorePoolSize(int corePoolSize) {
+        this.corePoolSize = corePoolSize;
     }
 
-    public void setObjectName(String objectName) {
-        this.objectName = objectName;
+    public void setKeepAliveTimeInSeconds(long keepAliveTimeInSeconds) {
+        this.keepAliveTimeInSeconds = keepAliveTimeInSeconds;
+    }
+
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
+    }
+
+    /**
+     * Use {@link #setCorePoolSize(int)} and {@link #setMaximumPoolSize(int)} or {@link #setPoolSize(String)}.
+     */
+    @Deprecated
+    public void setNbThreads(int nbThreads) {
+        this.corePoolSize = nbThreads;
+        this.maximumPoolSize = nbThreads;
+    }
+
+    public void setPoolSize(String poolSize) {
+        if (!StringUtils.hasText(poolSize)) {
+            return;
+        }
+        String[] splittedPoolSize = StringUtils.split(poolSize, "-");
+        if (splittedPoolSize.length == 1) {
+            this.corePoolSize = Integer.parseInt(splittedPoolSize[0]);
+            this.maximumPoolSize = corePoolSize;
+        } else if (splittedPoolSize.length == 2) {
+            this.corePoolSize = Integer.parseInt(splittedPoolSize[0]);
+            this.maximumPoolSize = Integer.parseInt(splittedPoolSize[1]);
+        } else {
+            throw new BeanCreationException(this.beanName, "Invalid pool-size value [" + poolSize + "]: only single maximum integer "
+                    + "(e.g. \"5\") and minimum-maximum range (e.g. \"3-5\") are supported.");
+        }
     }
 
     public void setQueueCapacity(int queueCapacity) {
         this.queueCapacity = queueCapacity;
     }
 
-    public void setThreadNamePrefix(String threadNamePrefix) {
-        this.threadNamePrefix = threadNamePrefix;
+    private Class<? extends RejectedExecutionHandler> rejectedExecutionHandlerClass = AbortPolicy.class;
+
+    public void setRejectedExecutionHandlerClass(Class<? extends RejectedExecutionHandler> rejectedExecutionHandlerClass) {
+        this.rejectedExecutionHandlerClass = rejectedExecutionHandlerClass;
     }
 }
