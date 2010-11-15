@@ -32,6 +32,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -42,18 +43,22 @@ import org.springframework.util.StringUtils;
 
 /**
  * <p>
- * To prevent need of using {@link MBeanExporter#setAllowEagerInit(boolean)} to <code>true</code>, we manually call
- * {@link MBeanExporter#registerManagedResource(Object, ObjectName)}. See <a href="http://jira.springframework.org/browse/SPR-4954">SPR-4954 : Add property to
- * MBeanExporter to control eager initiailization of FactoryBeans</a>
+ * To prevent need of using {@link MBeanExporter#setAllowEagerInit(boolean)} to
+ * <code>true</code>, we manually call
+ * {@link MBeanExporter#registerManagedResource(Object, ObjectName)}. See <a
+ * href="http://jira.springframework.org/browse/SPR-4954">SPR-4954 : Add
+ * property to MBeanExporter to control eager initiailization of
+ * FactoryBeans</a>
  * </p>
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExecutor> implements FactoryBean<ThreadPoolExecutor>, BeanNameAware {
+public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExecutor> implements FactoryBean<ThreadPoolExecutor>,
+        BeanNameAware {
 
     private static class CountingRejectedExecutionHandler implements RejectedExecutionHandler {
 
-        final private AtomicInteger rejectedExecutionCount = new AtomicInteger();
+        private final AtomicInteger rejectedExecutionCount = new AtomicInteger();
 
         private final RejectedExecutionHandler rejectedExecutionHandler;
 
@@ -71,6 +76,12 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
             rejectedExecutionHandler.rejectedExecution(r, executor);
         }
 
+        @Override
+        public String toString() {
+            return new ToStringCreator(this).append("rejectedExecutionCount", this.rejectedExecutionCount)
+                    .append("rejectedExecutionHandler", this.rejectedExecutionHandler).toString();
+        }
+
     }
 
     @ManagedResource
@@ -78,9 +89,11 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
 
         private ObjectName objectName;
 
-        public SpringJmxEnabledThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue,
-                ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler, ObjectName objectName) {
-            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, new CountingRejectedExecutionHandler(rejectedExecutionHandler));
+        public SpringJmxEnabledThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+                BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler,
+                ObjectName objectName) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, new CountingRejectedExecutionHandler(
+                    rejectedExecutionHandler));
             this.objectName = objectName;
         }
 
@@ -113,6 +126,14 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
             return super.getTaskCount();
         }
 
+        @Override
+        public String toString() {
+            return new ToStringCreator(this).append("objectName", this.objectName).append("corePoolSize", this.getCorePoolSize())
+                    .append("maximumPoolSize", this.getMaximumPoolSize())
+                    .append("keepAliveTimeInMillis", this.getKeepAliveTime(TimeUnit.MILLISECONDS))
+                    .append("queue", this.getQueue().getClass()).append("rejectedExecutionHandler", this.getRejectedExecutionHandler())
+                    .toString();
+        }
     }
 
     private String beanName;
@@ -135,7 +156,7 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
         threadFactory.setDaemon(true);
 
         BlockingQueue<Runnable> blockingQueue;
-        if(queueCapacity == 0) {
+        if (queueCapacity == 0) {
             blockingQueue = new SynchronousQueue<Runnable>();
         } else {
             blockingQueue = new LinkedBlockingQueue<Runnable>(queueCapacity);
@@ -179,7 +200,8 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
     }
 
     /**
-     * Use {@link #setCorePoolSize(int)} and {@link #setMaximumPoolSize(int)} or {@link #setPoolSize(String)}.
+     * Use {@link #setCorePoolSize(int)} and {@link #setMaximumPoolSize(int)} or
+     * {@link #setPoolSize(String)}.
      */
     @Deprecated
     public void setNbThreads(int nbThreads) {
