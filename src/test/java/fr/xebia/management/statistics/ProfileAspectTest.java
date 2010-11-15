@@ -175,4 +175,12 @@ public class ProfileAspectTest {
         String actual = ProfileAspect.getClassName("java.lang.String", ClassNameStyle.SHORT_NAME);
         assertEquals("String", actual);
     }
+    
+    @Autowired
+    ServiceStatistics serviceStatistics;
+    
+    @Test
+    public void testServiceStatistics() throws Exception {
+        System.out.println(serviceStatistics);
+    }
 }

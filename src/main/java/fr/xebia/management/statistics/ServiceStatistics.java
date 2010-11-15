@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedMetric;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -35,7 +36,8 @@ import org.springframework.jmx.support.MetricType;
 public class ServiceStatistics implements SelfNaming {
 
     /**
-     * Returns <code>true</code> if the given <code>throwable</code> or one of its cause is an instance of one of the given <code>throwableTypes</code>.
+     * Returns <code>true</code> if the given <code>throwable</code> or one of
+     * its cause is an instance of one of the given <code>throwableTypes</code>.
      */
     public static boolean containsThrowableOfType(Throwable throwable, Class<?>... throwableTypes) {
         List<Throwable> alreadyProcessedThrowables = new ArrayList<Throwable>();
@@ -60,17 +62,17 @@ public class ServiceStatistics implements SelfNaming {
 
     private final AtomicInteger businessExceptionCounter = new AtomicInteger();
 
-    private final Class<?>[] businessExceptionsTypes;
+    private Class<?>[] businessExceptionsTypes;
 
     private final AtomicInteger communicationExceptionCounter = new AtomicInteger();
 
-    private final Class<?>[] communicationExceptionsTypes;
+    private Class<?>[] communicationExceptionsTypes;
 
     private final AtomicInteger currentActiveCounter = new AtomicInteger();
 
     private final AtomicInteger invocationCounter = new AtomicInteger();
 
-    private final String name;
+    private String name;
 
     private ObjectName objectName;
 
@@ -86,15 +88,20 @@ public class ServiceStatistics implements SelfNaming {
 
     private long verySlowInvocationThresholdInNanos;
 
+    public ServiceStatistics() {
+        super();
+    }
+
     /**
-     * Instantiate service statistics with predefined {@link IOException} as communication exceptions and no business exception defined.
+     * Instantiate service statistics with predefined {@link IOException} as
+     * communication exceptions and no business exception defined.
      * 
      * @param name
      *            identifier of the service
      * @see #ServiceStatistics(String, Class[], Class[])
      */
     public ServiceStatistics(String name) {
-        this(name, new Class<?>[] {}, new Class<?>[] {IOException.class});
+        this(name, new Class<?>[] {}, new Class<?>[] { IOException.class });
     }
 
     /**
@@ -102,9 +109,11 @@ public class ServiceStatistics implements SelfNaming {
      * @param name
      *            identifier of the service
      * @param businessExceptionsTypes
-     *            types of exceptions that are categorized as business exceptions
+     *            types of exceptions that are categorized as business
+     *            exceptions
      * @param communicationExceptionsTypes
-     *            types of exceptions that are categorized as communication exceptions
+     *            types of exceptions that are categorized as communication
+     *            exceptions
      */
     public ServiceStatistics(String name, Class<?>[] businessExceptionsTypes, Class<?>[] communicationExceptionsTypes) {
         super();
@@ -183,17 +192,18 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     /**
-     * Identifier of the service. Used by to build the {@link ObjectName} (see {@link #getObjectName()}).
+     * Identifier of the service. Used by to build the {@link ObjectName} (see
+     * {@link #getObjectName()}).
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * ObjectName of the service statics.
      */
     public ObjectName getObjectName() throws MalformedObjectNameException {
-        if(objectName == null) {
+        if (objectName == null) {
             objectName = new ObjectName("fr.xebia:type=ServiceStatistics,name=" + this.name);
         }
         return objectName;
@@ -291,8 +301,9 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     /**
-     * Increment the {@link #communicationExceptionCounter} if the given throwable or one of its cause is an instance of {@link IOException} ; otherwise,
-     * increment {@link #otherExceptionCounter}.
+     * Increment the {@link #communicationExceptionCounter} if the given
+     * throwable or one of its cause is an instance of {@link IOException} ;
+     * otherwise, increment {@link #otherExceptionCounter}.
      */
     public void incrementExceptionCount(Throwable throwable) {
 
@@ -313,8 +324,9 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     /**
-     * Increment {@link #totalDurationInNanosCounter}, {@link #invocationCounter} and, if eligible, {@link #verySlowInvocationCounter} or
-     * {@link #slowInvocationCounter}.
+     * Increment {@link #totalDurationInNanosCounter},
+     * {@link #invocationCounter} and, if eligible,
+     * {@link #verySlowInvocationCounter} or {@link #slowInvocationCounter}.
      * 
      * @param deltaInNanos
      *            delta in nanos
@@ -359,6 +371,18 @@ public class ServiceStatistics implements SelfNaming {
         totalDurationInNanosCounter.addAndGet(deltaInNanos);
     }
 
+    public void setBusinessExceptionsTypes(Class<?>[] businessExceptionsTypes) {
+        this.businessExceptionsTypes = businessExceptionsTypes;
+    }
+
+    public void setCommunicationExceptionsTypes(Class<?>[] communicationExceptionsTypes) {
+        this.communicationExceptionsTypes = communicationExceptionsTypes;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setObjectName(ObjectName objectName) {
         this.objectName = objectName;
     }
@@ -377,5 +401,18 @@ public class ServiceStatistics implements SelfNaming {
 
     public void setVerySlowInvocationThresholdInNanos(long verySlowInvocationThresholdInNanos) {
         this.verySlowInvocationThresholdInNanos = verySlowInvocationThresholdInNanos;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringCreator(this). //
+                append("name", this.name). //
+                append("slowInvocationThresholdInMillis", this.getSlowInvocationThresholdInMillis()). //
+                append("verySlowInvocationThresholdInMillis", this.getVerySlowInvocationThresholdInMillis()). //
+                append("communicationExceptionsTypes", this.communicationExceptionsTypes). //
+                append("businessExceptionsTypes", this.businessExceptionsTypes). //
+                append("invocationCount", this.invocationCounter). //
+                append("totalDurationInMillis", this.getTotalDurationInMillis()). //
+                toString();
     }
 }
