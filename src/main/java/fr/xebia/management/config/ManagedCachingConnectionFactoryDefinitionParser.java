@@ -40,7 +40,7 @@ public class ManagedCachingConnectionFactoryDefinitionParser extends AbstractBea
         builder.setRole(BeanDefinition.ROLE_APPLICATION);
         builder.getRawBeanDefinition().setSource(parserContext.extractSource(element));
 
-        builder.addPropertyReference("connectionFactory", element.getAttribute(CONNECTION_FACTORY_ATTRIBUTE));
+        builder.addPropertyReference("targetConnectionFactory", element.getAttribute(CONNECTION_FACTORY_ATTRIBUTE));
         builder.addPropertyValue("cacheConsumers", element.getAttribute(CACHE_CONSUMERS_ATTRIBUTE));
         builder.addPropertyValue("cacheProducers", element.getAttribute(CACHE_PRODUCERS_ATTRIBUTE));
         builder.addPropertyValue("sessionCacheSize", element.getAttribute(SESSION_CACHE_SIZE_ATTRIBUTE));
