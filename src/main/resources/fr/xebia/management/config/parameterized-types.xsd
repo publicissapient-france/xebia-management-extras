@@ -19,8 +19,8 @@
 <!-- 
 Source : http://cxf.apache.org/schemas/configuration/parameterized-types.xsd
  -->
-<xs:schema targetNamespace="http://cxf.apache.org/configuration/parameterized-types" 
-           xmlns:tns="http://cxf.apache.org/configuration/parameterized-types" 
+<xs:schema targetNamespace="http://www.xebia.fr/schema/parameterized-types" 
+           xmlns:tns="http://www.xebia.fr/schema/parameterized-types" 
            xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
