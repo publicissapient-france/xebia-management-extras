@@ -14,3 +14,4 @@
 # limitations under the License.
 
 http\://xebia-france.googlecode.com/svn/schema/management/xebia-management-extras.xsd=fr/xebia/management/config/xebia-management-extras.xsd
+http\://xebia-france.googlecode.com/svn/schema/parameterized-types.xsd=fr/xebia/management/config/parameterized-types.xsd
