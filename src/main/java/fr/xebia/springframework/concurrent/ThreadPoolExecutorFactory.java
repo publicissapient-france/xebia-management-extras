@@ -138,11 +138,11 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
 
     private String beanName;
 
-    private int corePoolSize;
+    private int corePoolSize = 1;
 
     private long keepAliveTimeInSeconds;
 
-    private int maximumPoolSize;
+    private int maximumPoolSize = Integer.MAX_VALUE;
 
     private int queueCapacity = Integer.MAX_VALUE;
 
