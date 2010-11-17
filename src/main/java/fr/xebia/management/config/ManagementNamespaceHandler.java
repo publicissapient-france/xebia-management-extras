@@ -31,6 +31,7 @@ public class ManagementNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("jms-caching-connection-factory", new ManagedCachingConnectionFactoryDefinitionParser());
         registerBeanDefinitionParser("eh-cache-management-service", new EhCacheManagementServiceDefinitionParser());
         registerBeanDefinitionParser("executor-service", new ThreadPoolExecutorFactoryDefinitionParser());
+        registerBeanDefinitionParser("dbcp-datasource", new ManagedBasicDataSourceBeanDefinitionParser());
 
     }
 
