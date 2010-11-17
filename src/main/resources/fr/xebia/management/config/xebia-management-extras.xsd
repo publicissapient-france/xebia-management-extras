@@ -338,13 +338,17 @@
          </xsd:complexContent>
       </xsd:complexType>
    </xsd:element>
-   
    <xsd:element name="executor-service">
         <xsd:annotation>
             <xsd:documentation><![CDATA[
     Defines a ExecutorService instance with configurable pool size,
     queue-capacity, keep-alive, and rejection-policy values.
             ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="java.util.concurrent.ExecutorService" />
+            </tool:annotation>
+         </xsd:appinfo>
         </xsd:annotation>
         <xsd:complexType>
             <xsd:attribute name="id" type="xsd:string" use="required">
