@@ -26,11 +26,11 @@
    <version>0.0.8-SNAPSHOT</version>
    <packaging>jar</packaging>
    <name>xebia-management-extras</name>
-   <description>Management Extras (JMX, etc)</description>
+   <description>Management Extras (JMX MBeans, @Profiled annotation, etc)</description>
    <scm>
       <connection>scm:svn:http://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</connection>
       <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</developerConnection>
-      <url>https://xebia-france.googlecode.com/svn/management/xebia-management-extras/</url>
+      <url>http://xebia-france.googlecode.com/svn/management/xebia-management-extras/</url>
    </scm>
    <build>
       <plugins>
