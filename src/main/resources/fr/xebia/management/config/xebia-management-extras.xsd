@@ -15,11 +15,13 @@
 <!-- limitations under the License. -->
 <!-- -->
 <xsd:schema xmlns="http://www.xebia.fr/schema/xebia-management-extras" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
-   xmlns:tool="http://www.springframework.org/schema/tool" targetNamespace="http://www.xebia.fr/schema/xebia-management-extras"
+   xmlns:tool="http://www.springframework.org/schema/tool" xmlns:pt="http://www.xebia.fr/schema/parameterized-types" 
+   targetNamespace="http://www.xebia.fr/schema/xebia-management-extras"
    elementFormDefault="qualified" attributeFormDefault="unqualified">
 
    <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" />
    <xsd:import namespace="http://www.springframework.org/schema/tool" schemaLocation="http://www.springframework.org/schema/tool/spring-tool-3.0.xsd" />
+   <xsd:import namespace="http://www.xebia.fr/schema/parameterized-types" schemaLocation="http://xebia-france.googlecode.com/svn/schema/parameterized-types.xsd" />
 
    <xsd:annotation>
       <xsd:documentation><![CDATA[
@@ -418,5 +420,336 @@
                 </xsd:simpleType>
             </xsd:attribute>
         </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="dbcp-datasource">
+      <xsd:annotation>
+         <xsd:documentation><![CDATA[
+   JMX enabled Jakarta Commons DBCP datasource
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="javax.sql.DataSource" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+          <xsd:all>
+             <xsd:element name="url" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="username" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="password" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="driver-class-name" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-auto-commit" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-read-only" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-transaction-isolation" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" use="required" >
+                     <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                           <xsd:enumeration value="FULLY_QUALIFIED_NAME" />
+                           <xsd:enumeration value="COMPACT_FULLY_QUALIFIED_NAME" />
+                           <xsd:enumeration value="SHORT_NAME" />
+                         </xsd:restriction>
+                      </xsd:simpleType>
+                   </xsd:attribute>
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-catalog" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-active" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-idle" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="min-idle" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="initial-size" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-wait" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedLong" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="pool-prepared-statements" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-open-prepared-statements" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="test-on-borrow" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="test-on-return" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="time-between-eviction-runs-millis" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedLong" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="num-tests-per-eviction-run" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="min-evictable-idle-time-millis" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedLong" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="test-while-idle" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="validation-query" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="validation-query-timeout" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+<!-- 
+             <xsd:element name="connection-init-sqls" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="#interface java.util.Collection#" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+ -->
+             <xsd:element name="access-to-underlying-connection-allowed" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="login-timeout" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="remove-abandoned" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="remove-abandoned-timeout" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="log-abandoned" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="connection-properties" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+          </xsd:all>
+          <xsd:attribute name="id" type="xsd:ID" use="required">
+             <xsd:annotation>
+                <xsd:documentation><![CDATA[
+    The unique identifier for a bean. The scope of the identifier
+    is the enclosing bean factory.
+                ]]></xsd:documentation>
+             </xsd:annotation>
+          </xsd:attribute>
+      </xsd:complexType>
     </xsd:element>
 </xsd:schema>
