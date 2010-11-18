@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.jmx.export.naming.SelfNaming;
 
 /**
@@ -56,5 +57,14 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
 
     public void destroy() throws Exception {
         this.close();
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringCreator(this). //
+        append("url", getUrl()). //
+        append("username", getUsername()). //
+        append("maxActive", getMaxActive()). //
+        toString();
     }
 }
