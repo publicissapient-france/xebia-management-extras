@@ -437,6 +437,7 @@
              <xsd:element name="url" minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Jdbc 'url'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -447,6 +448,7 @@
              <xsd:element name="username" minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Connection 'username' to be passed to our JDBC driver to establish a connection.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -457,6 +459,7 @@
              <xsd:element name="password" minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Connection 'password' to be passed to our JDBC driver to establish a connection.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -467,6 +470,7 @@
              <xsd:element name="driver-class-name" minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Jdbc driver class name.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -477,6 +481,8 @@
              <xsd:element name="default-auto-commit" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Default auto-commit state of connections returned by this datasource.
+                    Default is 'true'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -487,6 +493,8 @@
              <xsd:element name="default-read-only" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    'defaultReadonly' property.
+                    Default is 'false'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -497,15 +505,19 @@
              <xsd:element name="default-transaction-isolation" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Default transaction isolation state for returned connections.
+                    Nothing specified by default.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
                    <xsd:attribute name="value" use="required" >
                      <xsd:simpleType>
                         <xsd:restriction base="xsd:string">
-                           <xsd:enumeration value="FULLY_QUALIFIED_NAME" />
-                           <xsd:enumeration value="COMPACT_FULLY_QUALIFIED_NAME" />
-                           <xsd:enumeration value="SHORT_NAME" />
+                           <xsd:enumeration value="NONE" />
+                           <xsd:enumeration value="READ_UNCOMMITTED" />
+                           <xsd:enumeration value="READ_COMMITTED" />
+                           <xsd:enumeration value="REPEATABLE_READ" />
+                           <xsd:enumeration value="SERIALIZABLE" />
                          </xsd:restriction>
                       </xsd:simpleType>
                    </xsd:attribute>
@@ -515,6 +527,7 @@
              <xsd:element name="default-catalog" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Default catalog.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -525,6 +538,9 @@
              <xsd:element name="max-active" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Maximum number of active connections that can be allocated at 
+                    the same time. Use a negative value for no limit.
+                    Default is '8'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -535,6 +551,8 @@
              <xsd:element name="max-idle" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Maximum number of connections that can remain idle in the pool.
+                    Default is '8'
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -545,6 +563,8 @@
              <xsd:element name="min-idle" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Minimum number of idle connections in the pool.
+                    Default is '0'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -555,6 +575,8 @@
              <xsd:element name="initial-size" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Initial number of connections that are created when the pool is started.
+                    Default is '0'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -565,6 +587,9 @@
              <xsd:element name="max-wait" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Maximum number of milliseconds that the pool will wait (when there are no available connections) for a 
+                    connection to be returned before throwing an exception, or <= 0 to wait indefinitely.
+                    Default '-1'
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -575,6 +600,9 @@
              <xsd:element name="pool-prepared-statements" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Prepared statement pooling for this pool. When this property is set to 'true' 
+                    both PreparedStatements and CallableStatements are pooled.
+                    Default is 'false'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -585,6 +613,10 @@
              <xsd:element name="max-open-prepared-statements" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Maximum number of open statements that can be allocated 
+                    from the statement pool at the same time, or non-positive for no limit.  Since  a connection 
+                    usually only uses one or two statements at a time, this is mostly used to help detect resource leaks.
+                    Default is '-1'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -595,6 +627,8 @@
              <xsd:element name="test-on-borrow" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Indication of whether objects will be validated before being borrowed from the pool.  If the object fails to validate, it will be dropped from the pool, and we will attempt to borrow another.
+                    Default is 'true'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -605,6 +639,8 @@
              <xsd:element name="test-on-return" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Indication of whether objects will be validated before being returned to the pool.
+                    Default is 'false'
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -615,6 +651,8 @@
              <xsd:element name="time-between-eviction-runs-millis" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Number of milliseconds to sleep between runs of the idle object evictor thread.  When non-positive, no idle object evictor thread will be run.
+                    Default is '-1'
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -625,6 +663,8 @@
              <xsd:element name="num-tests-per-eviction-run" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Number of objects to examine during each run of the idle object evictor thread (if any).
+                    Default is '3'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -635,6 +675,8 @@
              <xsd:element name="min-evictable-idle-time-millis" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                     The minimum amount of time an object may sit idle in the pool before it is eligable for eviction by the idle object evictor (if any).
+                     Default is '1800000' (30 mins).
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -645,6 +687,8 @@
              <xsd:element name="test-while-idle" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    The indication of whether objects will be validated by the idle object evictor (if any).  If an object fails to validate, it will be dropped from the pool.
+                    Default is 'false'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -655,6 +699,8 @@
              <xsd:element name="validation-query" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    The SQL query that will be used to validate connections from this pool before returning them to the caller.  If specified, this query <strong>MUST</strong> be an SQL SELECT statement that returns at least one row.
+                    Default is 'null'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -665,6 +711,8 @@
              <xsd:element name="validation-query-timeout" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Timeout in seconds before connection validation queries fail. 
+                    Default is '-1'
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -685,6 +733,8 @@
              <xsd:element name="access-to-underlying-connection-allowed" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Controls access to the underlying connection.
+                    Default is 'false'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -692,19 +742,12 @@
                 </xsd:complexType>
              </xsd:element>
 
-             <xsd:element name="login-timeout" minOccurs="0" maxOccurs="1">
-                <xsd:annotation>
-                    <xsd:documentation><![CDATA[
-                ]]></xsd:documentation>
-                </xsd:annotation>
-                <xsd:complexType>
-                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
-                </xsd:complexType>
-             </xsd:element>
-
              <xsd:element name="remove-abandoned" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Whether or not a connection is considered abandoned and eligible for removal if it has been idle longer than the removeAbandonedTimeout.
+                    
+                    Default is 'false'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -715,6 +758,9 @@
              <xsd:element name="remove-abandoned-timeout" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Timeout in seconds before an abandoned connection can be removed.
+                    
+                    Default is '300' seconds.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -725,6 +771,9 @@
              <xsd:element name="log-abandoned" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    Determines whether or not to log stack traces for application code which abandoned a Statement or Connection.
+                    
+                    Default is 'false'.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
@@ -735,6 +784,7 @@
              <xsd:element name="connection-properties" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
+                    The connection properties that will be sent to our JDBC driver when establishing new connections.  <strong>NOTE</strong> - The "user" and "password" properties will be passed explicitly, so they do not need to be included here.
                 ]]></xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>

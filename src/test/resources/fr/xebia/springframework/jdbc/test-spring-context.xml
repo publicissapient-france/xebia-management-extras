@@ -15,27 +15,25 @@
 <!-- limitations under the License. -->
 <!-- -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:context="http://www.springframework.org/schema/context" xmlns:management="http://www.xebia.fr/schema/xebia-management-extras" xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+   xmlns:context="http://www.springframework.org/schema/context" xmlns:management="http://www.xebia.fr/schema/xebia-management-extras"
+   xmlns:util="http://www.springframework.org/schema/util"
+   xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 		http://www.xebia.fr/schema/xebia-management-extras http://xebia-france.googlecode.com/svn/schema/management/xebia-management-extras.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-<!-- 
-file:///C:/workspace/home/cleclerc/svn/xebia-management-extras/src/main/resources/fr/xebia/management/config/xebia-management-extras.xsd
- -->
-    <aop:aspectj-autoproxy />
-    <context:mbean-server />
+   <aop:aspectj-autoproxy />
+   <context:mbean-server />
 
-    <context:mbean-export />
+   <context:mbean-export />
 
-    <management:dbcp-datasource id="myDataSource">
-        <management:url value="jdbc:h2:mem:dbcp-test" />
-        <management:driver-class-name value="org.h2.Driver" />
-        <management:username value="sa" />
-        <management:password value="" />
-        <management:max-active value="10" />
-        <management:min-idle value="1" />
-    </management:dbcp-datasource>
+   <management:dbcp-datasource id="myDataSource">
+      <management:url value="jdbc:h2:mem:dbcp-test" />
+      <management:driver-class-name value="org.h2.Driver" />
+      <management:username value="sa" />
+      <management:password value="" />
+      <management:max-active value="10" />
+      <management:min-idle value="1" />
+   </management:dbcp-datasource>
 </beans>

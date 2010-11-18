@@ -45,8 +45,6 @@ public class ManagedBasicDataSourceBeanDefinitionParser extends AbstractBeanDefi
         fillBuilderWithAttributeIfExists(builder, element, "driverClassName", "driver-class-name", String.class, parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "initialSize", "initial-size", int.class, parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "logAbandoned", "log-abandoned", boolean.class, parserContext);
-        fillBuilderWithAttributeIfExists(builder, element, "logWriter", "log-writer", java.io.PrintWriter.class, parserContext);
-        fillBuilderWithAttributeIfExists(builder, element, "loginTimeout", "login-timeout", int.class, parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "maxActive", "max-active", int.class, parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "maxIdle", "max-idle", int.class, parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "maxOpenPreparedStatements", "max-open-prepared-statements", int.class, parserContext);
