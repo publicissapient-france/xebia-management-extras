@@ -13,5 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-http\://xebia-france.googlecode.com/svn/schema/management/xebia-management-extras.xsd=fr/xebia/management/config/xebia-management-extras.xsd
-http\://xebia-france.googlecode.com/svn/schema/parameterized-types.xsd=fr/xebia/management/config/parameterized-types.xsd
+http\://www.xebia.fr/schema/management/xebia-management-extras.xsd=fr/xebia/management/config/xebia-management-extras.xsd
+http\://www.xebia.fr/schema/parameterized-types.xsd=fr/xebia/management/config/parameterized-types.xsd
