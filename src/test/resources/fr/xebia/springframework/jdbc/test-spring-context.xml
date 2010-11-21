@@ -35,5 +35,7 @@
       <management:password value="" />
       <management:max-active value="10" />
       <management:min-idle value="1" />
+      <management:default-transaction-isolation value="SERIALIZABLE"/>
+      
    </management:dbcp-datasource>
 </beans>

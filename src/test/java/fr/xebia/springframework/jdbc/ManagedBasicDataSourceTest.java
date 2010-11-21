@@ -15,6 +15,8 @@
  */
 package fr.xebia.springframework.jdbc;
 
+import java.sql.Connection;
+
 import javax.sql.DataSource;
 
 import junit.framework.Assert;
@@ -41,5 +43,6 @@ public class ManagedBasicDataSourceTest {
         Assert.assertEquals("sa", managedBasicDataSource.getUsername());
         Assert.assertEquals(10, managedBasicDataSource.getMaxActive());
         Assert.assertEquals(1, managedBasicDataSource.getMinIdle());
+        Assert.assertEquals(Connection.TRANSACTION_SERIALIZABLE, managedBasicDataSource.getDefaultTransactionIsolation());
     }
 }
