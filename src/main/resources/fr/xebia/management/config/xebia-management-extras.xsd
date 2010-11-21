@@ -235,21 +235,21 @@
                <xsd:attribute name="cache-consumers" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
-   Indicates weither MessageConsumers should be cached
+   Indicates whether MessageConsumers should be cached
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
                <xsd:attribute name="cache-producers" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
-   Indicates weither MessageProducers should be cached
+   Indicates whether MessageProducers should be cached
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
                <xsd:attribute name="reconnect-on-exception" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
-   Indicates weither a connection should be closed and reopened when a JMSException occurs
+   Indicates whether a connection should be closed and reopened when a JMSException occurs
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
@@ -310,28 +310,28 @@
                <xsd:attribute name="register-cache-manager" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
-   Indicates weither CacheManager MBean should be registered
+   Indicates whether CacheManager MBean should be registered
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
                <xsd:attribute name="register-caches" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
-   Indicates weither Caches MBeans should be registered
+   Indicates whether Caches MBeans should be registered
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
                <xsd:attribute name="register-cache-configurations" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
-   Indicates weither Cache Configurations MBeans should be registered
+   Indicates whether Cache Configurations MBeans should be registered
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
                <xsd:attribute name="register-cache-statistics" type="xsd:boolean" default="true">
                   <xsd:annotation>
                      <xsd:documentation><![CDATA[
-   Indicates weither Cache Statistics MBeans should be registered
+   Indicates whether Cache Statistics MBeans should be registered
                ]]></xsd:documentation>
                   </xsd:annotation>
                </xsd:attribute>
