@@ -46,5 +46,7 @@ public interface ManagedBasicDataSourceMBean {
 
     void setMaxIdle(int maxIdle);
 
+    void setMinIdle(int maxIdle);
+
     void setMaxWait(long maxWait);
 }
