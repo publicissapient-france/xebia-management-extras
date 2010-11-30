@@ -30,6 +30,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:fr/xebia/springframework/jdbc/test-spring-context.xml")
 public class ManagedBasicDataSourceTest {
+    static {
+        // this system property is used by the Spring xml config
+        System.setProperty("tomcat.thread-pool.size", "20");
+        System.setProperty("jdbc.min-idle", "1");
+
+    }
 
     @Autowired
     private DataSource dataSource;
@@ -37,7 +43,7 @@ public class ManagedBasicDataSourceTest {
     @Test
     public void testDataSource() throws Exception {
         ManagedBasicDataSource managedBasicDataSource = (ManagedBasicDataSource) dataSource;
-        
+
         Assert.assertEquals("jdbc:h2:mem:dbcp-test", managedBasicDataSource.getUrl());
         Assert.assertEquals("org.h2.Driver", managedBasicDataSource.getDriverClassName());
         Assert.assertEquals("sa", managedBasicDataSource.getUsername());

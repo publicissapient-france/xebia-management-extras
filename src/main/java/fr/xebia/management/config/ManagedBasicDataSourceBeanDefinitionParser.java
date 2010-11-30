@@ -102,20 +102,10 @@ public class ManagedBasicDataSourceBeanDefinitionParser extends AbstractBeanDefi
 
     protected void fillBuilderWithAttributeIfExists(BeanDefinitionBuilder builder, Element parentElement, String propertyName,
             String elementName, Class<?> expectedType, ParserContext parserContext) {
-        Object value = getSubElementValue(parentElement, elementName, expectedType, parserContext);
-        if (value != null) {
-            // String propertyName =
-            // Conventions.attributeNameToPropertyName(elementName);
-            builder.addPropertyValue(propertyName, value);
-        }
-    }
-
-    protected Object getSubElementValue(Element parentElement, String elementName, Class<?> expectedType, ParserContext parserContext) {
-
         Element element = DomUtils.getChildElementByTagName(parentElement, elementName);
 
         if (element == null) {
-            return null;
+
         } else {
             String value = element.getAttribute("value");
             if (value == null) {
@@ -123,29 +113,8 @@ public class ManagedBasicDataSourceBeanDefinitionParser extends AbstractBeanDefi
                 parserContext.getReaderContext().fatal(msg, parentElement);
                 throw new IllegalStateException(msg);
             }
-            if (long.class.equals(expectedType) || Long.class.equals(expectedType)) {
-                try {
-                    return new Long(value);
-                } catch (NumberFormatException e) {
-                    String msg = "Invalid long value for '<" + elementName + "' value=\"" + value + "\" />'";
-                    parserContext.getReaderContext().fatal(msg, parentElement, e);
-                    throw new IllegalStateException(msg);
-                }
-            } else if (int.class.equals(expectedType) || Integer.class.equals(expectedType)) {
-                try {
-                    return new Integer(value);
-                } catch (NumberFormatException e) {
-                    String msg = "Invalid integer value for '<" + elementName + "' value=\"" + value + "\" />'";
-                    parserContext.getReaderContext().fatal(msg, parentElement, e);
-                    throw new IllegalStateException(msg);
-                }
-            } else if (boolean.class.equals(expectedType) || Boolean.class.equals(expectedType)) {
-                return Boolean.valueOf(value);
-            } else {
-                return value;
-            }
+            builder.addPropertyValue(propertyName, value);
         }
-
     }
 
 }

@@ -27,14 +27,15 @@
    <context:mbean-server />
 
    <context:mbean-export />
+   <context:property-placeholder/>
 
    <management:dbcp-datasource id="myDataSource">
       <management:url value="jdbc:h2:mem:dbcp-test" />
       <management:driver-class-name value="org.h2.Driver" />
       <management:username value="sa" />
       <management:password value="" />
-      <management:max-active value="10" />
-      <management:min-idle value="1" />
+      <management:max-active value="#{ T(java.lang.Integer).parseInt(systemProperties['tomcat.thread-pool.size']) / 2 }" />
+      <management:min-idle value="${jdbc.min-idle}" />
       <management:default-transaction-isolation value="SERIALIZABLE"/>
       
    </management:dbcp-datasource>
