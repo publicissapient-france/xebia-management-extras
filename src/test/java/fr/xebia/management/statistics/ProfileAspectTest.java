@@ -29,6 +29,11 @@ import fr.xebia.management.statistics.ProfileAspect.ClassNameStyle;
 public class ProfileAspectTest {
 
     public static class TestService {
+        
+        public String getCountryCode() {
+            return "FR";
+        }
+        
         @Profiled(slowInvocationThresholdInMillis = 100, verySlowInvocationThresholdInMillis = 200)
         public void doJobWithDefaultName() {
 
@@ -39,7 +44,7 @@ public class ProfileAspectTest {
 
         }
 
-        @Profiled(name = "my-name(#{args[0]}-#{args[1]})")
+        @Profiled(name = "my-name(#{args[0]}-#{args[1]}-#{invokedObject.countryCode})")
         public void doJobWithElName(String arg1, String arg2) {
 
         }
@@ -110,7 +115,7 @@ public class ProfileAspectTest {
 
         // verify
 
-        String name = "my-name(foo-bar)";
+        String name = "my-name(foo-bar-FR)";
         ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
         assertNotNull(serviceStatistics);
         assertEquals(1, serviceStatistics.getInvocationCount());
