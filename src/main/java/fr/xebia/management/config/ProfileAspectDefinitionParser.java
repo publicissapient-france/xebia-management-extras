@@ -38,7 +38,10 @@ public class ProfileAspectDefinitionParser extends AbstractBeanDefinitionParser 
     @Override
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         String id = element.getAttribute(ID_ATTRIBUTE);
-        return (StringUtils.hasText(id) ? id : PROFILE_ASPECT_BEAN_NAME);
+        if (!StringUtils.hasText(id)) {
+            id = PROFILE_ASPECT_BEAN_NAME;
+        }
+        return id;
     }
 
     @Override
@@ -67,8 +70,7 @@ public class ProfileAspectDefinitionParser extends AbstractBeanDefinitionParser 
      * <code>org.springframework.context.config.MBeanServerBeanDefinitionParser.findServerForSpecialEnvironment()</code>
      */
     static AbstractBeanDefinition findServerForSpecialEnvironment() {
-        boolean weblogicPresent = ClassUtils.isPresent("weblogic.management.Helper",
-                ProfileAspectDefinitionParser.class.getClassLoader());
+        boolean weblogicPresent = ClassUtils.isPresent("weblogic.management.Helper", ProfileAspectDefinitionParser.class.getClassLoader());
 
         boolean webspherePresent = ClassUtils.isPresent("com.ibm.websphere.management.AdminServiceFactory",
                 ProfileAspectDefinitionParser.class.getClassLoader());

@@ -79,7 +79,8 @@ public class ManagedBasicDataSourceBeanDefinitionParser extends AbstractBeanDefi
         fillBuilderWithAttributeIfExists(builder, element, "minEvictableIdleTimeMillis", "min-evictable-idle-time-millis", long.class,
                 parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "minIdle", "min-idle", int.class, parserContext);
-        fillBuilderWithAttributeIfExists(builder, element, "numTestsPerEvictionRun", "num-tests-per-eviction-run", int.class, parserContext);
+        fillBuilderWithAttributeIfExists(builder, element, "numTestsPerEvictionRun", "num-tests-per-eviction-run", int.class,
+                parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "password", "password", String.class, parserContext);
         fillBuilderWithAttributeIfExists(builder, element, "poolPreparedStatements", "pool-prepared-statements", boolean.class,
                 parserContext);
@@ -105,7 +106,7 @@ public class ManagedBasicDataSourceBeanDefinitionParser extends AbstractBeanDefi
         Element element = DomUtils.getChildElementByTagName(parentElement, elementName);
 
         if (element == null) {
-
+            // skip
         } else {
             String value = element.getAttribute("value");
             if (value == null) {

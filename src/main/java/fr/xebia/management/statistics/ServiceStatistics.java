@@ -164,7 +164,8 @@ public class ServiceStatistics implements SelfNaming {
      * 
      * @see #incrementCommunicationExceptionCount()
      */
-    @ManagedMetric(description = "Number of communication exceptions (timeout, connection refused, etc)", metricType = MetricType.COUNTER, category = "throughput")
+    @ManagedMetric(description = "Number of communication exceptions (timeout, connection refused, etc)",
+            metricType = MetricType.COUNTER, category = "throughput")
     public int getCommunicationExceptionCount() {
         return communicationExceptionCounter.get();
     }
@@ -213,7 +214,8 @@ public class ServiceStatistics implements SelfNaming {
      * 
      * @return
      */
-    @ManagedMetric(description = "Number of non business exceptions excluding communication exceptions", metricType = MetricType.COUNTER, category = "throughput")
+    @ManagedMetric(description = "Number of non business exceptions excluding communication exceptions", metricType = MetricType.COUNTER,
+            category = "throughput")
     public int getOtherExceptionCount() {
         return otherExceptionCounter.get();
     }
@@ -244,7 +246,8 @@ public class ServiceStatistics implements SelfNaming {
         return TimeUnit.MILLISECONDS.convert(getTotalDurationInNanos(), TimeUnit.NANOSECONDS);
     }
 
-    @ManagedMetric(description = "Total durations in nanos of the invocations", metricType = MetricType.COUNTER, unit = "ns", category = "throughput")
+    @ManagedMetric(description = "Total durations in nanos of the invocations", metricType = MetricType.COUNTER, unit = "ns",
+            category = "throughput")
     public long getTotalDurationInNanos() {
         return totalDurationInNanosCounter.get();
     }
@@ -405,14 +408,14 @@ public class ServiceStatistics implements SelfNaming {
 
     @Override
     public String toString() {
-        return new ToStringCreator(this). //
-                append("name", this.name). //
-                append("slowInvocationThresholdInMillis", this.getSlowInvocationThresholdInMillis()). //
-                append("verySlowInvocationThresholdInMillis", this.getVerySlowInvocationThresholdInMillis()). //
-                append("communicationExceptionsTypes", this.communicationExceptionsTypes). //
-                append("businessExceptionsTypes", this.businessExceptionsTypes). //
-                append("invocationCount", this.invocationCounter). //
-                append("totalDurationInMillis", this.getTotalDurationInMillis()). //
-                toString();
+        return new ToStringCreator(this) //
+                .append("name", this.name) //
+                .append("slowInvocationThresholdInMillis", this.getSlowInvocationThresholdInMillis()) //
+                .append("verySlowInvocationThresholdInMillis", this.getVerySlowInvocationThresholdInMillis()) //
+                .append("communicationExceptionsTypes", this.communicationExceptionsTypes) //
+                .append("businessExceptionsTypes", this.businessExceptionsTypes) //
+                .append("invocationCount", this.invocationCounter) //
+                .append("totalDurationInMillis", this.getTotalDurationInMillis()) //
+                .toString();
     }
 }

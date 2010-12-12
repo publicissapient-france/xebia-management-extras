@@ -15,10 +15,6 @@
  */
 package fr.xebia.management.config;
 
-import javax.management.MBeanServer;
-
-import net.sf.ehcache.management.ManagementService;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -46,12 +42,14 @@ public class EhCacheManagementServiceDefinitionParser extends AbstractBeanDefini
     @Override
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         String id = element.getAttribute(ID_ATTRIBUTE);
-        return (StringUtils.hasText(id) ? id : EH_CACHE_MANAGEMENT_SERVICE_BEAN_NAME);
+        if (!StringUtils.hasText(id)) {
+            id = EH_CACHE_MANAGEMENT_SERVICE_BEAN_NAME;
+        }
+        return id;
     }
 
     /**
-     * Instiates a {@link ManagementService} vie
-     * {@link ManagementService#ManagementService(net.sf.ehcache.CacheManager, MBeanServer, boolean, boolean, boolean, boolean)}
+     * Instantiates a {@link net.sf.ehcache.management.ManagementService}
      */
     @Override
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {

@@ -59,7 +59,7 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
         COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME, SHORT_NAME
     };
 
-    protected static class RootObject {
+    protected static final class RootObject {
 
         private final ProceedingJoinPoint pjp;
 
@@ -79,13 +79,16 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
     /**
      * <p>
-     * Formats the given <code>fullyQualifiedName</code> according to the given <code>classNameStyle</code>.
+     * Formats the given <code>fullyQualifiedName</code> according to the given
+     * <code>classNameStyle</code>.
      * </p>
      * <p>
      * Samples with <code>java.lang.String</code>:
      * <ul>
-     * <li>{@link ClassNameStyle#FULLY_QUALIFIED_NAME} : <code>java.lang.String</code></li>
-     * <li>{@link ClassNameStyle#COMPACT_FULLY_QUALIFIED_NAME} : <code>j.l.String</code></li>
+     * <li>{@link ClassNameStyle#FULLY_QUALIFIED_NAME} :
+     * <code>java.lang.String</code></li>
+     * <li>{@link ClassNameStyle#COMPACT_FULLY_QUALIFIED_NAME} :
+     * <code>j.l.String</code></li>
      * <li>{@link ClassNameStyle#SHORT_NAME} : <code>String</code></li>
      * </ul>
      * </p>
@@ -126,13 +129,15 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
     private MBeanExporter mbeanExporter;
 
-    private MBeanServer server;
-
     private String name;
 
     private ObjectName objectName;
 
     private ParserContext parserContext = new TemplateParserContext();
+
+    private ConcurrentMap<Method, Expression> profiledMethodNameAsExpressionByMethod = new ConcurrentHashMap<Method, Expression>();
+
+    private MBeanServer server;
 
     protected ConcurrentMap<String, ServiceStatistics> serviceStatisticsByName = new ConcurrentHashMap<String, ServiceStatistics>();
 
@@ -172,8 +177,6 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
         return this.serviceStatisticsByName.size();
     }
 
-    ConcurrentMap<Method, Expression> profiledMethodNameAsExpressionByMethod = new ConcurrentHashMap<Method, Expression>();
-
     @Around(value = "execution(* *(..)) && @annotation(profiled)", argNames = "pjp,profiled")
     public Object profileInvocation(ProceedingJoinPoint pjp, Profiled profiled) throws Throwable {
 
@@ -186,7 +189,7 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
                 String nameAsStringExpression = profiled.name();
                 nameAsExpression = expressionParser.parseExpression(nameAsStringExpression, parserContext);
             } else {
-                String fullyQualifiedMethodName = getFullyQualifiedMethodName( //
+                String fullyQualifiedMethodName = getFullyQualifiedMethodName(//
                         jointPointSignature.getDeclaringTypeName(), //
                         jointPointSignature.getName(), //
                         this.classNameStyle);
@@ -194,25 +197,26 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
             }
         }
 
-        String name;
+        String serviceStatisticsName;
         if (nameAsExpression instanceof LiteralExpression) {
             // Optimization : prevent useless objects instantiations
-            name = nameAsExpression.getExpressionString();
+            serviceStatisticsName = nameAsExpression.getExpressionString();
         } else {
-            name = nameAsExpression.getValue(new RootObject(pjp), String.class);
+            serviceStatisticsName = nameAsExpression.getValue(new RootObject(pjp), String.class);
         }
 
         // LOOKUP SERVICE STATISTICS
-        ServiceStatistics serviceStatistics = serviceStatisticsByName.get(name);
+        ServiceStatistics serviceStatistics = serviceStatisticsByName.get(serviceStatisticsName);
         if (serviceStatistics == null) {
             // INSTIANCIATE NEW SERVICE STATISTICS
-            ServiceStatistics newServiceStatistics = new ServiceStatistics(name, profiled.businessExceptionsTypes(), profiled.communicationExceptionsTypes());
+            ServiceStatistics newServiceStatistics = new ServiceStatistics(serviceStatisticsName, profiled.businessExceptionsTypes(),
+                    profiled.communicationExceptionsTypes());
             newServiceStatistics.setSlowInvocationThresholdInMillis(profiled.slowInvocationThresholdInMillis());
             newServiceStatistics.setVerySlowInvocationThresholdInMillis(profiled.verySlowInvocationThresholdInMillis());
 
-            newServiceStatistics.setObjectName(new ObjectName(this.jmxDomain + ":type=ServiceStatistics,name=" + name));
+            newServiceStatistics.setObjectName(new ObjectName(this.jmxDomain + ":type=ServiceStatistics,name=" + serviceStatisticsName));
 
-            ServiceStatistics previousServiceStatistics = serviceStatisticsByName.putIfAbsent(name, newServiceStatistics);
+            ServiceStatistics previousServiceStatistics = serviceStatisticsByName.putIfAbsent(serviceStatisticsName, newServiceStatistics);
             if (previousServiceStatistics == null) {
                 serviceStatistics = newServiceStatistics;
                 mbeanExporter.registerManagedResource(serviceStatistics);
@@ -236,8 +240,8 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
         }
     }
 
-    public void setBeanName(String name) {
-        this.name = name;
+    public void setBeanName(String beanName) {
+        this.name = beanName;
     }
 
     public void setClassNameStyle(ClassNameStyle classNameStyle) {
@@ -247,7 +251,8 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
     /**
      * 
      * @param classNameStyle
-     *            one of COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME and SHORT_NAME
+     *            one of COMPACT_FULLY_QUALIFIED_NAME, FULLY_QUALIFIED_NAME and
+     *            SHORT_NAME
      */
     public void setClassNameStyle(String classNameStyle) {
         this.classNameStyle = ClassNameStyle.valueOf(classNameStyle);

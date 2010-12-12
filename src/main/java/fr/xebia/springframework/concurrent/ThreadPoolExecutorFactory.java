@@ -33,7 +33,6 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.naming.SelfNaming;
@@ -42,14 +41,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
- * <p>
- * To prevent need of using {@link MBeanExporter#setAllowEagerInit(boolean)} to
- * <code>true</code>, we manually call
- * {@link MBeanExporter#registerManagedResource(Object, ObjectName)}. See <a
- * href="http://jira.springframework.org/browse/SPR-4954">SPR-4954 : Add
- * property to MBeanExporter to control eager initiailization of
- * FactoryBeans</a>
- * </p>
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
@@ -146,6 +137,8 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
 
     private int queueCapacity = Integer.MAX_VALUE;
 
+    private Class<? extends RejectedExecutionHandler> rejectedExecutionHandlerClass = AbortPolicy.class;
+
     @Override
     protected ThreadPoolExecutor createInstance() throws Exception {
         Assert.isTrue(this.corePoolSize > 0, "corePoolSize must be greater than zero");
@@ -200,8 +193,9 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
     }
 
     /**
-     * Use {@link #setCorePoolSize(int)} and {@link #setMaximumPoolSize(int)} or
-     * {@link #setPoolSize(String)}.
+     * @deprecated Use {@link #setCorePoolSize(int)} and
+     *             {@link #setMaximumPoolSize(int)} or
+     *             {@link #setPoolSize(String)}.
      */
     @Deprecated
     public void setNbThreads(int nbThreads) {
@@ -229,8 +223,6 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
     public void setQueueCapacity(int queueCapacity) {
         this.queueCapacity = queueCapacity;
     }
-
-    private Class<? extends RejectedExecutionHandler> rejectedExecutionHandlerClass = AbortPolicy.class;
 
     public void setRejectedExecutionHandlerClass(Class<? extends RejectedExecutionHandler> rejectedExecutionHandlerClass) {
         this.rejectedExecutionHandlerClass = rejectedExecutionHandlerClass;

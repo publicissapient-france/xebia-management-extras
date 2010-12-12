@@ -65,8 +65,8 @@ public class SessionWrapper implements Session {
         return delegate.createBytesMessage();
     }
 
-    public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean NoLocal) throws JMSException {
-        return delegate.createConsumer(destination, messageSelector, NoLocal);
+    public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean noLocal) throws JMSException {
+        return delegate.createConsumer(destination, messageSelector, noLocal);
     }
 
     public MessageConsumer createConsumer(Destination destination, String messageSelector) throws JMSException {

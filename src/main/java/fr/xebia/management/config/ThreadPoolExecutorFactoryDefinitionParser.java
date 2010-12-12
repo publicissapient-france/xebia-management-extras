@@ -46,7 +46,10 @@ public class ThreadPoolExecutorFactoryDefinitionParser extends AbstractBeanDefin
     @Override
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         String id = element.getAttribute(ID_ATTRIBUTE);
-        return (StringUtils.hasText(id) ? id : MBEAN_SERVER_BEAN_NAME);
+        if (!StringUtils.hasText(id)) {
+            id = MBEAN_SERVER_BEAN_NAME;
+        }
+        return id;
     }
 
     @Override

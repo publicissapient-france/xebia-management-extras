@@ -102,9 +102,9 @@ public class ManagedSession extends SessionWrapper {
     }
 
     @Override
-    public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean NoLocal) throws JMSException {
+    public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean noLocal) throws JMSException {
         try {
-            return decorate(super.createConsumer(destination, messageSelector, NoLocal));
+            return decorate(super.createConsumer(destination, messageSelector, noLocal));
         } catch (RuntimeException e) {
             statistics.incrementCreateMessageConsumerExceptionCount();
             throw e;

@@ -15,10 +15,9 @@
  */
 package fr.xebia.springframework.jdbc;
 
-import org.apache.commons.dbcp.BasicDataSource;
-
 /**
- * Managed attributes and operations of a {@link BasicDataSource}.
+ * Managed attributes and operations of a
+ * {@link org.apache.commons.dbcp.BasicDataSource}.
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */

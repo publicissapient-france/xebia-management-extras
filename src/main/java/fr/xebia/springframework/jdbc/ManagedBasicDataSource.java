@@ -58,13 +58,13 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
     public void destroy() throws Exception {
         this.close();
     }
-    
+
     @Override
     public String toString() {
-        return new ToStringCreator(this). //
-        append("url", getUrl()). //
-        append("username", getUsername()). //
-        append("maxActive", getMaxActive()). //
-        toString();
+        return new ToStringCreator(this) //
+                .append("url", getUrl()) //
+                .append("username", getUsername()) //
+                .append("maxActive", getMaxActive()) //
+                .toString();
     }
 }

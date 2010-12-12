@@ -48,5 +48,4 @@ public interface ManagedConnectionFactoryMBean {
     long getSendMessageDurationInMillis();
 
     int getSendMessageExceptionCount();
-
 }

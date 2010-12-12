@@ -53,8 +53,6 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(WebApplicationMavenInformation.class);
-
     private static final String POM_PROPERTY_ARTIFACT_ID = "artifactId";
     private static final String POM_PROPERTY_GROUP_ID = "groupId";
     private static final String POM_PROPERTY_VERSION = "version";
@@ -66,6 +64,8 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
     private String groupId = "#UNKNOWN#";
 
     private String jmxDomain = "fr.xebia";
+
+    protected final Logger logger = LoggerFactory.getLogger(WebApplicationMavenInformation.class);
 
     private ObjectName objectName;
 
@@ -79,17 +79,20 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
         loadInformationFromPomProperties();
     }
 
-    @ManagedAttribute(description = "Maven ${project.artifactId} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    @ManagedAttribute(description = "Maven ${project.artifactId} property extracted from "
+            + "${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
     public String getArtifactId() {
         return artifactId;
     }
 
-    @ManagedAttribute(description = "Maven ${project.groupId}:${project.artifactId}:${project.version} properties extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    @ManagedAttribute(description = "Maven ${project.groupId}:${project.artifactId}:${project.version} properties "
+            + "extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
     public String getFullyQualifiedArtifactIdentifier() {
         return groupId + ":" + artifactId + ":" + version;
     }
 
-    @ManagedAttribute(description = "Maven ${project.groupId} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    @ManagedAttribute(description = "Maven ${project.groupId} property extracted from "
+            + "${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
     public String getGroupId() {
         return groupId;
     }
@@ -105,7 +108,8 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
         return objectName;
     }
 
-    @ManagedAttribute(description = "Maven ${project.version} property extracted from ${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
+    @ManagedAttribute(description = "Maven ${project.version} property extracted from "
+            + "${webapp-home}/META-INF/${groupId}/${artifactId}/pom.properties file")
     public String getVersion() {
         return version;
     }
@@ -178,7 +182,11 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
     }
 
     public void setObjectName(String objectName) throws MalformedObjectNameException {
-        this.objectName = objectName == null ? null : ObjectName.getInstance(objectName);
+        if (objectName == null) {
+            this.objectName = null;
+        } else {
+            this.objectName = ObjectName.getInstance(objectName);
+        }
     }
 
     public void setServletContext(ServletContext servletContext) {

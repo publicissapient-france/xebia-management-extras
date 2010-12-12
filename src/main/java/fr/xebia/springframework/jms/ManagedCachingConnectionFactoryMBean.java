@@ -15,12 +15,10 @@
  */
 package fr.xebia.springframework.jms;
 
-import org.springframework.jms.connection.CachingConnectionFactory;
-
 /**
  * Exposed attributes and operations exposed via JMX by the
  * {@link ManagedCachingConnectionFactory} and its
- * {@link CachingConnectionFactory} parent.
+ * {@link org.springframework.jms.connection.CachingConnectionFactory} parent.
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */

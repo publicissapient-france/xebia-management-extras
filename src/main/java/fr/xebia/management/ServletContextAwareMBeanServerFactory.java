@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.jmx.support.JmxUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -59,8 +58,8 @@ import org.springframework.web.context.ServletContextAware;
  * <code>"net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics"</code>
  * that could collide with other applications and this MBeanServer will add the
  * <code>"path"</code> attribute to prevent problems :
- * <code>"net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,type=CacheStatistics,path=/my-application</code>
- * " .
+ * <code>"net.sf.ehcache:CacheManager=my-cachemanager,name=org.hibernate.cache.StandardQueryCache,
+ * type=CacheStatistics,path=/my-application</code> " .
  * </p>
  * <p>
  * Implementation decisions:
@@ -68,8 +67,9 @@ import org.springframework.web.context.ServletContextAware;
  * <ul>
  * <li>The added property was named <code>"path"</code> to follow Tomcat JMX
  * beans naming convention,</li>
- * <li>This {@link FactoryBean} doesn't extend {@link AbstractFactoryBean} due
- * to <a href="http://jira.springframework.org/browse/SPR-4968">SPR-4968 : Error
+ * <li>This {@link FactoryBean} doesn't extend
+ * {@link org.springframework.beans.factory.config.AbstractFactoryBean} due to
+ * <a href="http://jira.springframework.org/browse/SPR-4968">SPR-4968 : Error
  * "Singleton instance not initialized yet" triggered by toString call in case
  * of circular references</a></li>
  * </ul>
@@ -131,7 +131,8 @@ import org.springframework.web.context.ServletContextAware;
  * An object name
  * <code>"net.sf.ehcache:CacheManager=my-cache-manager,name=my-cache,type=Cache"</code>
  * will be registered as
- * <code>"net.sf.ehcache:CacheManager=my-cache-manager,ze-app-id-asked-by-ze-monitoring-team=my-application-id,name=my-cache,type=Cache,host=localhost,path=/my-application"</code>
+ * <code>"net.sf.ehcache:CacheManager=my-cache-manager,ze-app-id-asked-by-ze-monitoring-team=my-application-id,
+ * name=my-cache,type=Cache,host=localhost,path=/my-application"</code>
  * for an application "my-application" declared in the "localhost" host of a
  * Tomcat server: attributes <code>"path=/my-application"</code>,
  * <code>"host=localhost"</code>and
@@ -143,13 +144,13 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanServer>, ServletContextAware, InitializingBean {
 
-    private final static Logger logger = LoggerFactory.getLogger(ServletContextAwareMBeanServerFactory.class);
-
     protected MBeanServer instance;
 
-    protected MBeanServer server;
+    protected final Logger logger = LoggerFactory.getLogger(ServletContextAwareMBeanServerFactory.class);
 
     protected Map<String, String> objectNameExtraAttributes = new HashMap<String, String>();
+
+    protected MBeanServer server;
 
     protected ServletContext servletContext;
 
@@ -237,19 +238,12 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
         return true;
     }
 
-    public void setServer(MBeanServer server) {
-        this.server = server;
-    }
-
     /**
-     * <p>
-     * Use {@link #setServer(MBeanServer)}.
-     * </p>
-     * <p>
      * Deprecated to match
      * {@link org.springframework.jmx.export.MBeanExporter#setServer(MBeanServer)}
      * .
-     * </p>
+     * 
+     * @deprecated Use {@link #setServer(MBeanServer)}.
      */
     @Deprecated
     public void setMbeanServer(MBeanServer mbeanServer) {
@@ -258,6 +252,10 @@ public class ServletContextAwareMBeanServerFactory implements FactoryBean<MBeanS
 
     public void setObjectNameExtraAttributes(Map<String, String> objectNameExtraAttributes) {
         this.objectNameExtraAttributes = objectNameExtraAttributes;
+    }
+
+    public void setServer(MBeanServer server) {
+        this.server = server;
     }
 
     public void setServletContext(ServletContext servletContext) {
