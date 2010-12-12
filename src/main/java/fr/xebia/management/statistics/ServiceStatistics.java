@@ -118,8 +118,8 @@ public class ServiceStatistics implements SelfNaming {
     public ServiceStatistics(String name, Class<?>[] businessExceptionsTypes, Class<?>[] communicationExceptionsTypes) {
         super();
         this.name = name;
-        this.businessExceptionsTypes = businessExceptionsTypes;
-        this.communicationExceptionsTypes = communicationExceptionsTypes;
+        this.businessExceptionsTypes = businessExceptionsTypes.clone();
+        this.communicationExceptionsTypes = communicationExceptionsTypes.clone();
     }
 
     /**
@@ -372,11 +372,11 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     public void setBusinessExceptionsTypes(Class<?>[] businessExceptionsTypes) {
-        this.businessExceptionsTypes = businessExceptionsTypes;
+        this.businessExceptionsTypes = businessExceptionsTypes.clone();
     }
 
     public void setCommunicationExceptionsTypes(Class<?>[] communicationExceptionsTypes) {
-        this.communicationExceptionsTypes = communicationExceptionsTypes;
+        this.communicationExceptionsTypes = communicationExceptionsTypes.clone();
     }
 
     public void setName(String name) {

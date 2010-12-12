@@ -157,7 +157,12 @@ public class WebApplicationMavenInformation implements ServletContextAware, Init
         }
 
         Properties pomProperties = new Properties();
-        pomProperties.load(new FileInputStream(pomPropertiesFile));
+        FileInputStream in = new FileInputStream(pomPropertiesFile);
+        try {
+            pomProperties.load(in);
+        } finally {
+            in.close();
+        }
 
         this.groupId = pomProperties.getProperty(POM_PROPERTY_GROUP_ID, this.groupId);
         this.artifactId = pomProperties.getProperty(POM_PROPERTY_ARTIFACT_ID, this.artifactId);
