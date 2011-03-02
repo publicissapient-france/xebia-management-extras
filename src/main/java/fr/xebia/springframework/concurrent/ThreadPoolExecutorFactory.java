@@ -207,16 +207,20 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
         if (!StringUtils.hasText(poolSize)) {
             return;
         }
-        String[] splittedPoolSize = StringUtils.split(poolSize, "-");
-        if (splittedPoolSize.length == 1) {
-            this.corePoolSize = Integer.parseInt(splittedPoolSize[0]);
-            this.maximumPoolSize = corePoolSize;
-        } else if (splittedPoolSize.length == 2) {
+
+        switch (StringUtils.countOccurrencesOf(poolSize, "-")) {
+        case 0:
+            this.corePoolSize = Integer.parseInt(poolSize);
+            this.maximumPoolSize = this.corePoolSize;
+            break;
+        case 1:
+            String[] splittedPoolSize = StringUtils.split(poolSize, "-");
             this.corePoolSize = Integer.parseInt(splittedPoolSize[0]);
             this.maximumPoolSize = Integer.parseInt(splittedPoolSize[1]);
-        } else {
+            break;
+        default:
             throw new BeanCreationException(this.beanName, "Invalid pool-size value [" + poolSize + "]: only single maximum integer "
-                    + "(e.g. \"5\") and minimum-maximum range (e.g. \"3-5\") are supported.");
+                        + "(e.g. \"5\") and minimum-maximum range (e.g. \"3-5\") are supported.");
         }
     }
 

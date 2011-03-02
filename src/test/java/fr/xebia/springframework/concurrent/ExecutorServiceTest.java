@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -28,10 +29,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ExecutorServiceTest {
 
     @Autowired
-    private ExecutorService executorService;
+    @Qualifier(value="my-executor-1")
+    private ExecutorService executorService1;
+
+    @Autowired
+    @Qualifier(value="my-executor-2")
+    private ExecutorService executorService2;
 
     @Test
     public void testExecutorService() throws Exception {
-        System.out.println(executorService);
+        System.out.println(executorService1);
+        System.out.println(executorService2);
     }
 }

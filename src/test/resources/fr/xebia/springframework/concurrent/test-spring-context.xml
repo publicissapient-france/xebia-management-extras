@@ -27,5 +27,8 @@
 
     <context:mbean-export />
 
-    <management:executor-service id="my-executor" pool-size="1-10" rejection-policy="ABORT" />
+    <management:executor-service id="my-executor-1" pool-size="1-10" rejection-policy="ABORT" />
+    
+    <management:executor-service id="my-executor-2" pool-size="4" rejection-policy="ABORT" />
+    
 </beans>
