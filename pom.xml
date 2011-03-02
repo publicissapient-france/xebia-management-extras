@@ -22,14 +22,14 @@
    </parent>
    <groupId>fr.xebia.management</groupId>
    <artifactId>xebia-management-extras</artifactId>
-   <version>1.1.0</version>
+   <version>1.1.1-SNAPSHOT</version>
    <packaging>jar</packaging>
    <name>xebia-management-extras</name>
    <description>Management Extras (JMX MBeans, @Profiled annotation, etc)</description>
    <scm>
-      <connection>scm:svn:http://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-1.1.0</connection>
-      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-1.1.0</developerConnection>
-      <url>http://xebia-france.googlecode.com/svn/management/xebia-management-extras/tags/xebia-management-extras-1.1.0</url>
+      <connection>scm:svn:http://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</connection>
+      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</developerConnection>
+      <url>http://xebia-france.googlecode.com/svn/management/xebia-management-extras/</url>
    </scm>
    <build>
       <plugins>
