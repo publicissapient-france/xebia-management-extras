@@ -94,6 +94,30 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
             return super.getActiveCount();
         }
 
+        @ManagedAttribute(description = "Returns the approximate total number of tasks that have completed execution.")
+        @Override
+        public long getCompletedTaskCount() {
+            return super.getCompletedTaskCount();
+        }
+
+        @ManagedAttribute(description = "Returns the core number of threads")
+        @Override
+        public int getCorePoolSize() {
+            return super.getCorePoolSize();
+        }
+
+        @ManagedAttribute(description = "Returns the largest number of threads that have ever simultaneously been in the pool.")
+        @Override
+        public int getLargestPoolSize() {
+            return super.getLargestPoolSize();
+        }
+
+        @ManagedAttribute(description = "Returns the maximum allowed number of threads")
+        @Override
+        public int getMaximumPoolSize() {
+            return super.getMaximumPoolSize();
+        }
+
         public ObjectName getObjectName() throws MalformedObjectNameException {
             return objectName;
         }
@@ -117,9 +141,26 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
             return super.getTaskCount();
         }
 
+        @ManagedAttribute(description = "Sets the core number of threads. "
+                + "If the new value is smaller than the current value, excess existing threads will be terminated when they next "
+                + "become idle. If larger, new threads will, if needed, be started to execute any queued tasks.")
+        @Override
+        public void setCorePoolSize(int corePoolSize) {
+            super.setCorePoolSize(corePoolSize);
+        }
+
+        @ManagedAttribute(description = "Sets the maximum allowed number of threads. "
+                + "If the new value is smaller than the current value, excess existing threads will be "
+                + "terminated when they next become idle.")
+        @Override
+        public void setMaximumPoolSize(int maximumPoolSize) {
+            super.setMaximumPoolSize(maximumPoolSize);
+        }
+
         @Override
         public String toString() {
-            return new ToStringCreator(this).append("objectName", this.objectName).append("corePoolSize", this.getCorePoolSize())
+            return new ToStringCreator(this).append("objectName", this.objectName)
+                    .append("corePoolSize", this.getCorePoolSize())
                     .append("maximumPoolSize", this.getMaximumPoolSize())
                     .append("keepAliveTimeInMillis", this.getKeepAliveTime(TimeUnit.MILLISECONDS))
                     .append("queue", this.getQueue().getClass()).append("rejectedExecutionHandler", this.getRejectedExecutionHandler())
