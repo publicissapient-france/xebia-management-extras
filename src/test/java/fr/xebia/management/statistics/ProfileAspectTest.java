@@ -16,6 +16,13 @@
 package fr.xebia.management.statistics;
 
 import static junit.framework.Assert.*;
+
+import java.util.Set;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +36,11 @@ import fr.xebia.management.statistics.ProfileAspect.ClassNameStyle;
 public class ProfileAspectTest {
 
     public static class TestService {
-        
+
         public String getCountryCode() {
             return "FR";
         }
-        
+
         @Profiled(slowInvocationThresholdInMillis = 100, verySlowInvocationThresholdInMillis = 200)
         public void doJobWithDefaultName() {
 
@@ -66,6 +73,9 @@ public class ProfileAspectTest {
     @Autowired
     protected ProfileAspect profileAspect;
 
+    @Autowired
+    protected MBeanServer mbeanServer;
+
     @Test
     public void testProfiledAnnotationWithDefaultName() throws Exception {
 
@@ -87,6 +97,14 @@ public class ProfileAspectTest {
         assertEquals(0, serviceStatistics.getBusinessExceptionCount());
         assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
         assertEquals(0, serviceStatistics.getOtherExceptionCount());
+
+        Set<ObjectInstance> mbeansInstances = mbeanServer.queryMBeans(new ObjectName("com.mycompany:type=ServiceStatistics,name=" + name),
+                null);
+        assertEquals(1, mbeansInstances.size());
+        
+        ObjectName serviceStatisticsObjectName = mbeansInstances.iterator().next().getObjectName();
+        assertEquals(1, mbeanServer.getAttribute(serviceStatisticsObjectName, "InvocationCount"));
+        
     }
 
     @Test
@@ -166,7 +184,8 @@ public class ProfileAspectTest {
 
     @Test
     public void testGetClassNameCompactFullyQualifiedName() {
-        String actual = ProfileAspect.getFullyQualifiedMethodName("java.lang.String", "length", ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME);
+        String actual = ProfileAspect
+                .getFullyQualifiedMethodName("java.lang.String", "length", ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME);
         assertEquals("j.l.String.length", actual);
     }
 

@@ -34,6 +34,8 @@ public class ProfileAspectDefinitionParser extends AbstractBeanDefinitionParser 
     private static final String PROFILE_ASPECT_BEAN_NAME = "profileAspect";
 
     private static final String SERVER_ATTRIBUTE = "server";
+    
+    private static final String JMX_DOMAIN_ATTRIBUTE = "jmxDomain";
 
     @Override
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
@@ -62,6 +64,10 @@ public class ProfileAspectDefinitionParser extends AbstractBeanDefinitionParser 
             }
         }
 
+        String jmxDomain = element.getAttribute(JMX_DOMAIN_ATTRIBUTE);
+        if(StringUtils.hasLength(jmxDomain)) {
+           builder.addPropertyValue("jmxDomain", jmxDomain);
+        }
         return builder.getBeanDefinition();
     }
 
