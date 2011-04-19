@@ -65,8 +65,8 @@ public class ProfileAspectDefinitionParser extends AbstractBeanDefinitionParser 
         }
 
         String jmxDomain = element.getAttribute(JMX_DOMAIN_ATTRIBUTE);
-        if(StringUtils.hasLength(jmxDomain)) {
-           builder.addPropertyValue("jmxDomain", jmxDomain);
+        if (StringUtils.hasLength(jmxDomain)) {
+            builder.addPropertyValue("jmxDomain", jmxDomain);
         }
         return builder.getBeanDefinition();
     }
