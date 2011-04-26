@@ -390,6 +390,7 @@ public class ServiceStatistics implements SelfNaming {
         this.objectName = objectName;
     }
 
+    @ManagedAttribute
     public void setSlowInvocationThresholdInMillis(long slowInvocationThresholdInMillis) {
         this.slowInvocationThresholdInNanos = TimeUnit.NANOSECONDS.convert(slowInvocationThresholdInMillis, TimeUnit.MILLISECONDS);
     }
@@ -398,6 +399,7 @@ public class ServiceStatistics implements SelfNaming {
         this.slowInvocationThresholdInNanos = slowInvocationThresholdInNanos;
     }
 
+    @ManagedAttribute
     public void setVerySlowInvocationThresholdInMillis(long verySlowInvocationThresholdInMillis) {
         this.verySlowInvocationThresholdInNanos = TimeUnit.NANOSECONDS.convert(verySlowInvocationThresholdInMillis, TimeUnit.MILLISECONDS);
     }
