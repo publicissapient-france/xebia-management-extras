@@ -16,8 +16,11 @@
 package fr.xebia.management.statistics;
 
 import java.lang.reflect.Method;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -74,6 +77,10 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
         public Object getInvokedObject() {
             return pjp.getThis();
+        }
+
+        public Properties getSystemProperties() {
+            return System.getProperties();
         }
     }
 
@@ -139,6 +146,9 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
     private MBeanServer server;
 
+    /**
+     * visible for tests
+     */
     protected ConcurrentMap<String, ServiceStatistics> serviceStatisticsByName = new ConcurrentHashMap<String, ServiceStatistics>();
 
     public void afterPropertiesSet() throws Exception {
@@ -207,14 +217,24 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
         // LOOKUP SERVICE STATISTICS
         ServiceStatistics serviceStatistics = serviceStatisticsByName.get(serviceStatisticsName);
+
         if (serviceStatistics == null) {
             // INSTIANCIATE NEW SERVICE STATISTICS
-            ServiceStatistics newServiceStatistics = new ServiceStatistics(serviceStatisticsName, profiled.businessExceptionsTypes(),
-                    profiled.communicationExceptionsTypes());
+            ServiceStatistics newServiceStatistics = new ServiceStatistics(//
+                    new ObjectName(this.jmxDomain + ":type=ServiceStatistics,name=" + serviceStatisticsName), //
+                    profiled.businessExceptionsTypes(), profiled.communicationExceptionsTypes());
+
             newServiceStatistics.setSlowInvocationThresholdInMillis(profiled.slowInvocationThresholdInMillis());
             newServiceStatistics.setVerySlowInvocationThresholdInMillis(profiled.verySlowInvocationThresholdInMillis());
-
-            newServiceStatistics.setObjectName(new ObjectName(this.jmxDomain + ":type=ServiceStatistics,name=" + serviceStatisticsName));
+            int maxActive;
+            if (StringUtils.hasLength(profiled.maxActiveExpression())) {
+                maxActive = expressionParser.parseExpression(profiled.maxActiveExpression(), parserContext).getValue(new RootObject(pjp),
+                        Integer.class);
+            } else {
+                maxActive = profiled.maxActive();
+            }
+            newServiceStatistics.setMaxActive(maxActive);
+            newServiceStatistics.setMaxActiveSemaphoreAcquisitionMaxTimeInNanos(profiled.maxActiveSemaphoreAcquisitionMaxTimeInMillis());
 
             ServiceStatistics previousServiceStatistics = serviceStatisticsByName.putIfAbsent(serviceStatisticsName, newServiceStatistics);
             if (previousServiceStatistics == null) {
@@ -227,14 +247,30 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
         // INVOKE AND PROFILE INVOCATION
         long nanosBefore = System.nanoTime();
+
+        Semaphore semaphore = serviceStatistics.getMaxActiveSemaphore();
+        if (semaphore != null) {
+            boolean acquired = semaphore.tryAcquire(serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos(),
+                    TimeUnit.NANOSECONDS);
+            if (!acquired) {
+                serviceStatistics.incrementServiceUnavailableExceptionCount();
+                throw new ServiceUnavailableException("Service '" + serviceStatisticsName + "' is unavailable: "
+                        + serviceStatistics.getCurrentActive() + " invocations of are currently running");
+            }
+        }
         serviceStatistics.incrementCurrentActiveCount();
         try {
+            
             Object returned = pjp.proceed();
+            
             return returned;
         } catch (Throwable t) {
             serviceStatistics.incrementExceptionCount(t);
             throw t;
         } finally {
+            if (semaphore != null) {
+                semaphore.release();
+            }
             serviceStatistics.decrementCurrentActiveCount();
             serviceStatistics.incrementInvocationCounterAndTotalDurationWithNanos(System.nanoTime() - nanosBefore);
         }

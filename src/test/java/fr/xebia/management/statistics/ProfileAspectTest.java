@@ -15,7 +15,9 @@
  */
 package fr.xebia.management.statistics;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.fail;
 
 import java.util.Set;
 
@@ -48,6 +50,15 @@ public class ProfileAspectTest {
 
         @Profiled(name = "my-name")
         public void doJobWithStaticName() {
+
+        }
+        
+        @Profiled(name = "test-max-active", maxActive=1)
+        public void testMaxActive() {
+
+        }
+        @Profiled(name = "test-max-active-with-spel", maxActiveExpression="#{ T(java.lang.Integer).parseInt(systemProperties['tomcat.thread-pool.size']) / 2 }")
+        public void testMaxActiveWithSpel() {
 
         }
 
@@ -95,8 +106,10 @@ public class ProfileAspectTest {
         assertEquals(0, serviceStatistics.getSlowInvocationCount());
         assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
         assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getServiceUnavailableExceptionCount());
         assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
         assertEquals(0, serviceStatistics.getOtherExceptionCount());
+        assertEquals(0, serviceStatistics.getTotalExceptionCount());
 
         Set<ObjectInstance> mbeansInstances = mbeanServer.queryMBeans(new ObjectName("com.mycompany:type=ServiceStatistics,name=" + name),
                 null);
@@ -121,9 +134,13 @@ public class ProfileAspectTest {
         assertEquals(0, serviceStatistics.getSlowInvocationCount());
         assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
         assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getServiceUnavailableExceptionCount());
         assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
         assertEquals(0, serviceStatistics.getOtherExceptionCount());
+        assertEquals(0, serviceStatistics.getTotalExceptionCount());
     }
+    
+    
 
     @Test
     public void testProfiledAnnotationWithElName() throws Exception {
@@ -140,8 +157,10 @@ public class ProfileAspectTest {
         assertEquals(0, serviceStatistics.getSlowInvocationCount());
         assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
         assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getServiceUnavailableExceptionCount());
         assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
         assertEquals(0, serviceStatistics.getOtherExceptionCount());
+        assertEquals(0, serviceStatistics.getTotalExceptionCount());
     }
 
     @Test
@@ -154,14 +173,67 @@ public class ProfileAspectTest {
         String name = "test-slow-invocation-threshold";
         ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
         assertNotNull(serviceStatistics);
-        assertNotNull(serviceStatistics);
         assertEquals(1, serviceStatistics.getInvocationCount());
         assertEquals(1, serviceStatistics.getSlowInvocationCount());
         assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
         assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getServiceUnavailableExceptionCount());
         assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
         assertEquals(0, serviceStatistics.getOtherExceptionCount());
+        assertEquals(0, serviceStatistics.getTotalExceptionCount());
     }
+
+    @Test
+    public void testMaxActive() throws Exception {
+
+        // initialize
+        testService.testMaxActive();
+
+        String name = "test-max-active";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        // simulate one running invocation
+        serviceStatistics.getMaxActiveSemaphore().acquire();
+        assertEquals(0, serviceStatistics.getMaxActiveSemaphore().availablePermits());
+        
+        // test
+        try {
+            testService.testMaxActive();
+            fail("TimeOutException expected");
+        } catch(ServiceUnavailableException e) {
+            // expected
+        }
+        
+        // reset
+        serviceStatistics.setMaxActive(1);
+        testService.testMaxActive();
+
+        // verify
+        assertEquals(2, serviceStatistics.getInvocationCount());
+        assertEquals(0, serviceStatistics.getSlowInvocationCount());
+        assertEquals(0, serviceStatistics.getVerySlowInvocationCount());
+        assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(1, serviceStatistics.getServiceUnavailableExceptionCount());
+        assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
+        assertEquals(0, serviceStatistics.getOtherExceptionCount());
+        assertEquals(1, serviceStatistics.getTotalExceptionCount());
+
+    }
+
+    @Test
+    public void testMaxActiveWithSpel() throws Exception {
+        System.setProperty("tomcat.thread-pool.size", "20");
+
+        // initialize
+        testService.testMaxActiveWithSpel();
+
+        String name = "test-max-active-with-spel";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        
+        int availablePermits = serviceStatistics.getMaxActiveSemaphore().availablePermits();
+        assertEquals(10, availablePermits);
+        }
 
     @Test
     public void testVerySlowInvocationThreshold() throws Exception {
@@ -173,13 +245,14 @@ public class ProfileAspectTest {
         String name = "test-very-slow-invocation-threshold";
         ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
         assertNotNull(serviceStatistics);
-        assertNotNull(serviceStatistics);
         assertEquals(1, serviceStatistics.getInvocationCount());
         assertEquals(0, serviceStatistics.getSlowInvocationCount());
         assertEquals(1, serviceStatistics.getVerySlowInvocationCount());
         assertEquals(0, serviceStatistics.getBusinessExceptionCount());
+        assertEquals(0, serviceStatistics.getServiceUnavailableExceptionCount());
         assertEquals(0, serviceStatistics.getCommunicationExceptionCount());
         assertEquals(0, serviceStatistics.getOtherExceptionCount());
+        assertEquals(0, serviceStatistics.getTotalExceptionCount());
     }
 
     @Test

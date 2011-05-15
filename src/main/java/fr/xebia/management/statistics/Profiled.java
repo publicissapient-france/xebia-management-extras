@@ -50,4 +50,20 @@ public @interface Profiled {
      * By default 1000 ms
      */
     long verySlowInvocationThresholdInMillis() default 1000;
+    
+    /**
+     * Max active invocation. By default, no limit.
+     */
+    int maxActive() default -1;
+    
+    /**
+     * Max active invocation as Spring Expression Language Expression. By default, no limit.
+     * Sample : "#{ T(java.lang.Integer).parseInt(systemProperties['tomcat.thread-pool.size']) / 2 }"
+     */
+    String maxActiveExpression() default "";
+    
+    /**
+     * Max wait time to acquire the max active semaphore. By default 100ms.
+     */
+    int maxActiveSemaphoreAcquisitionMaxTimeInMillis() default 100;
 }

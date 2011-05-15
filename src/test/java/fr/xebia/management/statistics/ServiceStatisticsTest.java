@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 
+import javax.management.MalformedObjectNameException;
+
 import org.junit.Test;
 
 public class ServiceStatisticsTest {
@@ -94,7 +96,7 @@ public class ServiceStatisticsTest {
     }
 
     @Test
-    public void testIncrementExceptionCount() {
+    public void testIncrementExceptionCount() throws MalformedObjectNameException {
         ServiceStatistics serviceStatistics = new ServiceStatistics( //
                 "test", //
                 new Class[] { FirstTestingBusinessException.class, SecondTestingBusinessException.class }, //
@@ -119,7 +121,7 @@ public class ServiceStatisticsTest {
     }
 
     @Test
-    public void testIncrementExceptionCountWithOneBusinessExceptionCausedByaCommunicationException() {
+    public void testIncrementExceptionCountWithOneBusinessExceptionCausedByaCommunicationException() throws MalformedObjectNameException {
         ServiceStatistics serviceStatistics = new ServiceStatistics( //
                 "test", //
                 new Class[] { FirstTestingBusinessException.class, SecondTestingBusinessException.class }, //

@@ -15,9 +15,9 @@
  */
 package fr.xebia.management.statistics;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -72,11 +72,15 @@ public class ServiceStatistics implements SelfNaming {
 
     private final AtomicInteger invocationCounter = new AtomicInteger();
 
-    private String name;
+    private Semaphore maxActiveSemaphore;
 
-    private ObjectName objectName;
+    private long maxActiveSemaphoreAcquisitionMaxTimeInNanos;
+
+    private final ObjectName objectName;
 
     private final AtomicInteger otherExceptionCounter = new AtomicInteger();
+
+    private final AtomicInteger serviceUnavailableExceptionCounter = new AtomicInteger();
 
     private final AtomicInteger slowInvocationCounter = new AtomicInteger();
 
@@ -88,20 +92,23 @@ public class ServiceStatistics implements SelfNaming {
 
     private long verySlowInvocationThresholdInNanos;
 
-    public ServiceStatistics() {
-        super();
-    }
-
     /**
-     * Instantiate service statistics with predefined {@link IOException} as
-     * communication exceptions and no business exception defined.
      * 
-     * @param name
+     * @param objectName
      *            identifier of the service
-     * @see #ServiceStatistics(String, Class[], Class[])
+     * @param businessExceptionsTypes
+     *            types of exceptions that are categorized as business
+     *            exceptions
+     * @param communicationExceptionsTypes
+     *            types of exceptions that are categorized as communication
+     *            exceptions
      */
-    public ServiceStatistics(String name) {
-        this(name, new Class<?>[] {}, new Class<?>[] { IOException.class });
+    public ServiceStatistics(ObjectName objectName,
+            Class<?>[] businessExceptionsTypes, Class<?>[] communicationExceptionsTypes) {
+        super();
+        this.objectName = objectName;
+        this.businessExceptionsTypes = businessExceptionsTypes.clone();
+        this.communicationExceptionsTypes = communicationExceptionsTypes.clone();
     }
 
     /**
@@ -114,12 +121,11 @@ public class ServiceStatistics implements SelfNaming {
      * @param communicationExceptionsTypes
      *            types of exceptions that are categorized as communication
      *            exceptions
+     * @throws MalformedObjectNameException
      */
-    public ServiceStatistics(String name, Class<?>[] businessExceptionsTypes, Class<?>[] communicationExceptionsTypes) {
-        super();
-        this.name = name;
-        this.businessExceptionsTypes = businessExceptionsTypes.clone();
-        this.communicationExceptionsTypes = communicationExceptionsTypes.clone();
+    public ServiceStatistics(String name,
+            Class<?>[] businessExceptionsTypes, Class<?>[] communicationExceptionsTypes) throws MalformedObjectNameException {
+        this(new ObjectName("fr.xebia:type=ServiceStatistics,name=" + name), businessExceptionsTypes, communicationExceptionsTypes);
     }
 
     /**
@@ -192,36 +198,67 @@ public class ServiceStatistics implements SelfNaming {
         return invocationCounter.get();
     }
 
-    /**
-     * Identifier of the service. Used by to build the {@link ObjectName} (see
-     * {@link #getObjectName()}).
-     */
-    public String getName() {
-        return name;
+    @ManagedAttribute(description = "Max active connections or -1 if max active invocation is disabled. Can be slightly inacurrate")
+    public int getMaxActive() {
+        if (this.maxActiveSemaphore == null) {
+            return -1;
+        } else {
+            return this.maxActiveSemaphore.availablePermits() + getCurrentActive();
+        }
+    }
+
+    @ManagedMetric(description = "Number of available additional active request", category = "dynamic")
+    public int getMaxActiveAvailablePermits() {
+        if (this.maxActiveSemaphore == null) {
+            return -1;
+        } else {
+            return this.maxActiveSemaphore.availablePermits();
+        }
+    }
+
+    public Semaphore getMaxActiveSemaphore() {
+        return maxActiveSemaphore;
+    }
+
+    public long getMaxActiveSemaphoreAcquisitionMaxTimeInNanos() {
+        return maxActiveSemaphoreAcquisitionMaxTimeInNanos;
     }
 
     /**
      * ObjectName of the service statics.
      */
     public ObjectName getObjectName() throws MalformedObjectNameException {
-        if (objectName == null) {
-            objectName = new ObjectName("fr.xebia:type=ServiceStatistics,name=" + this.name);
-        }
         return objectName;
     }
 
-    /**
-     * 
-     * @return
-     */
     @ManagedMetric(description = "Number of non business exceptions excluding communication exceptions", metricType = MetricType.COUNTER,
             category = "throughput")
     public int getOtherExceptionCount() {
         return otherExceptionCounter.get();
     }
 
+    @ManagedMetric(description = "Total Number of non business exceptions", metricType = MetricType.COUNTER,
+            category = "throughput")
+    public int getTotalExceptionCount() {
+        return getBusinessExceptionCount() + //
+                getCommunicationExceptionCount() + //
+                getOtherExceptionCount() + //
+                getServiceUnavailableExceptionCount();
+    }
+
     public AtomicInteger getOtherExceptionCounter() {
         return otherExceptionCounter;
+    }
+
+    @ManagedAttribute(description = "Max acquisition duration fur the max active semaphore")
+    public long getSemaphoreAcquisitionMaxTimeInMillis() {
+        return TimeUnit.MILLISECONDS.convert(maxActiveSemaphoreAcquisitionMaxTimeInNanos, TimeUnit.NANOSECONDS);
+    }
+
+    @ManagedMetric(description = "Number of slow 'service unavailable' exceptions",
+            metricType = MetricType.COUNTER, category = "throughput")
+    public int getServiceUnavailableExceptionCount() {
+        return serviceUnavailableExceptionCounter.get();
     }
 
     @ManagedMetric(description = "Number of slow invocations", metricType = MetricType.COUNTER, category = "throughput")
@@ -234,9 +271,6 @@ public class ServiceStatistics implements SelfNaming {
         return TimeUnit.MILLISECONDS.convert(slowInvocationThresholdInNanos, TimeUnit.NANOSECONDS);
     }
 
-    /**
-     * 
-     */
     public long getSlowInvocationThresholdInNanos() {
         return slowInvocationThresholdInNanos;
     }
@@ -305,12 +339,15 @@ public class ServiceStatistics implements SelfNaming {
 
     /**
      * Increment the {@link #communicationExceptionCounter} if the given
-     * throwable or one of its cause is an instance of {@link IOException} ;
-     * otherwise, increment {@link #otherExceptionCounter}.
+     * throwable or one of its cause is an instance of on of
+     * {@link #communicationExceptionsTypes} ; otherwise, increment
+     * {@link #otherExceptionCounter}.
      */
     public void incrementExceptionCount(Throwable throwable) {
 
-        if (containsThrowableOfType(throwable, communicationExceptionsTypes)) {
+        if (throwable instanceof ServiceUnavailableException) {
+            serviceUnavailableExceptionCounter.incrementAndGet();
+        } else if (containsThrowableOfType(throwable, communicationExceptionsTypes)) {
             communicationExceptionCounter.incrementAndGet();
         } else if (containsThrowableOfType(throwable, businessExceptionsTypes)) {
             businessExceptionCounter.incrementAndGet();
@@ -355,6 +392,13 @@ public class ServiceStatistics implements SelfNaming {
     }
 
     /**
+     * Increment {@link #serviceUnavailableExceptionCounter}
+     */
+    public void incrementServiceUnavailableExceptionCount() {
+        serviceUnavailableExceptionCounter.incrementAndGet();
+    }
+
+    /**
      * Increment {@link #totalDurationInNanosCounter}.
      * 
      * @param deltaInMillis
@@ -382,12 +426,23 @@ public class ServiceStatistics implements SelfNaming {
         this.communicationExceptionsTypes = communicationExceptionsTypes.clone();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @ManagedAttribute
+    public void setMaxActive(int maxActive) {
+        if (maxActive > 0) {
+            this.maxActiveSemaphore = new Semaphore(maxActive);
+        } else {
+            this.maxActiveSemaphore = null;
+        }
     }
 
-    public void setObjectName(ObjectName objectName) {
-        this.objectName = objectName;
+    public void setMaxActiveSemaphoreAcquisitionMaxTimeInNanos(long semaphoreAcquisitionMaxTimeInNanos) {
+        this.maxActiveSemaphoreAcquisitionMaxTimeInNanos = semaphoreAcquisitionMaxTimeInNanos;
+    }
+
+    @ManagedAttribute(description = "Max acquisition duration fur the max active semaphore")
+    public void setSemaphoreAcquisitionMaxTimeInMillis(long semaphoreAcquisitionMaxTimeInMillis) {
+        this.maxActiveSemaphoreAcquisitionMaxTimeInNanos = TimeUnit.NANOSECONDS.convert(maxActiveSemaphoreAcquisitionMaxTimeInNanos,
+                TimeUnit.MILLISECONDS);
     }
 
     @ManagedAttribute
@@ -411,12 +466,13 @@ public class ServiceStatistics implements SelfNaming {
     @Override
     public String toString() {
         return new ToStringCreator(this) //
-                .append("name", this.name) //
+                .append("objectName", this.objectName) //
                 .append("slowInvocationThresholdInMillis", this.getSlowInvocationThresholdInMillis()) //
                 .append("verySlowInvocationThresholdInMillis", this.getVerySlowInvocationThresholdInMillis()) //
                 .append("communicationExceptionsTypes", this.communicationExceptionsTypes) //
                 .append("businessExceptionsTypes", this.businessExceptionsTypes) //
                 .append("invocationCount", this.invocationCounter) //
+                .append("maxActiveAvailablePermits", getMaxActiveAvailablePermits()) //
                 .append("totalDurationInMillis", this.getTotalDurationInMillis()) //
                 .toString();
     }
