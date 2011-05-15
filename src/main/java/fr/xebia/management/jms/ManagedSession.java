@@ -39,6 +39,15 @@ public class ManagedSession extends SessionWrapper {
     }
 
     @Override
+    public void close() throws JMSException {
+        try {
+            super.close();
+        } finally {
+            statistics.incrementCloseSessionCount();
+        }
+    }
+
+    @Override
     public TopicSubscriber createDurableSubscriber(Topic topic, String name) throws JMSException {
         try {
             return decorate(super.createDurableSubscriber(topic, name));

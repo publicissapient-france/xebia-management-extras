@@ -37,6 +37,15 @@ public class ManagedMessageProducer extends MessageProducerWrapper {
     }
 
     @Override
+    public void close() throws JMSException {
+        try {
+            super.close();
+        } finally {
+            statistics.incrementCloseMessageProducerCount();
+        }
+    }
+
+    @Override
     public void send(Destination destination, Message message) throws JMSException {
         long timeBefore = System.currentTimeMillis();
         try {

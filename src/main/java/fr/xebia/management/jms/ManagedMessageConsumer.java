@@ -36,6 +36,15 @@ public class ManagedMessageConsumer extends MessageConsumerWrapper {
     }
 
     @Override
+    public void close() throws JMSException {
+        try {
+            super.close();
+        } finally {
+            statistics.incrementCloseMessageConsumerCount();
+        }
+    }
+
+    @Override
     public Message receive() throws JMSException {
         long timeBefore = System.currentTimeMillis();
         Message message = null;

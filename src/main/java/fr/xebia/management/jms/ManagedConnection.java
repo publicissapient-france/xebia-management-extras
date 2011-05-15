@@ -36,6 +36,15 @@ public class ManagedConnection extends ConnectionWrapper {
         super(delegate);
         this.statistics = statistics;
     }
+    
+    @Override
+    public void close() throws JMSException {
+        try {
+           super.close();
+        } finally {
+            statistics.incrementCloseConnectionCount();
+        }
+    }
 
     @Override
     public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {

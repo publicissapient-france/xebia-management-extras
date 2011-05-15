@@ -37,6 +37,14 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     public static class Statistics {
 
+        private final AtomicInteger closeConnectionCount = new AtomicInteger();
+
+        private final AtomicInteger closeMessageConsumerCount = new AtomicInteger();
+
+        private final AtomicInteger closeMessageProducerCount = new AtomicInteger();
+
+        private final AtomicInteger closeSessionCount = new AtomicInteger();
+
         private final AtomicInteger createConnectionCount = new AtomicInteger();
 
         private final AtomicInteger createConnectionExceptionCount = new AtomicInteger();
@@ -64,6 +72,22 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         private final AtomicLong sendMessageDurationInMillis = new AtomicLong();
 
         private final AtomicInteger sendMessageExceptionCount = new AtomicInteger();
+
+        public int getCloseConnectionCount() {
+            return closeConnectionCount.get();
+        }
+
+        public int getCloseMessageConsumerCount() {
+            return closeMessageConsumerCount.get();
+        }
+
+        public int getCloseMessageProducerCount() {
+            return closeMessageProducerCount.get();
+        }
+
+        public int getCloseSessionCount() {
+            return closeSessionCount.get();
+        }
 
         public int getCreateConnectionCount() {
             return createConnectionCount.get();
@@ -119,6 +143,22 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
         public int getSendMessageExceptionCount() {
             return sendMessageExceptionCount.get();
+        }
+
+        public void incrementCloseConnectionCount() {
+            closeConnectionCount.incrementAndGet();
+        }
+
+        public void incrementCloseMessageConsumerCount() {
+            closeMessageConsumerCount.incrementAndGet();
+        }
+
+        public void incrementCloseMessageProducerCount() {
+            closeMessageProducerCount.incrementAndGet();
+        }
+
+        public void incrementCloseSessionCount() {
+            closeSessionCount.incrementAndGet();
         }
 
         public void incrementCreateConnectionCount() {
@@ -179,6 +219,15 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     }
 
+    public ManagedConnectionFactory() {
+        super();
+    }
+
+    public ManagedConnectionFactory(ConnectionFactory connectionFactory) {
+        super();
+        this.connectionFactory = connectionFactory;
+    }
+
     private ConnectionFactory connectionFactory;
 
     private final Statistics statistics = new Statistics();
@@ -211,6 +260,42 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         }
     }
 
+    public int getActiveConnectionCount() {
+        return getCreateConnectionCount() - getCloseConnectionCount();
+    }
+
+    public int getActiveMessageConsumerCount() {
+        return getCreateMessageConsumerCount() - getCloseMessageConsumerCount();
+    }
+
+    public int getActiveMessageProducerCount() {
+        return getCreateMessageProducerCount() - getCloseMessageProducerCount();
+    }
+
+    public int getActiveSessionCount() {
+        return getCreateSessionCount() - getCloseSessionCount();
+    }
+
+    public int getCloseConnectionCount() {
+        return statistics.getCloseConnectionCount();
+    }
+
+    public int getCloseMessageConsumerCount() {
+        return statistics.getCloseMessageConsumerCount();
+    }
+
+    public int getCloseMessageProducerCount() {
+        return statistics.getCloseMessageProducerCount();
+    }
+
+    public int getCloseSessionCount() {
+        return statistics.getCloseSessionCount();
+    }
+
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
     public int getCreateConnectionCount() {
         return statistics.getCreateConnectionCount();
     }
@@ -220,7 +305,7 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
     }
 
     public int getCreateMessageConsumerCount() {
-        return statistics.getCreateMessageProducerCount();
+        return statistics.getCreateMessageConsumerCount();
     }
 
     public int getCreateMessageConsumerExceptionCount() {
@@ -241,10 +326,6 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     public int getCreateSessionExceptionCount() {
         return statistics.getCreateSessionExceptionCount();
-    }
-
-    public ConnectionFactory getConnectionFactory() {
-        return connectionFactory;
     }
 
     public int getReceiveMessageCount() {
@@ -271,6 +352,10 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         return statistics.getSendMessageExceptionCount();
     }
 
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
     /**
      * @deprecated Use {@link #setConnectionFactory(ConnectionFactory)}.
      */
@@ -279,7 +364,4 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         this.connectionFactory = delegate;
     }
 
-    public void setConnectionFactory(ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
-    }
 }

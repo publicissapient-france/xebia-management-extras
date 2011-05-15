@@ -21,6 +21,22 @@ package fr.xebia.management.jms;
  */
 public interface ManagedConnectionFactoryMBean {
 
+    int getActiveConnectionCount();
+
+    int getActiveMessageConsumerCount();
+
+    int getActiveMessageProducerCount();
+
+    int getActiveSessionCount();
+
+    int getCloseConnectionCount();
+
+    int getCloseMessageConsumerCount();
+
+    int getCloseMessageProducerCount();
+
+    int getCloseSessionCount();
+
     int getCreateConnectionCount();
 
     int getCreateConnectionExceptionCount();
