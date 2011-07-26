@@ -29,9 +29,14 @@ import javax.jms.Topic;
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class ConnectionWrapper implements Connection {
+public class ConnectionWrapper extends ForwardingObject implements Connection {
 
     private final Connection delegate;
+
+    public ConnectionWrapper(Connection delegate) {
+        super();
+        this.delegate = delegate;
+    }
 
     public void close() throws JMSException {
         delegate.close();
@@ -49,6 +54,10 @@ public class ConnectionWrapper implements Connection {
 
     public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
         return delegate.createSession(transacted, acknowledgeMode);
+    }
+
+    protected Connection delegate() {
+        return delegate;
     }
 
     public String getClientID() throws JMSException {
@@ -77,10 +86,5 @@ public class ConnectionWrapper implements Connection {
 
     public void stop() throws JMSException {
         delegate.stop();
-    }
-
-    public ConnectionWrapper(Connection delegate) {
-        super();
-        this.delegate = delegate;
     }
 }

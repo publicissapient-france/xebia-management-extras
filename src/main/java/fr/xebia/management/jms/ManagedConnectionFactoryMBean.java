@@ -15,6 +15,8 @@
  */
 package fr.xebia.management.jms;
 
+import java.util.List;
+
 /**
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
@@ -60,8 +62,24 @@ public interface ManagedConnectionFactoryMBean {
     int getReceiveMessageExceptionCount();
 
     int getSendMessageCount();
-    
+
     long getSendMessageDurationInMillis();
 
     int getSendMessageExceptionCount();
+
+    /**
+     * Readonly to prevent thread safety issues.
+     */
+    boolean isTrackLeaks();
+
+    /**
+     * <p>
+     * List of opened connection / session / message producer / message consumer
+     * / topic subscriber.
+     * </p>
+     * <p>
+     * Only available if trace-leaks is enabled. Otherwise, an empty list is returned.
+     * </p>
+     */
+    List<String> dumpAllOpenedResources();
 }

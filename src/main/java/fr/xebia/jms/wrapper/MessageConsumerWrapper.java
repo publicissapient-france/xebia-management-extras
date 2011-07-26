@@ -15,7 +15,6 @@
  */
 package fr.xebia.jms.wrapper;
 
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -25,8 +24,13 @@ import javax.jms.MessageListener;
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class MessageConsumerWrapper implements MessageConsumer {
+public class MessageConsumerWrapper extends ForwardingObject implements MessageConsumer {
+
     private final MessageConsumer delegate;
+
+    protected MessageConsumer delegate() {
+        return delegate;
+    }
 
     public void close() throws JMSException {
         delegate.close();

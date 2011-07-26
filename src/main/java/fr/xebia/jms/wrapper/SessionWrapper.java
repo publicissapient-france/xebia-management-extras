@@ -15,7 +15,6 @@
  */
 package fr.xebia.jms.wrapper;
 
-
 import java.io.Serializable;
 
 import javax.jms.BytesMessage;
@@ -41,9 +40,14 @@ import javax.jms.TopicSubscriber;
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class SessionWrapper implements Session {
+public class SessionWrapper extends ForwardingObject implements Session {
 
     private final Session delegate;
+
+    public SessionWrapper(Session delegate) {
+        super();
+        this.delegate = delegate;
+    }
 
     public void close() throws JMSException {
         delegate.close();
@@ -53,36 +57,36 @@ public class SessionWrapper implements Session {
         delegate.commit();
     }
 
-    public QueueBrowser createBrowser(Queue queue, String messageSelector) throws JMSException {
-        return delegate.createBrowser(queue, messageSelector);
-    }
-
     public QueueBrowser createBrowser(Queue queue) throws JMSException {
         return delegate.createBrowser(queue);
+    }
+
+    public QueueBrowser createBrowser(Queue queue, String messageSelector) throws JMSException {
+        return delegate.createBrowser(queue, messageSelector);
     }
 
     public BytesMessage createBytesMessage() throws JMSException {
         return delegate.createBytesMessage();
     }
 
-    public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean noLocal) throws JMSException {
-        return delegate.createConsumer(destination, messageSelector, noLocal);
+    public MessageConsumer createConsumer(Destination destination) throws JMSException {
+        return delegate.createConsumer(destination);
     }
 
     public MessageConsumer createConsumer(Destination destination, String messageSelector) throws JMSException {
         return delegate.createConsumer(destination, messageSelector);
     }
 
-    public MessageConsumer createConsumer(Destination destination) throws JMSException {
-        return delegate.createConsumer(destination);
-    }
-
-    public TopicSubscriber createDurableSubscriber(Topic topic, String name, String messageSelector, boolean noLocal) throws JMSException {
-        return delegate.createDurableSubscriber(topic, name, messageSelector, noLocal);
+    public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean noLocal) throws JMSException {
+        return delegate.createConsumer(destination, messageSelector, noLocal);
     }
 
     public TopicSubscriber createDurableSubscriber(Topic topic, String name) throws JMSException {
         return delegate.createDurableSubscriber(topic, name);
+    }
+
+    public TopicSubscriber createDurableSubscriber(Topic topic, String name, String messageSelector, boolean noLocal) throws JMSException {
+        return delegate.createDurableSubscriber(topic, name, messageSelector, noLocal);
     }
 
     public MapMessage createMapMessage() throws JMSException {
@@ -133,6 +137,10 @@ public class SessionWrapper implements Session {
         return delegate.createTopic(topicName);
     }
 
+    protected Session delegate() {
+        return delegate;
+    }
+
     public int getAcknowledgeMode() throws JMSException {
         return delegate.getAcknowledgeMode();
     }
@@ -163,11 +171,6 @@ public class SessionWrapper implements Session {
 
     public void unsubscribe(String name) throws JMSException {
         delegate.unsubscribe(name);
-    }
-
-    public SessionWrapper(Session delegate) {
-        super();
-        this.delegate = delegate;
     }
 
 }

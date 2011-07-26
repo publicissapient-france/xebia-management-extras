@@ -27,6 +27,7 @@ import fr.xebia.management.jms.SpringManagedConnectionFactory;
 public class SpringManagedConnectionFactoryDefinitionParser extends AbstractBeanDefinitionParser {
 
     private static final String CONNECTION_FACTORY_ATTRIBUTE = "connection-factory";
+    private static final String TRACK_LEAKS_ATTRIBUTE = "track-leaks";
 
     @Override
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
@@ -37,6 +38,7 @@ public class SpringManagedConnectionFactoryDefinitionParser extends AbstractBean
         builder.getRawBeanDefinition().setSource(parserContext.extractSource(element));
 
         builder.addPropertyReference("connectionFactory", element.getAttribute(CONNECTION_FACTORY_ATTRIBUTE));
+        builder.addPropertyValue("trackLeaks", element.getAttribute(TRACK_LEAKS_ATTRIBUTE));
 
         return builder.getBeanDefinition();
     }

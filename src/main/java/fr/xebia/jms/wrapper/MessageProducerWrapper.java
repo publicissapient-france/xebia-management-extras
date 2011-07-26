@@ -24,13 +24,17 @@ import javax.jms.MessageProducer;
  * 
  * @author <a href="mailto:cyrille@cyrilleleclerc.com">Cyrille Le Clerc</a>
  */
-public class MessageProducerWrapper implements MessageProducer {
+public class MessageProducerWrapper extends ForwardingObject implements MessageProducer {
 
     private final MessageProducer delegate;
 
     public MessageProducerWrapper(MessageProducer delegate) {
         super();
         this.delegate = delegate;
+    }
+
+    protected MessageProducer delegate() {
+        return delegate;
     }
 
     public void close() throws JMSException {

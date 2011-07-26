@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- -->
+<!-- Copyright 2008-2010 Xebia and the original author or authors. -->
+<!-- -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); -->
+<!-- you may not use this file except in compliance with the License. -->
+<!-- You may obtain a copy of the License at -->
+<!-- -->
+<!-- http://www.apache.org/licenses/LICENSE-2.0 -->
+<!-- -->
+<!-- Unless required by applicable law or agreed to in writing, software -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS, -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+<!-- See the License for the specific language governing permissions and -->
+<!-- limitations under the License. -->
+<!-- -->
+<xsd:schema xmlns="http://www.xebia.fr/schema/xebia-management-extras" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+   xmlns:tool="http://www.springframework.org/schema/tool" xmlns:pt="http://www.xebia.fr/schema/parameterized-types" 
+   targetNamespace="http://www.xebia.fr/schema/xebia-management-extras"
+   elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+   <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" />
+   <xsd:import namespace="http://www.springframework.org/schema/tool" schemaLocation="http://www.springframework.org/schema/tool/spring-tool-3.0.xsd" />
+   <xsd:import namespace="http://www.xebia.fr/schema/parameterized-types" schemaLocation="http://www.xebia.fr/schema/parameterized-types.xsd" />
+
+   <xsd:annotation>
+      <xsd:documentation><![CDATA[
+   Defines the configuration elements for the Xebia Management extras
+   context support.
+      ]]></xsd:documentation>
+   </xsd:annotation>
+
+   <xsd:element name="servlet-context-aware-mbean-server">
+      <xsd:annotation>
+         <xsd:documentation source="java:fr.xebia.management.ServletContextAwareMBeanServerFactory">
+         <![CDATA[
+   Exposes a default MBeanServer for the current platform.
+   Autodetects WebLogic 9+, WebSphere 5.1+ and the JDK 1.5+ platform MBeanServer.
+
+   The default bean name for the exposed MBeanServer is "mbeanServer".
+   This may be customized through specifying the "id" attribute.
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="javax.management.MBeanServer" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="server" type="xsd:string">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   The bean name of the MBeanServer to which MBeans should be exported.
+   Default is to use the platform's default MBeanServer (autodetecting
+   WebLogic 9+, WebSphere 5.1+ and the JDK 1.5+ platform MBeanServer).
+               ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.management.MBeanServer" />
+                        </tool:annotation>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+
+   <xsd:element name="profile-aspect">
+      <xsd:annotation>
+         <xsd:documentation source="java:fr.xebia.management.statistics.ProfileAspect">
+         <![CDATA[
+   Exposes a default ProfileAspect to annotate methods with @Profiled.
+
+   The default bean name for the exposed ProfileAspect is "profileAspect".
+   This may be customized through specifying the "id" attribute.
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="fr.xebia.management.statistics.ProfileAspect" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="server" type="xsd:string">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   The bean name of the MBeanServer to which MBeans should be exported.
+   Default is to use the platform's default MBeanServer (autodetecting
+   WebLogic 9+, WebSphere 5.1+ and the JDK 1.5+ platform MBeanServer).
+               ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.management.MBeanServer" />
+                        </tool:annotation>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+               <xsd:attribute name="jmxDomain" type="xsd:string" default="fr.xebia">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Name of the domain of the JMX MBeans registered by the profile aspect. 
+   Registered MBeans are :
+   * the MBean of the profile aspect itself 
+   * one mbean per monitored service 
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+               <xsd:attribute name="classNameStyle" default="COMPACT_FULLY_QUALIFIED_NAME">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Name of the service statistics for the when "name" attribute is not 
+   defined using the @Profiled annotation.
+   Values are :
+   * FULLY_QUALIFIED_NAME : e.g. java.lang.String
+   * COMPACT_FULLY_QUALIFIED_NAME : e.g. j.l.String
+   * SHORT_NAME : e.g. String
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                     <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="FULLY_QUALIFIED_NAME" />
+                        <xsd:enumeration value="COMPACT_FULLY_QUALIFIED_NAME" />
+                        <xsd:enumeration value="SHORT_NAME" />
+                     </xsd:restriction>
+                  </xsd:simpleType>
+               </xsd:attribute>
+
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+
+   <xsd:element name="application-version-mbean">
+      <xsd:annotation>
+         <xsd:documentation source="java:fr.xebia.management.maven.WebApplicationMavenInformation">
+         <![CDATA[
+   Exposes a WebApplicationMavenInformation bean which is registered as a JMX MBean to expose the version number version via JMX.
+   
+   Relies on the existence of a META-INF/maven/.../my-app.pom file.
+
+   The default bean name for the exposed WebApplicationMavenInformation is "webApplicationMavenInformation".
+   This may be customized through specifying the "id" attribute.
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="fr.xebia.management.maven.WebApplicationMavenInformation" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="jmxDomain" type="xsd:string" default="fr.xebia">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Name of the domain of the registered WebApplicationMavenInformation JMX MBean.
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+
+   <xsd:element name="jms-connection-factory-wrapper">
+      <xsd:annotation>
+         <xsd:documentation source="java:fr.xebia.management.jms.SpringManagedConnectionFactory">
+         <![CDATA[
+   Wraps a JMS ConnectionFactory to expose various metrics on an mbean named <code>javax.jms:type=ConnectionFactory,name=${bean-id}</code>
+   Where <code>${bean-id} is the id of this element.</code>
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="javax.jms.ConnectionFactory" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="connection-factory" type="xsd:string" use="required">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Reference of the wrapped JMS ConnectionFactory
+               ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.jms.ConnectionFactory" />
+                        </tool:annotation>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="track-leaks" type="pt:ParameterizedBoolean" default="false">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Track jms resources leaks (connection, session, message producer, message consumer and topic subscribers). 
+   WARNING: NOT FOR PRODUCTION USE. Enabling  leaks tracking has an important performance impact 
+   (a thread dump is created at each creation).
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+
+   <xsd:element name="jms-caching-connection-factory">
+      <xsd:annotation>
+         <xsd:documentation source="java:fr.xebia.springframework.jms.ManagedCachingConnectionFactory">
+         <![CDATA[
+   Caching wrapper of a JMS ConnectionFactory. 
+   This wrapper is automatically exposed by Spring as a MBean named <code>javax.jms:type=CachingConnectionFactory,name=${bean-id}</code>
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="javax.jms.ConnectionFactory" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="connection-factory" type="xsd:string" use="required">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Reference of the wrapped JMS ConnectionFactory
+               ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.jms.ConnectionFactory" />
+                        </tool:annotation>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+               <xsd:attribute name="cache-consumers" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates whether MessageConsumers should be cached
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="cache-producers" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates whether MessageProducers should be cached
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="reconnect-on-exception" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates whether a connection should be closed and reopened when a JMSException occurs
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="session-cache-size" type="pt:ParameterizedInt" default="1">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Number of active JMS sessions. Default value is 1. Consider increasing this number in highly concurrent environments. 
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+
+   <xsd:element name="eh-cache-management-service">
+      <xsd:annotation>
+         <xsd:documentation source="java:net.sf.ehcache.management.ManagementService">
+         <![CDATA[
+   Wraps a JMS ConnectionFactory to expose various metrics on an mbean named <code>javax.jms:type=ConnectionFactory,name=${bean-id}</code>
+   Where <code>${bean-id} is the id of this element.</code>
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="net.sf.ehcache.management.ManagementService" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+         <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+               <xsd:attribute name="mbean-server" type="xsd:string" use="required">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Reference to the MBean Server
+               ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="javax.management.MBeanServer" />
+                        </tool:annotation>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="cache-manager" type="xsd:string" use="required">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Reference to the Cache Manager
+               ]]></xsd:documentation>
+                     <xsd:appinfo>
+                        <tool:annotation kind="ref">
+                           <tool:expected-type type="net.sf.ehcache.CacheManager" />
+                        </tool:annotation>
+                     </xsd:appinfo>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+               <xsd:attribute name="register-cache-manager" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates whether CacheManager MBean should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="register-caches" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates whether Caches MBeans should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="register-cache-configurations" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates whether Cache Configurations MBeans should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+               <xsd:attribute name="register-cache-statistics" type="xsd:boolean" default="true">
+                  <xsd:annotation>
+                     <xsd:documentation><![CDATA[
+   Indicates whether Cache Statistics MBeans should be registered
+               ]]></xsd:documentation>
+                  </xsd:annotation>
+               </xsd:attribute>
+
+            </xsd:extension>
+         </xsd:complexContent>
+      </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="executor-service">
+        <xsd:annotation>
+            <xsd:documentation><![CDATA[
+    Defines a ExecutorService instance with configurable pool size,
+    queue-capacity, keep-alive, and rejection-policy values.
+            ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="java.util.concurrent.ExecutorService" />
+            </tool:annotation>
+         </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:attribute name="id" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+    The bean name for the generated ExecutorService instance.
+    This value will also be used as the thread name prefix which is why it is
+    required even when defining the executor as an inner bean: The executor
+    won't be directly accessible then but will nevertheless use the specified
+    id as the thread name prefix of the threads that it manages.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="pool-size" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+    The size of the executor's thread pool as either a single value or a range
+    (e.g. 5-10). If no bounded queue-capacity value is provided, then a max value
+    has no effect unless the range is specified as 0-n. In that case, the core pool
+    will have a size of n, but the 'allowCoreThreadTimeout' flag will be set to true.
+    If a queue-capacity is provided, then the lower bound of a range will map to the
+    core size and the upper bound will map to the max size. If this attribute is not
+    provided, the default core size will be 1, and the default max size will be
+    Integer.MAX_VALUE (i.e. unbounded).
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="queue-capacity" type="pt:ParameterizedInt" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+    Queue capacity for the ThreadPoolTaskExecutor. If not specified, the default will
+    be Integer.MAX_VALUE (i.e. unbounded).
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="keep-alive" type="pt:ParameterizedInt" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+    Keep-alive time in seconds. Inactive threads that have been created beyond the
+    core size will timeout after the specified number of seconds elapse. If the
+    executor has an unbounded queue capacity and a size range represented as 0-n,
+    then the core threads will also be configured to timeout when inactive.
+    Otherwise, core threads will not ever timeout.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="rejection-policy" use="optional" default="ABORT">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+    The RejectedExecutionHandler type. When a bounded queue cannot accept any
+    additional tasks, this determines the behavior. While the default is ABORT,
+    consider using CALLER_RUNS to throttle inbound tasks. In other words, by forcing
+    the caller to run the task itself, it will not be able to provide another task
+    until after it completes the task at hand. In the meantime, one or more tasks
+    may be removed from the queue. Alternatively, if it is not critical to run every
+    task, consider using DISCARD to drop the current task or DISCARD_OLDEST to drop
+    the task at the head of the queue.
+                    ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="ABORT"/>
+                        <xsd:enumeration value="CALLER_RUNS"/>
+                        <xsd:enumeration value="DISCARD"/>
+                        <xsd:enumeration value="DISCARD_OLDEST"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="dbcp-datasource">
+      <xsd:annotation>
+         <xsd:documentation><![CDATA[
+   JMX enabled Jakarta Commons DBCP datasource
+         ]]></xsd:documentation>
+         <xsd:appinfo>
+            <tool:annotation>
+               <tool:exports type="javax.sql.DataSource" />
+            </tool:annotation>
+         </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+          <xsd:all>
+             <xsd:element name="url" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Jdbc 'url'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="username" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Connection 'username' to be passed to our JDBC driver to establish a connection.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="password" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Connection 'password' to be passed to our JDBC driver to establish a connection.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="driver-class-name" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Jdbc driver class name.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-auto-commit" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Default auto-commit state of connections returned by this datasource.
+                    Default is 'true'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-read-only" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    'defaultReadonly' property.
+                    Default is 'false'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-transaction-isolation" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Default transaction isolation state for returned connections.
+                    Nothing specified by default.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" use="required" >
+                     <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                           <xsd:enumeration value="NONE" />
+                           <xsd:enumeration value="READ_UNCOMMITTED" />
+                           <xsd:enumeration value="READ_COMMITTED" />
+                           <xsd:enumeration value="REPEATABLE_READ" />
+                           <xsd:enumeration value="SERIALIZABLE" />
+                         </xsd:restriction>
+                      </xsd:simpleType>
+                   </xsd:attribute>
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="default-catalog" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Default catalog.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-active" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Maximum number of active connections that can be allocated at 
+                    the same time. Use a negative value for no limit.
+                    Default is '8'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-idle" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Maximum number of connections that can remain idle in the pool.
+                    Default is '8'
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="min-idle" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Minimum number of idle connections in the pool.
+                    Default is '0'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="initial-size" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Initial number of connections that are created when the pool is started.
+                    Default is '0'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-wait" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Maximum number of milliseconds that the pool will wait (when there are no available connections) for a 
+                    connection to be returned before throwing an exception, or <= 0 to wait indefinitely.
+                    Default '-1'
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedLong" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="pool-prepared-statements" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Prepared statement pooling for this pool. When this property is set to 'true' 
+                    both PreparedStatements and CallableStatements are pooled.
+                    Default is 'false'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="max-open-prepared-statements" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Maximum number of open statements that can be allocated 
+                    from the statement pool at the same time, or non-positive for no limit.  Since  a connection 
+                    usually only uses one or two statements at a time, this is mostly used to help detect resource leaks.
+                    Default is '-1'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="test-on-borrow" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Indication of whether objects will be validated before being borrowed from the pool.  If the object fails to validate, it will be dropped from the pool, and we will attempt to borrow another.
+                    Default is 'true'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="test-on-return" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Indication of whether objects will be validated before being returned to the pool.
+                    Default is 'false'
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="time-between-eviction-runs-millis" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Number of milliseconds to sleep between runs of the idle object evictor thread.  When non-positive, no idle object evictor thread will be run.
+                    Default is '-1'
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedLong" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="num-tests-per-eviction-run" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Number of objects to examine during each run of the idle object evictor thread (if any).
+                    Default is '3'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="min-evictable-idle-time-millis" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                     The minimum amount of time an object may sit idle in the pool before it is eligable for eviction by the idle object evictor (if any).
+                     Default is '1800000' (30 mins).
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedLong" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="test-while-idle" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    The indication of whether objects will be validated by the idle object evictor (if any).  If an object fails to validate, it will be dropped from the pool.
+                    Default is 'false'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="validation-query" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    The SQL query that will be used to validate connections from this pool before returning them to the caller.  If specified, this query <strong>MUST</strong> be an SQL SELECT statement that returns at least one row.
+                    Default is 'null'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="validation-query-timeout" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Timeout in seconds before connection validation queries fail. 
+                    Default is '-1'
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+<!-- 
+             <xsd:element name="connection-init-sqls" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="#interface java.util.Collection#" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+ -->
+             <xsd:element name="access-to-underlying-connection-allowed" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Controls access to the underlying connection.
+                    Default is 'false'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="remove-abandoned" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Whether or not a connection is considered abandoned and eligible for removal if it has been idle longer than the removeAbandonedTimeout.
+                    
+                    Default is 'false'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="remove-abandoned-timeout" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Timeout in seconds before an abandoned connection can be removed.
+                    
+                    Default is '300' seconds.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="log-abandoned" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    Determines whether or not to log stack traces for application code which abandoned a Statement or Connection.
+                    
+                    Default is 'false'.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="pt:ParameterizedBoolean" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+
+             <xsd:element name="connection-properties" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation><![CDATA[
+                    The connection properties that will be sent to our JDBC driver when establishing new connections.  <strong>NOTE</strong> - The "user" and "password" properties will be passed explicitly, so they do not need to be included here.
+                ]]></xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                   <xsd:attribute name="value" type="xsd:string" use="required" />
+                </xsd:complexType>
+             </xsd:element>
+          </xsd:all>
+          <xsd:attribute name="id" type="xsd:ID" use="required">
+             <xsd:annotation>
+                <xsd:documentation><![CDATA[
+    The unique identifier for a bean. The scope of the identifier
+    is the enclosing bean factory.
+                ]]></xsd:documentation>
+             </xsd:annotation>
+          </xsd:attribute>
+      </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

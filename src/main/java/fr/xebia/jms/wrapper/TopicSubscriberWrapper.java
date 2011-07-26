@@ -32,6 +32,10 @@ public class TopicSubscriberWrapper extends MessageConsumerWrapper implements To
         this.delegate = delegate;
     }
 
+    protected TopicSubscriber delegate() {
+        return delegate;
+    }
+    
     public boolean getNoLocal() throws JMSException {
         return delegate.getNoLocal();
     }

@@ -15,12 +15,16 @@
  */
 package fr.xebia.management.jms;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+
+import fr.xebia.management.jms.leak.LeakDetectorConnectionFactory;
 
 /**
  * <p>
@@ -219,6 +223,12 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
 
     }
 
+    private ConnectionFactory connectionFactory;
+
+    private final Statistics statistics = new Statistics();
+
+    private boolean trackLeaks = false;
+
     public ManagedConnectionFactory() {
         super();
     }
@@ -227,10 +237,6 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         super();
         this.connectionFactory = connectionFactory;
     }
-
-    private ConnectionFactory connectionFactory;
-
-    private final Statistics statistics = new Statistics();
 
     public Connection createConnection() throws JMSException {
         try {
@@ -352,7 +358,14 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         return statistics.getSendMessageExceptionCount();
     }
 
+    public boolean isTrackLeaks() {
+        return trackLeaks;
+    }
+
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        if (trackLeaks && !(connectionFactory instanceof LeakDetectorConnectionFactory)) {
+            connectionFactory = new LeakDetectorConnectionFactory(connectionFactory);
+        }
         this.connectionFactory = connectionFactory;
     }
 
@@ -364,4 +377,18 @@ public class ManagedConnectionFactory implements ConnectionFactory, ManagedConne
         this.connectionFactory = delegate;
     }
 
+    public void setTrackLeaks(boolean trackLeaks) {
+        this.trackLeaks = trackLeaks;
+        if (trackLeaks && connectionFactory != null && !(connectionFactory instanceof LeakDetectorConnectionFactory)) {
+            connectionFactory = new LeakDetectorConnectionFactory(connectionFactory);
+        }
+    }
+
+    public List<String> dumpAllOpenedResources() {
+        if (connectionFactory instanceof LeakDetectorConnectionFactory) {
+            return ((LeakDetectorConnectionFactory) connectionFactory).dumpAllOpenedResources();
+        } else {
+            return Collections.emptyList();
+        }
+    }
 }
