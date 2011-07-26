@@ -48,7 +48,7 @@ public class LeakDetectorConnection extends ConnectionWrapper implements Connect
     public void close() throws JMSException {
         if (!this.openSessions.isEmpty()) {
             logger.warn("connection.close() is called on {} before closing {} sessions:", this, openSessions.size());
-            for(LeakDetectorSession session: this.openSessions) {
+            for (LeakDetectorSession session : this.openSessions) {
                 logger.warn(session.dumpCreationContext());
             }
         }

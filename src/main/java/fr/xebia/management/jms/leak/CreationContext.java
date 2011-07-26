@@ -47,7 +47,8 @@ public class CreationContext {
 
     public String dumpContext() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Creation context - Thread: '" + this.creationThreadName + "', date: '" + new Timestamp(creationTimestamp) + ", stacktrace: \r\n");
+        sb.append("Creation context - Thread: '" + this.creationThreadName + "', date: '" + new Timestamp(creationTimestamp)
+                + ", stacktrace: \r\n");
         for (StackTraceElement stackTraceElement : this.creationStackTrace) {
             sb.append("\t" + stackTraceElement);
         }

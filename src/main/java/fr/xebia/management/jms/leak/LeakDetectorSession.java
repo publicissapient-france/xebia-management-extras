@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import fr.xebia.jms.wrapper.SessionWrapper;
 
 public class LeakDetectorSession extends SessionWrapper implements Session {
-    
+
     private final CreationContext creationContext = new CreationContext();
 
     private final LeakDetectorConnection leakDetectorConnection;
@@ -51,19 +51,19 @@ public class LeakDetectorSession extends SessionWrapper implements Session {
         this.leakDetectorConnection = leakDetectorConnection;
         leakDetectorConnection.registerOpenSession(this);
     }
-    
+
     @Override
     public void close() throws JMSException {
-        if(!openMessageConsumers.isEmpty()) {
+        if (!openMessageConsumers.isEmpty()) {
             logger.warn("session.close() is called on {} before closing {} message consumers:", this, openMessageConsumers.size());
-            for(LeakDetectorMessageConsumer messageConsumer: this.openMessageConsumers) {
+            for (LeakDetectorMessageConsumer messageConsumer : this.openMessageConsumers) {
                 logger.warn(messageConsumer.dumpCreationContext());
             }
         }
-        
-        if(!openMessageProducers.isEmpty()) {
+
+        if (!openMessageProducers.isEmpty()) {
             logger.warn("session.close() is called on {} before closing {} message producers:", this, openMessageProducers.size());
-            for(LeakDetectorMessageProducer messageProducer: this.openMessageProducers) {
+            for (LeakDetectorMessageProducer messageProducer : this.openMessageProducers) {
                 logger.warn(messageProducer.dumpCreationContext());
             }
         }
