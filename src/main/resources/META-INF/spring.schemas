@@ -15,6 +15,7 @@
 
 http\://www.xebia.fr/schema/parameterized-types.xsd=fr/xebia/management/config/parameterized-types.xsd
 
-http\://www.xebia.fr/schema/management/xebia-management-extras.xsd=fr/xebia/management/config/xebia-management-extras-1.1.xsd
+http\://www.xebia.fr/schema/management/xebia-management-extras.xsd=fr/xebia/management/config/xebia-management-extras-1.2.xsd
+http\://www.xebia.fr/schema/management/xebia-management-extras-1.2.xsd=fr/xebia/management/config/xebia-management-extras-1.2.xsd
 http\://www.xebia.fr/schema/management/xebia-management-extras-1.1.xsd=fr/xebia/management/config/xebia-management-extras-1.1.xsd
 http\://www.xebia.fr/schema/management/xebia-management-extras-1.0.xsd=fr/xebia/management/config/xebia-management-extras-1.0.xsd
