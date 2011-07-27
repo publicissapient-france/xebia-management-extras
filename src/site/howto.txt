@@ -1,0 +1,6 @@
+
+How to deploy new .xsd on http://www.xebia.fr/schema web site ?
+---------------------------------------------------------------
+
+* ssh to web1.xebia.cyso.net server
+* xsd files are located under /var/www.xebia.fr/schema
