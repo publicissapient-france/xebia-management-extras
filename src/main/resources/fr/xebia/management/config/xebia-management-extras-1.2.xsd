@@ -728,17 +728,7 @@
                    <xsd:attribute name="value" type="pt:ParameterizedInt" use="required" />
                 </xsd:complexType>
              </xsd:element>
-<!-- 
-             <xsd:element name="connection-init-sqls" minOccurs="0" maxOccurs="1">
-                <xsd:annotation>
-                    <xsd:documentation><![CDATA[
-                ]]></xsd:documentation>
-                </xsd:annotation>
-                <xsd:complexType>
-                   <xsd:attribute name="value" type="#interface java.util.Collection#" use="required" />
-                </xsd:complexType>
-             </xsd:element>
- -->
+
              <xsd:element name="access-to-underlying-connection-allowed" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation><![CDATA[
