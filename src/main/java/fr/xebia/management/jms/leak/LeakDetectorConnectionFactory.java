@@ -81,14 +81,14 @@ public class LeakDetectorConnectionFactory extends ConnectionFactoryWrapper impl
     public List<String> dumpAllOpenedResources() {
         List<String> dumps = new ArrayList<String>();
         for (LeakDetectorConnection connection : openConnections) {
-            dumps.add(connection.dumpCreationContext());
+            dumps.add(connection.dumpCreationContext(""));
             for (LeakDetectorSession session : connection.getOpenSessions()) {
-                dumps.add(session.dumpCreationContext());
+                dumps.add(session.dumpCreationContext("   "));
                 for (LeakDetectorMessageProducer producer : session.getOpenMessageProducers()) {
-                    dumps.add(producer.dumpCreationContext());
+                    dumps.add(producer.dumpCreationContext("      "));
                 }
                 for (LeakDetectorMessageConsumer consumer : session.getOpenMessageConsumers()) {
-                    dumps.add(consumer.dumpCreationContext());
+                    dumps.add(consumer.dumpCreationContext("      "));
                 }
             }
         }

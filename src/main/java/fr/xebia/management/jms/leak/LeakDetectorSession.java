@@ -57,14 +57,14 @@ public class LeakDetectorSession extends SessionWrapper implements Session {
         if (!openMessageConsumers.isEmpty()) {
             logger.warn("session.close() is called on {} before closing {} message consumers:", this, openMessageConsumers.size());
             for (LeakDetectorMessageConsumer messageConsumer : this.openMessageConsumers) {
-                logger.warn(messageConsumer.dumpCreationContext());
+                logger.warn(messageConsumer.dumpCreationContext("   "));
             }
         }
 
         if (!openMessageProducers.isEmpty()) {
             logger.warn("session.close() is called on {} before closing {} message producers:", this, openMessageProducers.size());
             for (LeakDetectorMessageProducer messageProducer : this.openMessageProducers) {
-                logger.warn(messageProducer.dumpCreationContext());
+                logger.warn(messageProducer.dumpCreationContext("   "));
             }
         }
         super.close();
@@ -101,8 +101,8 @@ public class LeakDetectorSession extends SessionWrapper implements Session {
         return new LeakDetectorMessageProducer(super.createProducer(destination), this);
     }
 
-    public String dumpCreationContext() {
-        return delegate().toString() + " - " + creationContext.dumpContext();
+    public String dumpCreationContext(String offest) {
+        return offest + delegate().toString() + " - " + creationContext.dumpContext(offest);
     }
 
     public Set<LeakDetectorMessageConsumer> getOpenMessageConsumers() {

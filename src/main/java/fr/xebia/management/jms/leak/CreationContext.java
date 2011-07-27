@@ -45,12 +45,12 @@ public class CreationContext {
         return creationTimestamp;
     }
 
-    public String dumpContext() {
+    public String dumpContext(String offest) {
         StringBuilder sb = new StringBuilder();
         sb.append("Creation context - Thread: '" + this.creationThreadName + "', date: '" + new Timestamp(creationTimestamp)
-                + ", stacktrace: \r\n");
+                + "', stacktrace: \r\n");
         for (StackTraceElement stackTraceElement : this.creationStackTrace) {
-            sb.append("\t" + stackTraceElement);
+            sb.append(offest + " " + stackTraceElement + "\r\n");
         }
         return sb.toString();
     }

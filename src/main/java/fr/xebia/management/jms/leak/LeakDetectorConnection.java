@@ -49,7 +49,7 @@ public class LeakDetectorConnection extends ConnectionWrapper implements Connect
         if (!this.openSessions.isEmpty()) {
             logger.warn("connection.close() is called on {} before closing {} sessions:", this, openSessions.size());
             for (LeakDetectorSession session : this.openSessions) {
-                logger.warn(session.dumpCreationContext());
+                logger.warn(session.dumpCreationContext("   "));
             }
         }
         super.close();
@@ -73,7 +73,7 @@ public class LeakDetectorConnection extends ConnectionWrapper implements Connect
         openSessions.remove(session);
     }
 
-    public String dumpCreationContext() {
-        return delegate().toString() + " - " + creationContext.dumpContext();
+    public String dumpCreationContext(String offest) {
+        return offest + delegate().toString() + " - " + creationContext.dumpContext(offest);
     }
 }

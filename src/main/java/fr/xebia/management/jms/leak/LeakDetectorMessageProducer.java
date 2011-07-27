@@ -47,8 +47,8 @@ public class LeakDetectorMessageProducer extends MessageProducerWrapper implemen
         return leakDetectorSession;
     }
 
-    public String dumpCreationContext() {
-        return delegate().toString() + " - " + creationContext.dumpContext();
+    public String dumpCreationContext(String offest) {
+        return offest + delegate().toString() + " - " + creationContext.dumpContext(offest);
     }
 
 }
