@@ -27,9 +27,9 @@
    <name>xebia-management-extras</name>
    <description>Management Extras (JMX MBeans, @Profiled annotation, etc)</description>
    <scm>
-      <connection>scm:svn:http://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</connection>
-      <developerConnection>scm:svn:https://xebia-france.googlecode.com/svn/management/xebia-management-extras/trunk</developerConnection>
-      <url>http://xebia-france.googlecode.com/svn/management/xebia-management-extras/</url>
+      <connection>scm:git:git@github.com:xebia-france/xebia-management-extras.git</connection>
+      <developerConnection>scm:git:git@github.com:xebia-france/xebia-management-extras.git</developerConnection>
+      <url>https://github.com/xebia-france/xebia-management-extras</url>
    </scm>
    <build>
       <plugins>
