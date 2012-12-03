@@ -35,8 +35,6 @@ import org.springframework.jmx.export.naming.SelfNaming;
 public class ManagedDefaultMessageListenerContainer extends DefaultMessageListenerContainer implements
         ManagedDefaultMessageListenerContainerMBean, BeanNameAware, SelfNaming {
 
-    private String beanName;
-
     private ObjectName objectName;
 
     public ObjectName getObjectName() throws MalformedObjectNameException {
@@ -57,16 +55,10 @@ public class ManagedDefaultMessageListenerContainer extends DefaultMessageListen
                     throw new UncategorizedJmsException(e);
                 }
             }
-            objectName = ObjectName.getInstance("javax.jms:type=MessageListenerContainer,name=" + ObjectName.quote(beanName)
+            objectName = ObjectName.getInstance("javax.jms:type=MessageListenerContainer,name=" + ObjectName.quote(getBeanName())
                     + ",destination=" + destinationName);
         }
         return objectName;
-    }
-
-    @Override
-    public void setBeanName(String name) {
-        this.beanName = name;
-        super.setBeanName(beanName);
     }
 
 }
