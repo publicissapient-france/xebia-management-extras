@@ -66,6 +66,7 @@ public class ManagedDefaultMessageListenerContainer extends DefaultMessageListen
     @Override
     public void setBeanName(String name) {
         this.beanName = name;
+        super.setBeanName(beanName);
     }
 
 }
