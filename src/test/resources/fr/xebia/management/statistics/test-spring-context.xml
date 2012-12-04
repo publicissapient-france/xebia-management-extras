@@ -27,7 +27,7 @@
 
    <management:profile-aspect classNameStyle="FULLY_QUALIFIED_NAME" jmxDomain="com.mycompany" />
 
-   <bean id="testService" class="fr.xebia.management.statistics.ProfileAspectTest.TestService" />
+   <bean id="testService" class="fr.xebia.management.statistics.ProfileAspectTest$TestService" />
 
    <context:mbean-server />
 
