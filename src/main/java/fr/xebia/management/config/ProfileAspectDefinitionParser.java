@@ -50,6 +50,9 @@ public class ProfileAspectDefinitionParser extends AbstractBeanDefinitionParser 
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ProfileAspect.class);
 
+        // see http://static.springsource.org/spring/docs/3.1.x/spring-framework-reference/html/aop.html#aop-aj-configure
+        builder.setFactoryMethod("aspectOf");
+
         // Mark as infrastructure bean and attach source location.
         builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
         builder.getRawBeanDefinition().setSource(parserContext.extractSource(element));
