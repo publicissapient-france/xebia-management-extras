@@ -1,0 +1,5 @@
+fr.xebia.management.jms.leak
+fr.xebia.management.statistics
+fr.xebia.springframework.concurrent
+fr.xebia.springframework.jdbc
+fr.xebia.springframework.jms

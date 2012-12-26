@@ -1,0 +1,30 @@
+-classpath
+'/Users/cyrilleleclerc/github/xebia-france/xebia-management-extras/target/classes:/Users/cyrilleleclerc/github/xebia-france/xebia-management-extras/target/test-classes:/Users/cyrilleleclerc/.m2/repository/org/fusesource/hawtbuf/hawtbuf/1.9/hawtbuf-1.9.jar:/Users/cyrilleleclerc/.m2/repository/org/apache/activemq/protobuf/activemq-protobuf/1.1/activemq-protobuf-1.1.jar:/Users/cyrilleleclerc/.m2/repository/org/objenesis/objenesis/1.0/objenesis-1.0.jar:/Users/cyrilleleclerc/.m2/repository/cglib/cglib-nodep/2.2.2/cglib-nodep-2.2.2.jar:/Users/cyrilleleclerc/.m2/repository/org/jasypt/jasypt/1.9.0/jasypt-1.9.0.jar:/Users/cyrilleleclerc/.m2/repository/commons-net/commons-net/3.1/commons-net-3.1.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-beans/3.1.3.RELEASE/spring-beans-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar:/Users/cyrilleleclerc/.m2/repository/org/apache/geronimo/specs/geronimo-jsp_2.1_spec/1.0.1/geronimo-jsp_2.1_spec-1.0.1.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-asm/3.1.3.RELEASE/spring-asm-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-core/3.1.3.RELEASE/spring-core-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-context-support/3.1.3.RELEASE/spring-context-support-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/aspectj/aspectjrt/1.7.1/aspectjrt-1.7.1.jar:/Users/cyrilleleclerc/.m2/repository/junit/junit/4.11/junit-4.11.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-aop/3.1.3.RELEASE/spring-aop-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-test/3.1.3.RELEASE/spring-test-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/ch/qos/logback/logback-classic/1.0.9/logback-classic-1.0.9.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-expression/3.1.3.RELEASE/spring-expression-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/net/sf/ehcache/ehcache-core/2.6.2/ehcache-core-2.6.2.jar:/Users/cyrilleleclerc/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:/Users/cyrilleleclerc/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-context/3.1.3.RELEASE/spring-context-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/commons-pool/commons-pool/1.5.4/commons-pool-1.5.4.jar:/Users/cyrilleleclerc/.m2/repository/org/slf4j/jcl-over-slf4j/1.7.2/jcl-over-slf4j-1.7.2.jar:/Users/cyrilleleclerc/.m2/repository/org/apache/activemq/activemq-core/5.7.0/activemq-core-5.7.0.jar:/Users/cyrilleleclerc/.m2/repository/org/fusesource/hawtdispatch/hawtdispatch-transport/1.11/hawtdispatch-transport-1.11.jar:/Users/cyrilleleclerc/.m2/repository/ch/qos/logback/logback-core/1.0.9/logback-core-1.0.9.jar:/Users/cyrilleleclerc/.m2/repository/org/mockito/mockito-core/1.9.5/mockito-core-1.9.5.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-jms/3.1.3.RELEASE/spring-jms-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/apache/activemq/kahadb/5.7.0/kahadb-5.7.0.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-web/3.1.3.RELEASE/spring-web-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-aspects/3.1.3.RELEASE/spring-aspects-3.1.3.RELEASE.jar:/Users/cyrilleleclerc/.m2/repository/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2.jar:/Users/cyrilleleclerc/.m2/repository/org/fusesource/hawtdispatch/hawtdispatch/1.11/hawtdispatch-1.11.jar:/Users/cyrilleleclerc/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar:/Users/cyrilleleclerc/.m2/repository/org/aspectj/aspectjweaver/1.7.1/aspectjweaver-1.7.1.jar:/Users/cyrilleleclerc/.m2/repository/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar:/Users/cyrilleleclerc/.m2/repository/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar:/Users/cyrilleleclerc/.m2/repository/org/apache/geronimo/specs/geronimo-servlet_2.5_spec/1.2/geronimo-servlet_2.5_spec-1.2.jar:/Users/cyrilleleclerc/.m2/repository/org/fusesource/mqtt-client/mqtt-client/1.3/mqtt-client-1.3.jar:/Users/cyrilleleclerc/.m2/repository/com/h2database/h2/1.3.170/h2-1.3.170.jar:/Users/cyrilleleclerc/.m2/repository/org/springframework/spring-tx/3.1.3.RELEASE/spring-tx-3.1.3.RELEASE.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/Users/cyrilleleclerc/github/xebia-france/xebia-management-extras/src/test/java'
+-author
+-bottom
+'Copyright &#169; 2012. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/cyrilleleclerc/github/xebia-france/xebia-management-extras/target/site/testapidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'xebia-management-extras 1.2.3-SNAPSHOT Test API'
+-link
+'http://commons.apache.org/lang/api'
+-link
+'http://static.springsource.org/spring/docs/3.1.x/javadoc-api'
+-link
+'../apidocs'
+-linkoffline
+'http://docs.oracle.com/javase/6/docs/api' '/Users/cyrilleleclerc/github/xebia-france/xebia-management-extras/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'xebia-management-extras 1.2.3-SNAPSHOT Test API'

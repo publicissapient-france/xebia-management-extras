@@ -47,9 +47,15 @@
                                                                                                                                                                                                                                                                                             <li class="collapsed">
                           <a href="project-info.html" title="Project Information">Project Information</a>
                   </li>
-                                                                              <li class="expanded">
+                                                                                                                  <li class="expanded">
                           <a href="project-reports.html" title="Project Reports">Project Reports</a>
                     <ul>
+                      <li class="none">
+                          <a href="apidocs/index.html" title="JavaDocs">JavaDocs</a>
+            </li>
+                      <li class="none">
+                          <a href="testapidocs/index.html" title="Test JavaDocs">Test JavaDocs</a>
+            </li>
                       <li class="none">
             <strong>RAT Report</strong>
           </li>
@@ -69,9 +75,9 @@
 *****************************************************
 Summary
 -------
-Generated at: 2012-12-27T00:10:51+01:00
+Generated at: 2012-12-27T00:39:07+01:00
 Notes: 2
-Binaries: 109
+Binaries: 113
 Archives: 0
 Standards: 154
 
@@ -176,6 +182,7 @@ Archives:
  !????? .git/logs/refs/remotes/origin/master
   B     .git/objects/02/49e2979f12ddd953a3ec64afb24e739c0d4c98
   B     .git/objects/02/86868e8ba028e331d3081c8d8188cf33795694
+  B     .git/objects/03/f980162b4dee32d5461bf19e0d95a21220b25c
   B     .git/objects/05/35431980ff6089d06985498ed480537049e092
   B     .git/objects/0b/cbe3168cc7c57ccfc15b16f71ec6b3877eddfc
   B     .git/objects/10/3d3aa9f69fc843d192cd432b83076dd7172c89
@@ -203,6 +210,7 @@ Archives:
   B     .git/objects/54/ad59aca8643ebac9c8b1813074987f303fbd2d
   B     .git/objects/55/f86c79ad11507243671b9c8a0318fd19f136dd
   B     .git/objects/57/ec70438065f7ff8099c92915cbdab63bae5559
+  B     .git/objects/5d/cd6bbebd89ba3e67541b26e10e5173bfb543b1
   B     .git/objects/60/6836909872e183156077c50bbf5f871e9a0617
   B     .git/objects/6a/b2045e29d6b25b23c817775dc0f0b811bbca0b
   B     .git/objects/6b/23b8f0aa334cecafb8dd13e376766e1d9e08ef
@@ -229,9 +237,11 @@ Archives:
   B     .git/objects/9d/37f0439b81fa8651a4028351d3b62e89dbdbc9
   B     .git/objects/9e/da244def1bc6b4a4518dabc2632e4483d30423
   B     .git/objects/a3/af6526f05d99ac995166aad1fc5703ef0167ec
+  B     .git/objects/aa/78914f6fae804fe3db8062709cf28b683cab89
   B     .git/objects/ad/29d86eae69c9ea260710a7a842c3cb1bbf0e40
   B     .git/objects/b1/3077ef71e22af2ea730af9141cc42d950b532a
   B     .git/objects/b2/7b9c97a499f0efb305918fa61fcde47c4c3332
+  B     .git/objects/b2/8032fedbcf09d79bfe673c5d92a06f992cfa1a
   B     .git/objects/b7/82e404a575dc72cf39a7921b6709451c57da56
   B     .git/objects/b8/a9877b9abccfe7c47ec81143aa8e94bf977178
   B     .git/objects/bc/386bcf2f22ce7b7919db152e0f6e3ec709fb0c
@@ -438,7 +448,7 @@ Archives:
  =======================================================================
  ==.git/COMMIT_EDITMSG
  =======================================================================
-work on com.github.github;site-maven-plugin
+cleanup
 
  =======================================================================
  ==.git/config
@@ -460,7 +470,8 @@ work on com.github.github;site-maven-plugin
  =======================================================================
  ==.git/FETCH_HEAD
  =======================================================================
-5261a06b3265e5a52610913da37d8fe321bc337f		branch 'master' of https://github.com/xebia-france/xebia-management-extras
+fdf6844fae05cdd513b78b7e5d84b94b8f696a04		branch 'master' of https://github.com/xebia-france/xebia-management-extras
+aa78914f6fae804fe3db8062709cf28b683cab89	not-for-merge	branch 'gh-pages' of https://github.com/xebia-france/xebia-management-extras
 
  =======================================================================
  ==.git/HEAD
@@ -489,6 +500,7 @@ dd85bbf66a7483ca4a7e48d99c61713547161df3 8961c95d399b4e0569af3e0f68dbd8840c728be
 5261a06b3265e5a52610913da37d8fe321bc337f fdf6844fae05cdd513b78b7e5d84b94b8f696a04 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356562644 +0100	commit: work on com.github.github;site-maven-plugin
 fdf6844fae05cdd513b78b7e5d84b94b8f696a04 5261a06b3265e5a52610913da37d8fe321bc337f Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356562671 +0100	checkout: moving from master to gh-pages
 5261a06b3265e5a52610913da37d8fe321bc337f fdf6844fae05cdd513b78b7e5d84b94b8f696a04 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356562895 +0100	checkout: moving from gh-pages to master
+fdf6844fae05cdd513b78b7e5d84b94b8f696a04 5dcd6bbebd89ba3e67541b26e10e5173bfb543b1 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356564087 +0100	commit: cleanup
 
  =======================================================================
  ==.git/logs/refs/heads/master
@@ -508,6 +520,7 @@ bc96cdb1d815d2535a9d75a42a3883a1f6cf44c7 4fd9e08f3e58d25b1cf71c150bdb753ef2c8a9a
 dd85bbf66a7483ca4a7e48d99c61713547161df3 8961c95d399b4e0569af3e0f68dbd8840c728be6 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356561562 +0100	commit: upgrade to latest versions
 8961c95d399b4e0569af3e0f68dbd8840c728be6 5261a06b3265e5a52610913da37d8fe321bc337f Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356561591 +0100	commit: add github maven-downloads-plugin
 5261a06b3265e5a52610913da37d8fe321bc337f fdf6844fae05cdd513b78b7e5d84b94b8f696a04 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356562644 +0100	commit: work on com.github.github;site-maven-plugin
+fdf6844fae05cdd513b78b7e5d84b94b8f696a04 5dcd6bbebd89ba3e67541b26e10e5173bfb543b1 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356564087 +0100	commit: cleanup
 
  =======================================================================
  ==.git/logs/refs/remotes/origin/HEAD
@@ -526,6 +539,7 @@ bc96cdb1d815d2535a9d75a42a3883a1f6cf44c7 4fd9e08f3e58d25b1cf71c150bdb753ef2c8a9a
 4fd9e08f3e58d25b1cf71c150bdb753ef2c8a9af dd85bbf66a7483ca4a7e48d99c61713547161df3 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356486078 +0100	update by push
 dd85bbf66a7483ca4a7e48d99c61713547161df3 5261a06b3265e5a52610913da37d8fe321bc337f Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356562491 +0100	update by push
 5261a06b3265e5a52610913da37d8fe321bc337f fdf6844fae05cdd513b78b7e5d84b94b8f696a04 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356562665 +0100	update by push
+fdf6844fae05cdd513b78b7e5d84b94b8f696a04 5dcd6bbebd89ba3e67541b26e10e5173bfb543b1 Cyrille Le Clerc &lt;cyrille@cyrilleleclerc.com&gt; 1356564097 +0100	update by push
 
  =======================================================================
  ==.git/ORIG_HEAD
@@ -541,7 +555,7 @@ dd85bbf66a7483ca4a7e48d99c61713547161df3 5261a06b3265e5a52610913da37d8fe321bc337
  =======================================================================
  ==.git/refs/heads/master
  =======================================================================
-fdf6844fae05cdd513b78b7e5d84b94b8f696a04
+5dcd6bbebd89ba3e67541b26e10e5173bfb543b1
 
  =======================================================================
  ==.git/refs/remotes/origin/HEAD
@@ -551,7 +565,7 @@ ref: refs/remotes/origin/master
  =======================================================================
  ==.git/refs/remotes/origin/master
  =======================================================================
-fdf6844fae05cdd513b78b7e5d84b94b8f696a04
+5dcd6bbebd89ba3e67541b26e10e5173bfb543b1
 
  =======================================================================
  ==.git/refs/tags/xebia-management-extras-1.2.2
@@ -561,10 +575,10 @@ fdf6844fae05cdd513b78b7e5d84b94b8f696a04
  =======================================================================
  ==.git/sourcetreeconfig
  =======================================================================
-lastUsedView=1
+lastUsedView=0
 autorefresh=1
 savedIncoming=0
-lastCheckedRemotes=2012-12-26 23:00:04 +0000
+lastCheckedRemotes=2012-12-26 23:21:38 +0000
 savedOutgoing=0
 autorefreshremotes=1
 
