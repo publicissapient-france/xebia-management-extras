@@ -20,3 +20,5 @@ xebia-management-extras
 =======================
 
 Management Extras (JMX MBeans, @Profiled annotation, etc)
+
+ * [Latest JavaDoc](http://xebia-france.github.com/xebia-management-extras/apidocs/index.html)
