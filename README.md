@@ -13,6 +13,9 @@
 <!--  See the License for the specific language governing permissions and      -->
 <!--  limitations under the License.                                           -->
 <!--                                                                           -->
+
+[![Build Status](https://buildhive.cloudbees.com/job/xebia-france/job/xebia-management-extras/badge/icon)](https://buildhive.cloudbees.com/job/xebia-france/job/xebia-management-extras/)
+
 xebia-management-extras
 =======================
 
