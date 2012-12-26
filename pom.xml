@@ -168,14 +168,14 @@
          <!-- for spring aop -->
          <groupId>org.aspectj</groupId>
          <artifactId>aspectjrt</artifactId>
-         <version>1.7.1.RELEASE</version>
+         <version>1.7.1</version>
          <optional>true</optional>
       </dependency>
       <dependency>
          <!-- for spring aop -->
          <groupId>org.aspectj</groupId>
          <artifactId>aspectjweaver</artifactId>
-         <version>1.7.1.RELEASE</version>
+         <version>1.7.1</version>
          <scope>runtime</scope>
          <optional>true</optional>
       </dependency>
