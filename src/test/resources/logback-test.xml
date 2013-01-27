@@ -23,6 +23,7 @@
    </appender>
 
    <logger name="org.springframework.jmx" level="WARN" />
+   <logger name="fr.xebia.management.statistics" level="DEBUG" />
 
    <root level="WARN">
       <appender-ref ref="console" />

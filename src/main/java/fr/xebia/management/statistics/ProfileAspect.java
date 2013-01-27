@@ -30,6 +30,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -125,6 +127,8 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
         return fullyQualifiedMethodName.toString();
     }
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private ClassNameStyle classNameStyle = ClassNameStyle.COMPACT_FULLY_QUALIFIED_NAME;
 
     private ExpressionParser expressionParser = new SpelExpressionParser();
@@ -189,6 +193,8 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
 
     @Around(value = "execution(* *(..)) && @annotation(profiled)", argNames = "pjp,profiled")
     public Object profileInvocation(ProceedingJoinPoint pjp, Profiled profiled) throws Throwable {
+
+        logger.trace("> profileInvocation({},{}", pjp, profiled);
 
         MethodSignature jointPointSignature = (MethodSignature) pjp.getStaticPart().getSignature();
 
@@ -272,7 +278,11 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
                 semaphore.release();
             }
             serviceStatistics.decrementCurrentActiveCount();
-            serviceStatistics.incrementInvocationCounterAndTotalDurationWithNanos(System.nanoTime() - nanosBefore);
+            long deltaInNanos = System.nanoTime() - nanosBefore;
+            serviceStatistics.incrementInvocationCounterAndTotalDurationWithNanos(deltaInNanos);
+            if(logger.isDebugEnabled()) {
+                logger.debug("< profileInvocation({}): {}ns", serviceStatisticsName, deltaInNanos);
+            }
         }
     }
 
