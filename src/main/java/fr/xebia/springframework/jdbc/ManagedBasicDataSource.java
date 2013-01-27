@@ -24,6 +24,9 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.jmx.export.naming.SelfNaming;
 
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
+
 /**
  * JMX enabled {@link BasicDataSource}.
  * 
@@ -36,6 +39,7 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
 
     private ObjectName objectName;
 
+    @Override
     public ObjectName getObjectName() throws MalformedObjectNameException {
         if (objectName == null) {
             objectName = new ObjectName("javax.sql:type=DataSource,name=" + beanName);
@@ -43,6 +47,7 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
         return objectName;
     }
 
+    @Override
     public void setBeanName(String name) {
         this.beanName = name;
     }
@@ -55,8 +60,18 @@ public class ManagedBasicDataSource extends BasicDataSource implements ManagedBa
         this.objectName = ObjectName.getInstance(objectName);
     }
 
+    @Override
     public void destroy() throws Exception {
         this.close();
+    }
+
+    /**
+     *
+     * @see javax.sql.DataSource#getParentLogger()
+     * @throws SQLFeatureNotSupportedException
+     */
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override
