@@ -61,7 +61,7 @@
          <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
-            <version>0.8</version>
+            <version>0.10</version>
             <executions>
                <execution>
                   <phase>verify</phase>
@@ -72,6 +72,7 @@
             </executions>
             <configuration>
                <excludes>
+                   <exclude>.gitignore</exclude>
                    <exclude>.git/**/*</exclude>
                    <exclude>.idea/**/*</exclude>
                    <exclude>src/site/monitoring-visualvm-jms-dump-open-resources-result.log</exclude>
@@ -155,7 +156,7 @@
          <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
-            <version>0.8</version>
+            <version>0.10</version>
          </plugin>
       </plugins>
    </reporting>
