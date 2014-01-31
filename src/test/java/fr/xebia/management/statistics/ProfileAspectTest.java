@@ -15,11 +15,13 @@
  */
 package fr.xebia.management.statistics;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
@@ -60,6 +62,11 @@ public class ProfileAspectTest {
         @Profiled(name = "test-max-active-with-spel", maxActiveExpression="#{ T(java.lang.Integer).parseInt(systemProperties['tomcat.thread-pool.size']) / 2 }")
         public void testMaxActiveWithSpel() {
 
+        }
+        
+        @Profiled(name = "test-max-active-semaphore-acquisition", maxActiveSemaphoreAcquisitionMaxTimeInMillis = 1000, maxActive = 1)
+        public void testMaxActiveSemaphoreAcquisition() {
+        	
         }
 
         @Profiled(name = "my-name(#{args[0]}-#{args[1]}-#{invokedObject.countryCode})")
@@ -192,6 +199,7 @@ public class ProfileAspectTest {
         String name = "test-max-active";
         ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
         assertNotNull(serviceStatistics);
+        
         // simulate one running invocation
         serviceStatistics.getMaxActiveSemaphore().acquire();
         assertEquals(0, serviceStatistics.getMaxActiveSemaphore().availablePermits());
@@ -235,6 +243,42 @@ public class ProfileAspectTest {
         assertEquals(10, availablePermits);
         }
 
+
+    @Test
+    public void testMaxActive_defaultSemaphoreAcquisition() throws Exception {
+        // initialize
+        testService.testMaxActive();
+
+        String name = "test-max-active";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        assertEquals(TimeUnit.NANOSECONDS.convert(100, TimeUnit.MILLISECONDS), serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    }
+    
+    @Test(timeout = 5000)
+    public void testMaxActiveSemaphoreAcquisition() throws Exception {
+        // initialize
+        testService.testMaxActiveSemaphoreAcquisition();
+
+        String name = "test-max-active-semaphore-acquisition";
+        ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
+        assertNotNull(serviceStatistics);
+        assertEquals(TimeUnit.NANOSECONDS.convert(1000, TimeUnit.MILLISECONDS), serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+
+        serviceStatistics.getMaxActiveSemaphore().acquire();
+        assertEquals(0, serviceStatistics.getMaxActiveSemaphore().availablePermits());
+        
+        long start = System.currentTimeMillis();
+        try {
+        	testService.testMaxActiveSemaphoreAcquisition();
+        } catch(ServiceUnavailableException ex) {
+        	// Expected
+        }
+        long waited = System.currentTimeMillis() - start;
+        
+        assertTrue(waited >= 900L);
+    }
+    
     @Test
     public void testVerySlowInvocationThreshold() throws Exception {
 
