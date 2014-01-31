@@ -276,6 +276,10 @@ public class ProfileAspectTest {
         }
         long waited = System.currentTimeMillis() - start;
         
+        // reset
+        serviceStatistics.setMaxActive(1);
+        testService.testMaxActive();
+        
         assertTrue(waited >= 900L);
     }
     
