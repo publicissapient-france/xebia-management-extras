@@ -280,7 +280,7 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
             serviceStatistics.decrementCurrentActiveCount();
             long deltaInNanos = System.nanoTime() - nanosBefore;
             serviceStatistics.incrementInvocationCounterAndTotalDurationWithNanos(deltaInNanos);
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("< profileInvocation({}): {}ns", serviceStatisticsName, deltaInNanos);
             }
         }
