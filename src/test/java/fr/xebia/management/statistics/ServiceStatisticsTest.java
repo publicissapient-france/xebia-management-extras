@@ -135,4 +135,44 @@ public class ServiceStatisticsTest {
         assertEquals(0, serviceStatistics.getOtherExceptionCount());
 
     }
+    
+    @Test
+    public void testSetSemaphoreAcquisitionMaxTimeInMillis() throws MalformedObjectNameException {
+    	ServiceStatistics serviceStatistics = new ServiceStatistics("test", new Class<?>[0], new Class<?>[0]);
+    	
+    	assertEquals(0L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(0L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    	
+    	serviceStatistics.setSemaphoreAcquisitionMaxTimeInMillis(100L);
+    	assertEquals(100000000L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(100L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    	
+    	serviceStatistics.setSemaphoreAcquisitionMaxTimeInMillis(250L);
+    	assertEquals(250000000L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(250L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    	
+    	serviceStatistics.setSemaphoreAcquisitionMaxTimeInMillis(5000L);
+    	assertEquals(5000000000L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(5000L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    }
+    
+    @Test
+    public void testSetMaxActiveSemaphoreAcquisitionMaxTimeInNanos() throws MalformedObjectNameException {
+    	ServiceStatistics serviceStatistics = new ServiceStatistics("test", new Class<?>[0], new Class<?>[0]);
+    	
+    	assertEquals(0L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(0L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    	
+    	serviceStatistics.setMaxActiveSemaphoreAcquisitionMaxTimeInNanos(100000000);
+    	assertEquals(100000000L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(100L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    	
+    	serviceStatistics.setMaxActiveSemaphoreAcquisitionMaxTimeInNanos(343000000L);
+    	assertEquals(343000000L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(343L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    	
+    	serviceStatistics.setMaxActiveSemaphoreAcquisitionMaxTimeInNanos(5000000000L);
+    	assertEquals(5000000000L, serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
+    	assertEquals(5000L, serviceStatistics.getSemaphoreAcquisitionMaxTimeInMillis());
+    }
 }
