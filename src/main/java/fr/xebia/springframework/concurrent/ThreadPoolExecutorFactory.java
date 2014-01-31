@@ -182,9 +182,10 @@ public class ThreadPoolExecutorFactory extends AbstractFactoryBean<ThreadPoolExe
 
     @Override
     protected ThreadPoolExecutor createInstance() throws Exception {
-        Assert.isTrue(this.corePoolSize > 0, "corePoolSize must be greater than zero");
+        Assert.isTrue(this.corePoolSize >= 0, "corePoolSize must be greater than or equal to zero");
         Assert.isTrue(this.maximumPoolSize > 0, "maximumPoolSize must be greater than zero");
-        Assert.isTrue(this.queueCapacity > 0, "queueCapacity must be greater than zero");
+        Assert.isTrue(this.maximumPoolSize >= this.corePoolSize, "maximumPoolSize must be greater than or equal to corePoolSize");
+        Assert.isTrue(this.queueCapacity >= 0, "queueCapacity must be greater than or equal to zero");
 
         CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(this.beanName + "-");
         threadFactory.setDaemon(true);
