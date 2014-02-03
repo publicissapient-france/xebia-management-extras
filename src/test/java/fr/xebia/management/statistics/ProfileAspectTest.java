@@ -275,7 +275,8 @@ public class ProfileAspectTest {
         
         long start = System.currentTimeMillis();
         try {
-        	testService.testMaxActiveSemaphoreAcquisition();
+        	testService.testMaxActiveSemaphoreAcquisition();  
+        	fail("ServiceUnavailableException expected");
         } catch(ServiceUnavailableException ex) {
         	// Expected
         }
