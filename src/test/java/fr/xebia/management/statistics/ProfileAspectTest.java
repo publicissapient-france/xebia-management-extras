@@ -59,9 +59,15 @@ public class ProfileAspectTest {
         public void testMaxActive() {
 
         }
+        
         @Profiled(name = "test-max-active-with-spel", maxActiveExpression="#{ T(java.lang.Integer).parseInt(systemProperties['tomcat.thread-pool.size']) / 2 }")
         public void testMaxActiveWithSpel() {
 
+        }
+        
+        @Profiled(name = "test-max-active-semaphore-acquisition-default", maxActive = 1)
+        public void testMaxActiveSemaphoreAcquisition_default() {
+        	
         }
         
         @Profiled(name = "test-max-active-semaphore-acquisition", maxActiveSemaphoreAcquisitionMaxTimeInMillis = 1000, maxActive = 1)
@@ -199,7 +205,6 @@ public class ProfileAspectTest {
         String name = "test-max-active";
         ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
         assertNotNull(serviceStatistics);
-        
         // simulate one running invocation
         serviceStatistics.getMaxActiveSemaphore().acquire();
         assertEquals(0, serviceStatistics.getMaxActiveSemaphore().availablePermits());
@@ -207,7 +212,7 @@ public class ProfileAspectTest {
         // test
         try {
             testService.testMaxActive();
-            fail("TimeOutException expected");
+            fail("ServiceUnavailableException expected");
         } catch(ServiceUnavailableException e) {
             // expected
         }
@@ -247,9 +252,9 @@ public class ProfileAspectTest {
     @Test
     public void testMaxActive_defaultSemaphoreAcquisition() throws Exception {
         // initialize
-        testService.testMaxActive();
+        testService.testMaxActiveSemaphoreAcquisition_default();
 
-        String name = "test-max-active";
+        String name = "test-max-active-semaphore-acquisition-default";
         ServiceStatistics serviceStatistics = profileAspect.serviceStatisticsByName.get(name);
         assertNotNull(serviceStatistics);
         assertEquals(TimeUnit.NANOSECONDS.convert(100, TimeUnit.MILLISECONDS), serviceStatistics.getMaxActiveSemaphoreAcquisitionMaxTimeInNanos());
@@ -278,7 +283,7 @@ public class ProfileAspectTest {
         
         // reset
         serviceStatistics.setMaxActive(1);
-        testService.testMaxActive();
+        testService.testMaxActiveSemaphoreAcquisition();
         
         assertTrue(waited >= 900L);
     }
