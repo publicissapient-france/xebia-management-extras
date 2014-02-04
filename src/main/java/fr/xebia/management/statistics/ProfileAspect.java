@@ -239,8 +239,9 @@ public class ProfileAspect implements InitializingBean, DisposableBean, BeanName
             } else {
                 maxActive = profiled.maxActive();
             }
-            newServiceStatistics.setMaxActive(maxActive);
-            newServiceStatistics.setMaxActiveSemaphoreAcquisitionMaxTimeInNanos(profiled.maxActiveSemaphoreAcquisitionMaxTimeInMillis());
+            newServiceStatistics.setMaxActive(maxActive); 
+            newServiceStatistics.setMaxActiveSemaphoreAcquisitionMaxTimeInNanos(
+                    TimeUnit.NANOSECONDS.convert(profiled.maxActiveSemaphoreAcquisitionMaxTimeInMillis(), TimeUnit.MILLISECONDS));
 
             ServiceStatistics previousServiceStatistics = serviceStatisticsByName.putIfAbsent(serviceStatisticsName, newServiceStatistics);
             if (previousServiceStatistics == null) {

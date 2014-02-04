@@ -441,7 +441,7 @@ public class ServiceStatistics implements SelfNaming {
 
     @ManagedAttribute(description = "Max acquisition duration fur the max active semaphore")
     public void setSemaphoreAcquisitionMaxTimeInMillis(long semaphoreAcquisitionMaxTimeInMillis) {
-        this.maxActiveSemaphoreAcquisitionMaxTimeInNanos = TimeUnit.NANOSECONDS.convert(maxActiveSemaphoreAcquisitionMaxTimeInNanos,
+        this.maxActiveSemaphoreAcquisitionMaxTimeInNanos = TimeUnit.NANOSECONDS.convert(semaphoreAcquisitionMaxTimeInMillis,
                 TimeUnit.MILLISECONDS);
     }
 
