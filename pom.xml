@@ -22,7 +22,7 @@
    </parent>
    <groupId>fr.xebia.management</groupId>
    <artifactId>xebia-management-extras</artifactId>
-   <version>1.2.4-SNAPSHOT</version>
+   <version>1.2.4</version>
    <packaging>jar</packaging>
    <name>xebia-management-extras</name>
    <description>Management Extras (JMX MBeans, @Profiled annotation, etc)</description>
